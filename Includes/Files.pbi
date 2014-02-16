@@ -121,12 +121,12 @@ Threaded Files_File_Get_Return_String.s = ""
 Procedure.s Files_File_Get(Name.s)
   LockMutex(Files_Main\Mutex_ID)
   
-  Files_File_Get_Return_String = ""
+  Files_File_Get_Return_String.s = ""
   Found = 0
   
   ForEach Files_File()
     If Files_File()\Name = Name
-      Files_File_Get_Return_String = Files_File()\File
+      Files_File_Get_Return_String.s = Files_File()\File
       Found = 1
       Break
     EndIf
@@ -175,12 +175,13 @@ Procedure Files_Main()
     Files_Save(Files_File_Get("Files"))
   EndIf
 EndProcedure
-; IDE Options = PureBasic 5.11 (Windows - x64)
-; CursorPosition = 80
-; FirstLine = 78
+; IDE Options = PureBasic 5.00 (Windows - x86)
+; CursorPosition = 119
+; FirstLine = 114
 ; Folding = -
 ; EnableXP
 ; Executable = ..\Minecraft-Server.x86.exe
 ; DisableDebugger
+; CompileSourceDirectory
 ; EnableCompileCount = 0
 ; EnableBuildCount = 0

@@ -77,6 +77,7 @@ Enumeration 0
   #Lua_Event_Chat_Map
   #Lua_Event_Chat_All
   #Lua_Event_Chat_Private
+  #Lua_Event_Entity_Map_Change
 EndEnumeration
 
 ; ########################################## Variablen ##########################################
@@ -470,6 +471,7 @@ ProcedureC Lua_CMD_Client_Get_Entity(Lua_State)
   
   ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
+
 
 ;-############################################################
 
@@ -1838,6 +1840,17 @@ ProcedureC Lua_CMD_Map_Export(Lua_State)
   ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
+ProcedureC Lua_CMD_Map_Export_Get_Size(Lua_State)
+  lua_tostring(Filename.s, Lua_State, 1)
+  
+  lua_pushinteger(Lua_State, Map_Export_Get_Size_X(Filename))
+  lua_pushinteger(Lua_State, Map_Export_Get_Size_Y(Filename))
+  lua_pushinteger(Lua_State, Map_Export_Get_Size_Z(Filename))
+  
+  ProcedureReturn 3
+EndProcedure
+
+
 ProcedureC Lua_CMD_Map_Import_Player(Lua_State)
   Player_Number = lua_tointeger(Lua_State, 1)
   lua_tostring(Filename.s, Lua_State, 2) ;Filename.s = PeekS(lua_tolstring(Lua_State, 2, #Null))
@@ -2313,7 +2326,477 @@ ProcedureC Lua_CMD_Event_Delete(Lua_State)
   
   ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
+;-###########################################################
+; CPE Extensions
 
+ProcedureC Lua_CMD_Server_Get_Extensions(Lua_State)
+  lua_newtable(Lua_State)
+  
+    Elements = 11
+  
+    ;lua_pushinteger(Lua_State, 1)
+    lua_pushstring(Lua_State, "CustomBlocks")
+    lua_pushinteger(Lua_State, 1)
+    lua_rawset(Lua_State, -3)
+    
+    ;lua_pushinteger(Lua_State, 2)
+    lua_pushstring(Lua_State, "EmoteFix")
+    lua_pushinteger(Lua_State, 1)
+    lua_rawset(Lua_State, -3)
+    
+    ;lua_pushinteger(Lua_State, 3)
+    lua_pushstring(Lua_State, "HeldBlock")
+    lua_pushinteger(Lua_State, 1)
+    lua_rawset(Lua_State, -3)
+    
+    lua_pushstring(Lua_State, "ClickDistance")
+    lua_pushinteger(Lua_State, 1)
+    lua_rawset(Lua_State, -3)
+    
+    lua_pushstring(Lua_State, "ChangeModel")
+    lua_pushinteger(Lua_State, 1)
+    lua_rawset(Lua_State, -3)
+    
+    lua_pushstring(Lua_State, "ExtPlayerList")
+    lua_pushinteger(Lua_State, 1)
+    lua_rawset(Lua_State, -3)
+    
+    lua_pushstring(Lua_State, "EnvWeatherType")
+    lua_pushinteger(Lua_State, 1)
+    lua_rawset(Lua_State, -3)
+    
+    lua_pushstring(Lua_State, "EnvMapAppearance")
+    lua_pushinteger(Lua_State, 1)
+    lua_rawset(Lua_State, -3)
+    
+    lua_pushstring(Lua_State, "MessageTypes")
+    lua_pushinteger(Lua_State, 1)
+    lua_rawset(Lua_State, -3)
+    
+    lua_pushstring(Lua_State, "BlockPermissions")
+    lua_pushinteger(Lua_State, 1)
+    lua_rawset(Lua_State, -3)
+    
+    lua_pushstring(Lua_State, "EnvMapAppearance")
+    lua_pushinteger(Lua_State, 1)
+    lua_rawset(Lua_State, -3)
+    
+    ProcedureReturn 2
+EndProcedure
+
+ProcedureC Lua_CMD_Server_Get_Extension(Lua_State)
+  lua_tostring(Extension.s, Lua_State, 1)
+  
+  result.i = 0
+  Select LCase(Extension)
+    Case "customblocks"
+      result = 1
+    Case "emotefix"
+      result = 1
+    Case "heldblock"
+        result = 1
+    Case "clickdistance"
+        result = 1
+    Case "changemodel"
+        result = 1
+    Case "extplayerlist"
+        result = 1
+    Case "envweathertype"
+        result = 1
+    Case "envmapappearance"
+        result = 1
+    Case "messagetypes"
+        result = 1
+    Case "blockpermissions"
+        result = 1
+    Case "envmapappearance"
+        result = 1
+  EndSelect
+  
+  lua_pushinteger(Lua_State, result)
+  
+  ProcedureReturn result
+EndProcedure
+
+ProcedureC Lua_CMD_Client_Get_Extensions(Lua_State)
+  Client_ID = lua_tointeger(Lua_State, 1)
+  
+  Elements = 0
+  
+  *Pointer.Network_Client = Client_Get_Pointer(Client_ID)
+  If *Pointer
+    If *Pointer\CPE = #True
+      lua_newtable(Lua_State)
+      
+      Elements = ListSize(*Pointer\Extensions())
+      
+      ResetList(*Pointer\Extensions())
+      ResetList(*Pointer\ExtensionVersions())
+      
+      While NextElement(*Pointer\Extensions()) And NextElement(*Pointer\ExtensionVersions())
+        lua_pushstring(Lua_State, *Pointer\Extensions())
+        lua_pushinteger(Lua_State, *Pointer\ExtensionVersions())
+        lua_rawset(Lua_State, -3)
+      Wend
+      
+    EndIf
+    
+  EndIf
+  
+  lua_pushinteger(Lua_State, Elements)
+  
+  ProcedureReturn 2
+EndProcedure
+
+ProcedureC Lua_CMD_Client_Get_Extension(Lua_State)
+  Client_ID = lua_tointeger(Lua_State, 1)
+  lua_tostring(Extension.s, Lua_State, 2)
+  
+  Result.i = 0
+  
+  *Pointer.Network_Client = Client_Get_Pointer(Client_ID)
+  If *Pointer
+    If *Pointer\CPE = #True
+      ResetList(*Pointer\Extensions())
+      ResetList(*Pointer\ExtensionVersions())
+      
+      While NextElement(*Pointer\Extensions()) And NextElement(*Pointer\ExtensionVersions())
+        If *Pointer\Extensions() = Extension
+          result = *Pointer\ExtensionVersions()
+        EndIf
+      Wend
+    EndIf
+    
+  EndIf
+  
+  lua_pushinteger(Lua_State, Result)
+  
+  ProcedureReturn 1
+EndProcedure
+
+;################################
+
+ProcedureC Lua_CMD_CPE_Selection_Cuboid_Add(Lua_State)
+  Client_ID = lua_tointeger(Lua_State, 1)
+  Selection_ID = lua_tointeger(Lua_State, 2)
+  lua_tostring(Label.s, Lua_State, 3)
+  Start_X = lua_tointeger(Lua_State, 4)
+  Start_Y = lua_tointeger(Lua_State, 5)
+  Start_Z = lua_tointeger(Lua_State, 6)
+  End_X = lua_tointeger(Lua_State, 7)
+  End_Y = lua_tointeger(Lua_State, 8)
+  End_Z = lua_tointeger(Lua_State, 9)
+  Red = lua_tointeger(Lua_State, 10)
+  Green = lua_tointeger(Lua_State, 11)
+  Blue = lua_tointeger(Lua_State, 12)
+  Opacity = lua_tointeger(Lua_State, 13)
+  
+  CPE_Selection_Cuboid_Add(Client_ID, Selection_ID, Label, Start_X, Start_Y, Start_Z, End_X, End_Y, End_Z, Red, Green, Blue, Opacity)
+  
+  ProcedureReturn 1
+EndProcedure
+
+ProcedureC Lua_CMD_CPE_Selection_Cuboid_Delete(Lua_State)
+  Client_ID = lua_tointeger(Lua_State, 1)
+  Selection_ID = lua_tointeger(Lua_State, 2)
+  
+  CPE_Selection_Cuboid_Delete(Client_ID, Selection_ID)
+    
+  ProcedureReturn 1
+EndProcedure
+
+ProcedureC Lua_CMD_CPE_Get_Held_Block(Lua_State)
+  Client_ID = lua_tointeger(Lua_state, 1)
+  
+  *Pointer.Network_Client = Client_Get_Pointer(Client_ID)
+  If *Pointer
+    If *Pointer\CPE = #True
+      If *Pointer\Player\Entity
+        lua_pushinteger(Lua_State, *Pointer\Player\Entity\Held_Block)
+      EndIf
+    EndIf
+  EndIf
+EndProcedure
+
+ProcedureC Lua_CMD_CPE_Set_Held_Block(Lua_State)
+  Client_ID = lua_tointeger(Lua_State, 1)
+  Block_ID = lua_tointeger(Lua_State, 2)
+  Can_Change = lua_tointeger(Lua_State, 3)
+  
+  *Pointer.Network_Client = Client_Get_Pointer(Client_ID)
+  If *Pointer
+    If *Pointer\CPE = #True
+      If *Pointer\Player\Entity
+        CPE_HoldThis(Client_ID, Block_ID, Can_Change)
+      EndIf
+    EndIf
+  EndIf
+  
+  ProcedureReturn 0
+EndProcedure
+
+ProcedureC Lua_CMD_CPE_Change_Model(Lua_State)
+  Client_ID = lua_tointeger(Lua_State, 1)
+  lua_tostring(Model.s, Lua_State, 2)
+  
+  *Pointer.Network_Client = Client_Get_Pointer(Client_ID)
+  If *Pointer
+    If *Pointer\CPE = #True
+      If *Pointer\Player\Entity
+        CPE_Model_Change(Client_ID, Model)
+      EndIf
+    EndIf
+  EndIf
+  
+  ProcedureReturn 0
+EndProcedure
+
+ProcedureC Lua_CMD_CPE_Set_Weather(Lua_State)
+    Client_ID = lua_tointeger(Lua_State, 1)
+    WeatherType.b = lua_tointeger(Lua_State, 2)
+    
+    If WeatherType <> 0 And WeatherType <> 1 And WeatherType <> 2
+        ProcedureReturn 1 ; Error.    
+    EndIf
+    
+    *Pointer.Network_Client = Client_Get_Pointer(Client_ID)
+    If *Pointer
+        If *Pointer\CPE = #True
+            If *Pointer\Player\Entity
+                CPE_Set_Weather(Client_ID, WeatherType)
+            EndIf
+        EndIf
+    EndIf
+    
+    ProcedureReturn 0
+EndProcedure
+
+ProcedureC Lua_CMD_CPE_Map_Set_Env_Colors(Lua_State)
+    Map_ID.i = lua_tointeger(Lua_State, 1)
+    Red.b = lua_tointeger(Lua_State, 2)
+    Green.b = lua_tointeger(Lua_State, 3)
+    Blue.b = lua_tointeger(Lua_State, 4)
+    Type.b = lua_tointeger(Lua_State, 5)
+    
+    *ThisMap = Map_Get_Pointer(Map_ID)
+    If *ThisMap
+        Map_Env_Colors_Change(*ThisMap, Red, Green, Blue, Type)
+    EndIf
+    
+    ProcedureReturn 0
+EndProcedure
+ProcedureC Lua_CMD_CPE_Client_Set_Block_Permissions(Lua_State)
+    Client_ID = lua_tointeger(Lua_State, 1)
+    Block_ID = lua_tointeger(Lua_State, 2)
+    Can_Place = lua_tointeger(Lua_State, 3)
+    Can_Delete = lua_tointeger(Lua_State, 4)
+    
+    CPE_Client_Set_Block_Permissions(Client_ID, Block_ID, Can_Place, Can_Delete)
+    
+    ProcedureReturn 0    
+EndProcedure
+ProcedureC Lua_CMD_Map_Env_Apperance_Set(Lua_State)
+    Map_ID = lua_tointeger(Lua_State, 1)
+    lua_tostring(CustomURL.s, Lua_State, 2)
+    Side_Block = lua_tointeger(Lua_State, 3)
+    Edge_Block = lua_tointeger(Lua_State, 4)
+    Side_Level = lua_tointeger(Lua_State, 5)
+    
+    *ThisMap = Map_Get_Pointer(Map_ID)
+    If *ThisMap
+        Map_Env_Appearance_Set(*ThisMap, CustomURL, Side_Block, Edge_Block, Side_Level)
+    EndIf
+    
+    ProcedureReturn 0
+EndProcedure ; 
+ProcedureC Lua_CMD_Client_Send_Map_Appearence(Lua_State)
+    Client_ID = lua_tointeger(Lua_State, 1)
+    lua_tostring(CustomURL.s, Lua_State, 2)
+    Side_Block = lua_tointeger(Lua_State, 3)
+    Edge_Block = lua_tointeger(Lua_State, 4)
+    Side_Level = lua_tointeger(Lua_State, 5)
+    
+    
+    CPE_Client_Send_Map_Appearence(Client_ID, CustomURL, Side_Block, Edge_Block, Side_Level)
+    
+    ProcedureReturn 0
+EndProcedure
+ProcedureC Lua_CMD_CPE_Client_Hackcontrol_Send(Lua_State)
+    Client_ID = lua_tointeger(Lua_State, 1)
+    Flying = lua_tointeger(Lua_State, 2)
+    Noclip = lua_tointeger(Lua_State, 3)
+    Speeding = lua_tointeger(Lua_State, 4)
+    SpawnControl = lua_tointeger(Lua_State, 5)
+    ThirdPerson = lua_tointeger(Lua_State, 6)
+    WeatherControl = lua_tointeger(Lua_State, 7)
+    Jumpheight.w = lua_tointeger(Lua_State, 8)
+    
+    CPE_Client_Hackcontrol_Send(Client_ID, Flying, Noclip, Speeding, SpawnControl, ThirdPerson, WeatherControl, Jumpheight)
+    ProcedureReturn 0
+EndProcedure
+ProcedureC Lua_CMD_Hotkey_Add(Lua_State)
+    lua_tostring(Label.s, Lua_State, 1)
+    lua_tostring(Action.s, Lua_State, 2)
+    Keycode.l = lua_tointeger(Lua_State, 3)
+    Keymods = lua_tointeger(Lua_State, 4)
+    
+    Hotkey_Add(Label, Action, Keycode, Keymods)
+    ProcedureReturn 0
+EndProcedure
+ProcedureC Lua_CMD_Hotkey_Remove(Lua_State)
+    lua_tostring(Label.s, Lua_State, 1)
+    
+    Hotkey_Remove(Label)
+    ProcedureReturn 0
+EndProcedure
+ProcedureC Lua_CMD_Map_Hackcontrol_Set(Lua_State)
+    Map_ID = lua_tointeger(Lua_State, 1)
+    Flying = lua_tointeger(Lua_State, 2)
+    Noclip = lua_tointeger(Lua_State, 3)
+    Speeding = lua_tointeger(Lua_State, 4)
+    SpawnControl = lua_tointeger(Lua_State, 5)
+    ThirdPerson = lua_tointeger(Lua_State, 6)
+    WeatherControl = lua_tointeger(Lua_State, 7)
+    Jumpheight.w = lua_tointeger(Lua_State, 8)
+    
+    *MapData = Map_Get_Pointer(Map_ID)
+    If *MapData
+        Map_HackControl_Set(*MapData, Flying, Noclip, Speeding, SpawnControl, ThirdPerson, WeatherControl, Jumpheight)
+    EndIf
+    
+    ProcedureReturn 0
+EndProcedure
+
+;-########### Messages #####################
+ProcedureC Lua_CMD_System_Message_Status1_Send(Lua_State)
+    Client_ID = lua_tointeger(Lua_State, 1)
+    lua_tostring(Message.s, Lua_State, 2)
+    
+    System_Message_Status1_Send(Client_ID, Message)
+    
+    ProcedureReturn 0
+EndProcedure
+ProcedureC Lua_CMD_System_Message_Status1_Send_2_All(Lua_State)
+    Map_ID = lua_tointeger(Lua_State, 1)
+    lua_tostring(Message.s, Lua_State, 2)
+    
+    System_Message_Status1_Send_2_All(Map_ID, Message)
+    
+    ProcedureReturn 0
+EndProcedure
+ProcedureC Lua_CMD_System_Message_Status2_Send(Lua_State)
+    Client_ID = lua_tointeger(Lua_State, 1)
+    lua_tostring(Message.s, Lua_State, 2)
+    
+    System_Message_Status2_Send(Client_ID, Message)
+    
+    ProcedureReturn 0
+EndProcedure
+ProcedureC Lua_CMD_System_Message_Status2_Send_2_All(Lua_State)
+    Map_ID = lua_tointeger(Lua_State, 1)
+    lua_tostring(Message.s, Lua_State, 2)
+    
+    System_Message_Status2_Send_2_All(Map_ID, Message)
+    
+    ProcedureReturn 0    
+EndProcedure
+ProcedureC Lua_CMD_System_Message_Status3_Send(Lua_State)
+    Client_ID = lua_tointeger(Lua_State, 1)
+    lua_tostring(Message.s, Lua_State, 2)
+    
+    System_Message_Status3_Send(Client_ID, Message)
+    
+    ProcedureReturn 0
+EndProcedure
+ProcedureC Lua_CMD_System_Message_Status3_Send_2_All(Lua_State)
+    Map_ID = lua_tointeger(Lua_State, 1)
+    lua_tostring(Message.s, Lua_State, 2)
+    
+    System_Message_Status3_Send_2_All(Map_ID, Message)
+    
+    ProcedureReturn 0    
+EndProcedure
+;-
+ProcedureC Lua_CMD_System_Message_BR1_Send(Lua_State)
+    Client_ID = lua_tointeger(Lua_State, 1)
+    lua_tostring(Message.s, Lua_State, 2)
+    
+    System_Message_BR1_Send(Client_ID, Message)
+    
+    ProcedureReturn 0
+EndProcedure
+ProcedureC Lua_CMD_System_Message_BR1_Send_2_All(Lua_State)
+    Map_ID = lua_tointeger(Lua_State, 1)
+    lua_tostring(Message.s, Lua_State, 2)
+    
+    System_Message_BR1_Send_2_All(Map_ID, Message)
+    
+    ProcedureReturn 0    
+EndProcedure
+ProcedureC Lua_CMD_System_Message_BR2_Send(Lua_State)
+    Client_ID = lua_tointeger(Lua_State, 1)
+    lua_tostring(Message.s, Lua_State, 2)
+    
+    System_Message_BR2_Send(Client_ID, Message)
+    
+    ProcedureReturn 0
+EndProcedure
+ProcedureC Lua_CMD_System_Message_BR2_Send_2_All(Lua_State)
+    Map_ID = lua_tointeger(Lua_State, 1)
+    lua_tostring(Message.s, Lua_State, 2)
+    
+    System_Message_BR2_Send_2_All(Map_ID, Message)
+    
+    ProcedureReturn 0    
+EndProcedure
+ProcedureC Lua_CMD_System_Message_BR3_Send(Lua_State)
+    Client_ID = lua_tointeger(Lua_State, 1)
+    lua_tostring(Message.s, Lua_State, 2)
+    
+    System_Message_BR3_Send(Client_ID, Message)
+    
+    ProcedureReturn 0
+EndProcedure
+ProcedureC Lua_CMD_System_Message_BR3_Send_2_All(Lua_State)
+    Map_ID = lua_tointeger(Lua_State, 1)
+    lua_tostring(Message.s, Lua_State, 2)
+    
+    System_Message_BR3_Send_2_All(Map_ID, Message)
+    
+    ProcedureReturn 0    
+EndProcedure
+ProcedureC Lua_CMD_System_Message_TopLeft_Send(Lua_State)
+    Client_ID = lua_tointeger(Lua_State, 1)
+    lua_tostring(Message.s, Lua_State, 2)
+    
+    System_Message_TopLeft_Send(Client_ID, Message)
+    
+    ProcedureReturn 0
+EndProcedure
+ProcedureC Lua_CMD_System_Message_TopLeft_Send_2_All(Lua_State)
+    Map_ID = lua_tointeger(Lua_State, 1)
+    lua_tostring(Message.s, Lua_State, 2)
+    
+    System_Message_TopLeft_Send_2_All(Map_ID, Message)
+    
+    ProcedureReturn 0    
+EndProcedure
+ProcedureC Lua_CMD_System_Message_Announcement_Send(Lua_State)
+    Client_ID = lua_tointeger(Lua_State, 1)
+    lua_tostring(Message.s, Lua_State, 2)
+    
+    System_Message_Announcement_Send(Client_ID, Message)
+    
+    ProcedureReturn 0
+EndProcedure
+ProcedureC Lua_CMD_System_Message_Announcement_Send_2_All(Lua_State)
+    Map_ID = lua_tointeger(Lua_State, 1)
+    lua_tostring(Message.s, Lua_State, 2)
+    
+    System_Message_Announcement_Send_2_All(Map_ID, Message)
+    
+    ProcedureReturn 0    
+EndProcedure
 ;-########################################## Event-Proceduren ####################################
 
 Procedure Lua_Event_Select(ID.s, Log.a=0)
@@ -2360,6 +2843,7 @@ Procedure Lua_Event_Add(ID.s, Function.s, Type.s, Set_Or_Check.a, Time.l, Map_ID
       Case "chat_map"                 : Type_Enumeration = #Lua_Event_Chat_Map
       Case "chat_all"                 : Type_Enumeration = #Lua_Event_Chat_All
       Case "chat_private"             : Type_Enumeration = #Lua_Event_Chat_Private
+      Case "entity_map_change"        : Type_Enumeration = #Lua_Event_Entity_Map_Change
       Default                         : ProcedureReturn #False
     EndSelect
     
@@ -2714,6 +3198,21 @@ Procedure Lua_Do_Function_Command(Function_Name.s, Client_ID, Command.s, Text_0.
   EndIf
 EndProcedure
 
+Procedure Lua_Do_Function_Event_Entity_Map_Change(Result, Function_Name.s, Entity_ID, New_Map_ID, Old_Map_ID)
+    If Lua_Main\State
+        lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
+        lua_pushinteger(Lua_Main\State, Entity_ID)
+        lua_pushinteger(Lua_Main\State, New_Map_ID)
+        lua_pushinteger(Lua_Main\State, Old_Map_ID)
+        Lua_Do_Function(Function_Name, 3, 1)
+        Result = lua_tointeger(Lua_Main\State, -1)
+        lua_pop(Lua_Main\State, 1)
+    EndIf
+    
+    ProcedureReturn Result
+EndProcedure
+
+
 Procedure Lua_Do_Function_Map_Block_Physics(Function_Name.s, Map_ID, X, Y, Z)
   If Lua_Main\State
     lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
@@ -2913,6 +3412,9 @@ Procedure Lua_Register_All()
     lua_register(Lua_Main\State, "Map_Action_Add_Delete", @Lua_CMD_Map_Action_Add_Delete())
     lua_register(Lua_Main\State, "Map_Resend", @Lua_CMD_Map_Resend())
     lua_register(Lua_Main\State, "Map_Export", @Lua_CMD_Map_Export())
+    
+    lua_register(Lua_Main\State, "Map_Export_Get_Size", @Lua_CMD_Map_Export_Get_Size())
+    
     lua_register(Lua_Main\State, "Map_Import_Player", @Lua_CMD_Map_Import_Player())
     
     lua_register(Lua_Main\State, "Block_Get_Table", @Lua_CMD_Block_Get_Table())
@@ -2948,6 +3450,46 @@ Procedure Lua_Register_All()
     
     lua_register(Lua_Main\State, "Event_Add", @Lua_CMD_Event_Add())
     lua_register(Lua_Main\State, "Event_Delete", @Lua_CMD_Event_Delete())
+    
+    lua_register(Lua_Main\State, "Server_Get_Extensions", @Lua_CMD_Server_Get_Extensions())
+    lua_register(Lua_Main\State, "Server_Get_Extension", @Lua_CMD_Server_Get_Extension())
+    lua_register(Lua_Main\State, "Client_Get_Extensions", @Lua_CMD_Client_Get_Extensions())
+    lua_register(Lua_Main\State, "Client_Get_Extension", @Lua_CMD_Client_Get_Extension())
+    
+    lua_register(Lua_Main\State, "CPE_Selection_Cuboid_Add",@Lua_CMD_CPE_Selection_Cuboid_Add())
+    lua_register(Lua_Main\State, "CPE_Selection_Cuboid_Delete", @Lua_CMD_CPE_Selection_Cuboid_Delete())
+    
+    lua_register(Lua_Main\State, "CPE_Get_Held_Block", @Lua_CMD_CPE_Get_Held_Block())
+    lua_register(Lua_Main\State, "CPE_Set_Held_Block", @Lua_CMD_CPE_Set_Held_Block())
+    lua_register(Lua_Main\State, "CPE_Model_Change", @Lua_CMD_CPE_Change_Model())
+    lua_register(Lua_Main\State, "CPE_Set_Weather", @Lua_CMD_CPE_Set_Weather())
+    lua_register(Lua_Main\State, "CPE_Map_Set_Env_Colors", @Lua_CMD_CPE_Map_Set_Env_Colors())
+    lua_register(Lua_Main\State, "CPE_Client_Set_Block_Permissions", @Lua_CMD_CPE_Client_Set_Block_Permissions())
+    lua_register(Lua_Main\State, "Map_Env_Apperance_Set", @Lua_CMD_Map_Env_Apperance_Set())
+    lua_register(Lua_Main\State, "Client_Send_Map_Appearence", @Lua_CMD_Client_Send_Map_Appearence())
+    
+    lua_register(Lua_Main\State, "System_Message_Status1_Send", @Lua_CMD_System_Message_Status1_Send())
+    lua_register(Lua_Main\State, "System_Message_Status2_Send", @Lua_CMD_System_Message_Status2_Send())
+    lua_register(Lua_Main\State, "System_Message_Status3_Send", @Lua_CMD_System_Message_Status3_Send())
+    lua_register(Lua_Main\State, "System_Message_BR1_Send", @Lua_CMD_System_Message_BR1_Send())
+    lua_register(Lua_Main\State, "System_Message_BR2_Send", @Lua_CMD_System_Message_BR2_Send())
+    lua_register(Lua_Main\State, "System_Message_BR3_Send", @Lua_CMD_System_Message_BR3_Send())
+    lua_register(Lua_Main\State, "System_Message_TopLeft_Send", @Lua_CMD_System_Message_TopLeft_Send())
+    lua_register(Lua_Main\State, "System_Message_Announcement_Send", @Lua_CMD_System_Message_Announcement_Send())
+    
+    lua_register(Lua_Main\State, "System_Message_Status1_Send_2_All", @Lua_CMD_System_Message_Status1_Send_2_All())
+    lua_register(Lua_Main\State, "System_Message_Status2_Send_2_All", @Lua_CMD_System_Message_Status2_Send_2_All())
+    lua_register(Lua_Main\State, "System_Message_Status3_Send_2_All", @Lua_CMD_System_Message_Status3_Send_2_All())
+    lua_register(Lua_Main\State, "System_Message_BR1_Send_2_All", @Lua_CMD_System_Message_BR1_Send_2_All())
+    lua_register(Lua_Main\State, "System_Message_BR2_Send_2_All", @Lua_CMD_System_Message_BR2_Send_2_All())
+    lua_register(Lua_Main\State, "System_Message_BR3_Send_2_All", @Lua_CMD_System_Message_BR3_Send_2_All())
+    lua_register(Lua_Main\State, "System_Message_TopLeft_Send_2_All", @Lua_CMD_System_Message_TopLeft_Send_2_All())
+    lua_register(Lua_Main\State, "System_Message_Announcement_Send_2_All", @Lua_CMD_System_Message_Announcement_Send_2_All())
+    
+    lua_register(Lua_Main\State, "CPE_Client_Hackcontrol_Send", @Lua_CMD_CPE_Client_Hackcontrol_Send())
+    lua_register(Lua_Main\State, "Hotkey_Add", @Lua_CMD_Hotkey_Add())
+    lua_register(Lua_Main\State, "Hotkey_Remove", @Lua_CMD_Hotkey_Remove())
+    lua_register(Lua_Main\State, "Map_Hackcontrol_Set", @Lua_CMD_Map_Hackcontrol_Set())
   EndIf
 EndProcedure
 
@@ -3062,9 +3604,13 @@ Procedure Lua_Check_New_Files(Directory.s)
   EndIf
   
 EndProcedure
-; IDE Options = PureBasic 5.11 (Windows - x64)
-; CursorPosition = 318
-; FirstLine = 307
-; Folding = -----------------------------
+; IDE Options = PureBasic 5.00 (Windows - x86)
+; ExecutableFormat = Shared Dll
+; CursorPosition = 2638
+; FirstLine = 2566
+; Folding = ----------------------6------------
+; EnableThread
 ; EnableXP
+; EnableOnError
 ; DisableDebugger
+; CompileSourceDirectory

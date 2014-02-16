@@ -11,7 +11,7 @@ Declare Error_Handler()
 
 ; ########################################## Ladekram ############################################
 
-OnErrorCall(@Error_Handler())
+;OnErrorCall(@Error_Handler())
 
 ; ########################################## Proceduren ##########################################
 
@@ -206,7 +206,7 @@ Procedure Error_Handler()
     
     WriteStringN(File_ID, "      <br>")
     
-    SortStructuredList(Mem_Element(), #PB_Sort_Ascending, OffsetOf(Mem_Element\Memory), #PB_Integer)
+    SortStructuredList(Mem_Element(), #PB_Sort_Ascending, OffsetOf(Mem_Element\Memory), #PB_Sort_Integer)
     
     WriteStringN(File_ID, "      <b><u>Fragmentation:</u></b><br>")
     WriteStringN(File_ID, "      <br>")
@@ -230,7 +230,7 @@ Procedure Error_Handler()
     WriteStringN(File_ID, "      <br>")
     WriteStringN(File_ID, "      <br>")
     
-    SortStructuredList(Mem_Element(), #PB_Sort_Descending, OffsetOf(Mem_Element\Size), #PB_Integer)
+    SortStructuredList(Mem_Element(), #PB_Sort_Descending, OffsetOf(Mem_Element\Size), #PB_Sort_Integer)
     
     WriteStringN(File_ID, "      <b><u>Elements:</u></b><br>")
     WriteStringN(File_ID, "      <br>")
@@ -332,11 +332,11 @@ EndProcedure
 Procedure Error_Main()
   
 EndProcedure
-; IDE Options = PureBasic 5.21 LTS Beta 1 (Windows - x64)
-; CursorPosition = 232
-; FirstLine = 221
+; IDE Options = PureBasic 5.00 (Windows - x64)
+; CursorPosition = 13
 ; Folding = -
 ; EnableXP
 ; DisableDebugger
+; CompileSourceDirectory
 ; EnableCompileCount = 0
 ; EnableBuildCount = 0

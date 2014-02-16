@@ -62,14 +62,20 @@ Procedure System_Message_Network_Send(Client_ID, Message.s) ; Sendet eine Nachri
   
   Message = String_GV(Message)
   
+  Message = Emote_Replace(Message)
+  
   Lines = CountString(Message, Chr(10)) + 1
   
   For i = 1 To Lines
-    Text.s = String_GV(LSet(StringField(Message, i, Chr(10)), 64, " "))
+    Text.s = StringField(Message, i, Chr(10))
+    If String_IV(Right(Text, 1)) And Network_Client()\EmoteFix = #False
+      Text = Text + "." ; Suffix emotes for non-fixed clients.
+    EndIf
+    Text = LSet(Text, 64, " ")
     If Text <> LSet("", 64, " ") And Text <> ""
       If Network_Client_Select(Client_ID)
         Network_Client_Output_Write_Byte(Network_Client()\ID, 13)
-        Network_Client_Output_Write_Byte(Network_Client()\ID, 127)
+        Network_Client_Output_Write_Byte(Network_Client()\ID, 0)
         Network_Client_Output_Write_String(Network_Client()\ID, Text, 64)
       EndIf
     EndIf
@@ -93,15 +99,21 @@ Procedure System_Message_Network_Send_2_All(Map_ID, Message.s) ; Sendet eine Nac
   
   Message = String_GV(Message)
   
+  Message = Emote_Replace(Message)
+  
   Lines = CountString(Message, Chr(10)) + 1
   
   For i = 1 To Lines
-    Text.s = String_GV(LSet(StringField(Message, i, Chr(10)), 64, " "))
+    Text.s = StringField(Message, i, Chr(10))
+    If String_IV(Right(Text, 1)) And Network_Client()\EmoteFix = #False
+      Text = Text + "." ; Suffix emotes for non-fixed clients.
+    EndIf
+    Text = LSet(Text, 64, " ")
     If Text <> LSet("", 64, " ") And Text <> ""
       ForEach Network_Client()
         If Network_Client()\Player\Map_ID = Map_ID Or Map_ID = -1
           Network_Client_Output_Write_Byte(Network_Client()\ID, 13)
-          Network_Client_Output_Write_Byte(Network_Client()\ID, 127)
+          Network_Client_Output_Write_Byte(Network_Client()\ID, 0)
           Network_Client_Output_Write_String(Network_Client()\ID, Text, 64)
         EndIf
       Next
@@ -113,6 +125,642 @@ Procedure System_Message_Network_Send_2_All(Map_ID, Message.s) ; Sendet eine Nac
   EndIf
 EndProcedure
 
+Procedure System_Message_Status1_Send(Client_ID, Message.s)
+  If ListIndex(Network_Client()) <> -1
+    *Network_Client_Old = Network_Client()
+  Else
+      *Network_Client_Old = 0
+  EndIf
+  If Network_Client()\MessageTypes = #False
+      ProcedureReturn
+  EndIf
+  
+  Message = ReplaceString(Message, "<br>", Chr(10))
+  
+  Message = String_Multiline(Message)
+  
+  Message = String_GV(Message)
+  
+  Message = Emote_Replace(Message)
+  
+  Lines = CountString(Message, Chr(10)) + 1
+  
+  For i = 1 To Lines
+    Text.s = StringField(Message, i, Chr(10))
+    If String_IV(Right(Text, 1)) And Network_Client()\EmoteFix = #False
+      Text = Text + "." ; Suffix emotes for non-fixed clients.
+    EndIf
+    Text = LSet(Text, 64, " ")
+    If Text <> LSet("", 64, " ") And Text <> ""
+      If Network_Client_Select(Client_ID)
+        Network_Client_Output_Write_Byte(Network_Client()\ID, 13)
+        Network_Client_Output_Write_Byte(Network_Client()\ID, 1)
+        Network_Client_Output_Write_String(Network_Client()\ID, Text, 64)
+      EndIf
+    EndIf
+  Next
+  
+  If *Network_Client_Old
+    ChangeCurrentElement(Network_Client(), *Network_Client_Old)
+  EndIf
+EndProcedure
+
+Procedure System_Message_Status1_Send_2_All(Map_ID, Message.s)
+  If ListIndex(Network_Client()) <> -1
+    *Network_Client_Old = Network_Client()
+  Else
+    *Network_Client_Old = 0
+  EndIf
+  
+  Message = ReplaceString(Message, "<br>", Chr(10))
+  
+  Message = String_Multiline(Message)
+  
+  Message = String_GV(Message)
+  
+  Message = Emote_Replace(Message)
+  
+  Lines = CountString(Message, Chr(10)) + 1
+  For i = 1 To Lines
+    Text.s = StringField(Message, i, Chr(10))
+    If String_IV(Right(Text, 1)) And Network_Client()\EmoteFix = #False
+      Text = Text + "." ; Suffix emotes for non-fixed clients.
+    EndIf
+    Text = LSet(Text, 64, " ")
+    If Text <> LSet("", 64, " ") And Text <> ""
+      ForEach Network_Client()
+        If (Network_Client()\Player\Map_ID = Map_ID Or Map_ID = -1) And Network_Client()\MessageTypes = #True
+          Network_Client_Output_Write_Byte(Network_Client()\ID, 13)
+          Network_Client_Output_Write_Byte(Network_Client()\ID, 1)
+          Network_Client_Output_Write_String(Network_Client()\ID, Text, 64)
+        EndIf
+      Next
+    EndIf
+  Next
+  
+  If *Network_Client_Old
+    ChangeCurrentElement(Network_Client(), *Network_Client_Old)
+  EndIf
+EndProcedure
+
+Procedure System_Message_Status2_Send(Client_ID, Message.s)
+      If ListIndex(Network_Client()) <> -1
+    *Network_Client_Old = Network_Client()
+  Else
+      *Network_Client_Old = 0
+  EndIf
+
+  If Network_Client()\MessageTypes = #False
+      ProcedureReturn
+  EndIf
+  
+  Message = ReplaceString(Message, "<br>", Chr(10))
+  
+  Message = String_Multiline(Message)
+  
+  Message = String_GV(Message)
+  
+  Message = Emote_Replace(Message)
+  
+  Lines = CountString(Message, Chr(10)) + 1
+  
+  For i = 1 To Lines
+    Text.s = StringField(Message, i, Chr(10))
+    If String_IV(Right(Text, 1)) And Network_Client()\EmoteFix = #False
+      Text = Text + "." ; Suffix emotes for non-fixed clients.
+    EndIf
+    Text = LSet(Text, 64, " ")
+    If Text <> LSet("", 64, " ") And Text <> ""
+      If Network_Client_Select(Client_ID)
+        Network_Client_Output_Write_Byte(Network_Client()\ID, 13)
+        Network_Client_Output_Write_Byte(Network_Client()\ID, 2)
+        Network_Client_Output_Write_String(Network_Client()\ID, Text, 64)
+      EndIf
+    EndIf
+  Next
+  
+  If *Network_Client_Old
+    ChangeCurrentElement(Network_Client(), *Network_Client_Old)
+  EndIf
+EndProcedure
+
+Procedure System_Message_Status2_Send_2_All(Map_ID, Message.s)
+  If ListIndex(Network_Client()) <> -1
+    *Network_Client_Old = Network_Client()
+  Else
+    *Network_Client_Old = 0
+  EndIf
+  
+  Message = ReplaceString(Message, "<br>", Chr(10))
+  
+  Message = String_Multiline(Message)
+  
+  Message = String_GV(Message)
+  
+  Message = Emote_Replace(Message)
+  
+  Lines = CountString(Message, Chr(10)) + 1
+  
+  For i = 1 To Lines
+    Text.s = StringField(Message, i, Chr(10))
+    If String_IV(Right(Text, 1)) And Network_Client()\EmoteFix = #False
+      Text = Text + "." ; Suffix emotes for non-fixed clients.
+    EndIf
+    Text = LSet(Text, 64, " ")
+    If Text <> LSet("", 64, " ") And Text <> ""
+      ForEach Network_Client()
+        If (Network_Client()\Player\Map_ID = Map_ID Or Map_ID = -1) And Network_Client()\MessageTypes = #True
+          Network_Client_Output_Write_Byte(Network_Client()\ID, 13)
+          Network_Client_Output_Write_Byte(Network_Client()\ID, 2)
+          Network_Client_Output_Write_String(Network_Client()\ID, Text, 64)
+        EndIf
+      Next
+    EndIf
+  Next
+  
+  If *Network_Client_Old
+    ChangeCurrentElement(Network_Client(), *Network_Client_Old)
+  EndIf
+EndProcedure
+Procedure System_Message_Status3_Send(Client_ID, Message.s)
+      If ListIndex(Network_Client()) <> -1
+    *Network_Client_Old = Network_Client()
+  Else
+      *Network_Client_Old = 0
+  EndIf
+
+  If Network_Client()\MessageTypes = #False
+      ProcedureReturn
+  EndIf
+  
+  Message = ReplaceString(Message, "<br>", Chr(10))
+  
+  Message = String_Multiline(Message)
+  
+  Message = String_GV(Message)
+  
+  Message = Emote_Replace(Message)
+  
+  Lines = CountString(Message, Chr(10)) + 1
+  
+  For i = 1 To Lines
+    Text.s = StringField(Message, i, Chr(10))
+    If String_IV(Right(Text, 1)) And Network_Client()\EmoteFix = #False
+      Text = Text + "." ; Suffix emotes for non-fixed clients.
+    EndIf
+    Text = LSet(Text, 64, " ")
+    If Text <> LSet("", 64, " ") And Text <> ""
+      If Network_Client_Select(Client_ID)
+        Network_Client_Output_Write_Byte(Network_Client()\ID, 13)
+        Network_Client_Output_Write_Byte(Network_Client()\ID, 3)
+        Network_Client_Output_Write_String(Network_Client()\ID, Text, 64)
+      EndIf
+    EndIf
+  Next
+  
+  If *Network_Client_Old
+    ChangeCurrentElement(Network_Client(), *Network_Client_Old)
+  EndIf
+EndProcedure
+
+Procedure System_Message_Status3_Send_2_All(Map_ID, Message.s)
+  If ListIndex(Network_Client()) <> -1
+    *Network_Client_Old = Network_Client()
+  Else
+    *Network_Client_Old = 0
+  EndIf
+  
+  Message = ReplaceString(Message, "<br>", Chr(10))
+  
+  Message = String_Multiline(Message)
+  
+  Message = String_GV(Message)
+  
+  Message = Emote_Replace(Message)
+  
+  Lines = CountString(Message, Chr(10)) + 1
+  
+  For i = 1 To Lines
+    Text.s = StringField(Message, i, Chr(10))
+    If String_IV(Right(Text, 1)) And Network_Client()\EmoteFix = #False
+      Text = Text + "." ; Suffix emotes for non-fixed clients.
+    EndIf
+    Text = LSet(Text, 64, " ")
+    If Text <> LSet("", 64, " ") And Text <> ""
+      ForEach Network_Client()
+        If (Network_Client()\Player\Map_ID = Map_ID Or Map_ID = -1) And Network_Client()\MessageTypes = #True
+          Network_Client_Output_Write_Byte(Network_Client()\ID, 13)
+          Network_Client_Output_Write_Byte(Network_Client()\ID, 3)
+          Network_Client_Output_Write_String(Network_Client()\ID, Text, 64)
+        EndIf
+      Next
+    EndIf
+  Next
+  
+  If *Network_Client_Old
+    ChangeCurrentElement(Network_Client(), *Network_Client_Old)
+  EndIf   
+EndProcedure
+
+Procedure System_Message_BR1_Send(Client_ID, Message.s)
+      If ListIndex(Network_Client()) <> -1
+    *Network_Client_Old = Network_Client()
+  Else
+      *Network_Client_Old = 0
+  EndIf
+
+  If Network_Client()\MessageTypes = #False
+      ProcedureReturn
+  EndIf
+  
+  Message = ReplaceString(Message, "<br>", Chr(10))
+  
+  Message = String_Multiline(Message)
+  
+  Message = String_GV(Message)
+  
+  Message = Emote_Replace(Message)
+  
+  Lines = CountString(Message, Chr(10)) + 1
+  
+  For i = 1 To Lines
+    Text.s = StringField(Message, i, Chr(10))
+    If String_IV(Right(Text, 1)) And Network_Client()\EmoteFix = #False
+      Text = Text + "." ; Suffix emotes for non-fixed clients.
+    EndIf
+    Text = LSet(Text, 64, " ")
+    If Text <> LSet("", 64, " ") And Text <> ""
+      If Network_Client_Select(Client_ID)
+        Network_Client_Output_Write_Byte(Network_Client()\ID, 13)
+        Network_Client_Output_Write_Byte(Network_Client()\ID, 11)
+        Network_Client_Output_Write_String(Network_Client()\ID, Text, 64)
+      EndIf
+    EndIf
+  Next
+  
+  If *Network_Client_Old
+    ChangeCurrentElement(Network_Client(), *Network_Client_Old)
+  EndIf
+EndProcedure
+
+Procedure System_Message_BR1_Send_2_All(Map_ID, Message.s)
+  If ListIndex(Network_Client()) <> -1
+    *Network_Client_Old = Network_Client()
+  Else
+    *Network_Client_Old = 0
+  EndIf
+  
+  Message = ReplaceString(Message, "<br>", Chr(10))
+  
+  Message = String_Multiline(Message)
+  
+  Message = String_GV(Message)
+  
+  Message = Emote_Replace(Message)
+  
+  Lines = CountString(Message, Chr(10)) + 1
+  
+  For i = 1 To Lines
+    Text.s = StringField(Message, i, Chr(10))
+    If String_IV(Right(Text, 1)) And Network_Client()\EmoteFix = #False
+      Text = Text + "." ; Suffix emotes for non-fixed clients.
+    EndIf
+    Text = LSet(Text, 64, " ")
+    If Text <> LSet("", 64, " ") And Text <> ""
+      ForEach Network_Client()
+        If (Network_Client()\Player\Map_ID = Map_ID Or Map_ID = -1) And Network_Client()\MessageTypes = #True
+          Network_Client_Output_Write_Byte(Network_Client()\ID, 13)
+          Network_Client_Output_Write_Byte(Network_Client()\ID, 11)
+          Network_Client_Output_Write_String(Network_Client()\ID, Text, 64)
+        EndIf
+      Next
+    EndIf
+  Next
+  
+  If *Network_Client_Old
+    ChangeCurrentElement(Network_Client(), *Network_Client_Old)
+  EndIf   
+EndProcedure
+
+Procedure System_Message_BR2_Send(Client_ID, Message.s)
+      If ListIndex(Network_Client()) <> -1
+    *Network_Client_Old = Network_Client()
+  Else
+      *Network_Client_Old = 0
+  EndIf
+
+  If Network_Client()\MessageTypes = #False
+      ProcedureReturn
+  EndIf
+  
+  Message = ReplaceString(Message, "<br>", Chr(10))
+  
+  Message = String_Multiline(Message)
+  
+  Message = String_GV(Message)
+  
+  Message = Emote_Replace(Message)
+  
+  Lines = CountString(Message, Chr(10)) + 1
+  
+  For i = 1 To Lines
+    Text.s = StringField(Message, i, Chr(10))
+    If String_IV(Right(Text, 1)) And Network_Client()\EmoteFix = #False
+      Text = Text + "." ; Suffix emotes for non-fixed clients.
+    EndIf
+    Text = LSet(Text, 64, " ")
+    If Text <> LSet("", 64, " ") And Text <> ""
+      If Network_Client_Select(Client_ID)
+        Network_Client_Output_Write_Byte(Network_Client()\ID, 13)
+        Network_Client_Output_Write_Byte(Network_Client()\ID, 12)
+        Network_Client_Output_Write_String(Network_Client()\ID, Text, 64)
+      EndIf
+    EndIf
+  Next
+  
+  If *Network_Client_Old
+    ChangeCurrentElement(Network_Client(), *Network_Client_Old)
+  EndIf
+EndProcedure
+
+Procedure System_Message_BR2_Send_2_All(Map_ID, Message.s)
+  If ListIndex(Network_Client()) <> -1
+    *Network_Client_Old = Network_Client()
+  Else
+    *Network_Client_Old = 0
+  EndIf
+  
+  Message = ReplaceString(Message, "<br>", Chr(10))
+  
+  Message = String_Multiline(Message)
+  
+  Message = String_GV(Message)
+  
+  Message = Emote_Replace(Message)
+  
+  Lines = CountString(Message, Chr(10)) + 1
+  
+  For i = 1 To Lines
+    Text.s = StringField(Message, i, Chr(10))
+    If String_IV(Right(Text, 1)) And Network_Client()\EmoteFix = #False
+      Text = Text + "." ; Suffix emotes for non-fixed clients.
+    EndIf
+    Text = LSet(Text, 64, " ")
+    If Text <> LSet("", 64, " ") And Text <> ""
+      ForEach Network_Client()
+        If (Network_Client()\Player\Map_ID = Map_ID Or Map_ID = -1) And Network_Client()\MessageTypes = #True
+          Network_Client_Output_Write_Byte(Network_Client()\ID, 13)
+          Network_Client_Output_Write_Byte(Network_Client()\ID, 12)
+          Network_Client_Output_Write_String(Network_Client()\ID, Text, 64)
+        EndIf
+      Next
+    EndIf
+  Next
+  
+  If *Network_Client_Old
+    ChangeCurrentElement(Network_Client(), *Network_Client_Old)
+  EndIf   
+EndProcedure
+
+Procedure System_Message_BR3_Send(Client_ID, Message.s)
+      If ListIndex(Network_Client()) <> -1
+    *Network_Client_Old = Network_Client()
+  Else
+      *Network_Client_Old = 0
+  EndIf
+
+  If Network_Client()\MessageTypes = #False
+      ProcedureReturn
+  EndIf
+  
+  Message = ReplaceString(Message, "<br>", Chr(10))
+  
+  Message = String_Multiline(Message)
+  
+  Message = String_GV(Message)
+  
+  Message = Emote_Replace(Message)
+  
+  Lines = CountString(Message, Chr(10)) + 1
+  
+  For i = 1 To Lines
+    Text.s = StringField(Message, i, Chr(10))
+    If String_IV(Right(Text, 1)) And Network_Client()\EmoteFix = #False
+      Text = Text + "." ; Suffix emotes for non-fixed clients.
+    EndIf
+    Text = LSet(Text, 64, " ")
+    If Text <> LSet("", 64, " ") And Text <> ""
+      If Network_Client_Select(Client_ID)
+        Network_Client_Output_Write_Byte(Network_Client()\ID, 13)
+        Network_Client_Output_Write_Byte(Network_Client()\ID, 13)
+        Network_Client_Output_Write_String(Network_Client()\ID, Text, 64)
+      EndIf
+    EndIf
+  Next
+  
+  If *Network_Client_Old
+    ChangeCurrentElement(Network_Client(), *Network_Client_Old)
+  EndIf
+EndProcedure
+
+Procedure System_Message_BR3_Send_2_All(Map_ID, Message.s)
+  If ListIndex(Network_Client()) <> -1
+    *Network_Client_Old = Network_Client()
+  Else
+    *Network_Client_Old = 0
+  EndIf
+  
+  Message = ReplaceString(Message, "<br>", Chr(10))
+  
+  Message = String_Multiline(Message)
+  
+  Message = String_GV(Message)
+  
+  Message = Emote_Replace(Message)
+  
+  Lines = CountString(Message, Chr(10)) + 1
+  
+  For i = 1 To Lines
+    Text.s = StringField(Message, i, Chr(10))
+    If String_IV(Right(Text, 1)) And Network_Client()\EmoteFix = #False
+      Text = Text + "." ; Suffix emotes for non-fixed clients.
+    EndIf
+    Text = LSet(Text, 64, " ")
+    If Text <> LSet("", 64, " ") And Text <> ""
+      ForEach Network_Client()
+        If (Network_Client()\Player\Map_ID = Map_ID Or Map_ID = -1) And Network_Client()\MessageTypes = #True
+          Network_Client_Output_Write_Byte(Network_Client()\ID, 13)
+          Network_Client_Output_Write_Byte(Network_Client()\ID, 13)
+          Network_Client_Output_Write_String(Network_Client()\ID, Text, 64)
+        EndIf
+      Next
+    EndIf
+  Next
+  
+  If *Network_Client_Old
+    ChangeCurrentElement(Network_Client(), *Network_Client_Old)
+  EndIf   
+EndProcedure
+
+Procedure System_Message_TopLeft_Send(Client_ID, Message.s)
+      If ListIndex(Network_Client()) <> -1
+    *Network_Client_Old = Network_Client()
+  Else
+      *Network_Client_Old = 0
+  EndIf
+
+  If Network_Client()\MessageTypes = #False
+      ProcedureReturn
+  EndIf
+  
+  Message = ReplaceString(Message, "<br>", Chr(10))
+  
+  Message = String_Multiline(Message)
+  
+  Message = String_GV(Message)
+  
+  Message = Emote_Replace(Message)
+  
+  Lines = CountString(Message, Chr(10)) + 1
+  
+  For i = 1 To Lines
+    Text.s = StringField(Message, i, Chr(10))
+    If String_IV(Right(Text, 1)) And Network_Client()\EmoteFix = #False
+      Text = Text + "." ; Suffix emotes for non-fixed clients.
+    EndIf
+    Text = LSet(Text, 64, " ")
+    If Text <> LSet("", 64, " ") And Text <> ""
+      If Network_Client_Select(Client_ID)
+        Network_Client_Output_Write_Byte(Network_Client()\ID, 13)
+        Network_Client_Output_Write_Byte(Network_Client()\ID, 21)
+        Network_Client_Output_Write_String(Network_Client()\ID, Text, 64)
+      EndIf
+    EndIf
+  Next
+  
+  If *Network_Client_Old
+    ChangeCurrentElement(Network_Client(), *Network_Client_Old)
+  EndIf
+EndProcedure
+
+Procedure System_Message_TopLeft_Send_2_All(Map_ID, Message.s)
+  If ListIndex(Network_Client()) <> -1
+    *Network_Client_Old = Network_Client()
+  Else
+    *Network_Client_Old = 0
+  EndIf
+  
+  Message = ReplaceString(Message, "<br>", Chr(10))
+  
+  Message = String_Multiline(Message)
+  
+  Message = String_GV(Message)
+  
+  Message = Emote_Replace(Message)
+  
+  Lines = CountString(Message, Chr(10)) + 1
+  
+  For i = 1 To Lines
+    Text.s = StringField(Message, i, Chr(10))
+    If String_IV(Right(Text, 1)) And Network_Client()\EmoteFix = #False
+      Text = Text + "." ; Suffix emotes for non-fixed clients.
+    EndIf
+    Text = LSet(Text, 64, " ")
+    If Text <> LSet("", 64, " ") And Text <> ""
+      ForEach Network_Client()
+        If (Network_Client()\Player\Map_ID = Map_ID Or Map_ID = -1) And Network_Client()\MessageTypes = #True
+          Network_Client_Output_Write_Byte(Network_Client()\ID, 13)
+          Network_Client_Output_Write_Byte(Network_Client()\ID, 21)
+          Network_Client_Output_Write_String(Network_Client()\ID, Text, 64)
+        EndIf
+      Next
+    EndIf
+  Next
+  
+  If *Network_Client_Old
+    ChangeCurrentElement(Network_Client(), *Network_Client_Old)
+  EndIf   
+EndProcedure
+
+Procedure System_Message_Announcement_Send(Client_ID, Message.s)
+      If ListIndex(Network_Client()) <> -1
+    *Network_Client_Old = Network_Client()
+  Else
+      *Network_Client_Old = 0
+  EndIf
+
+  If Network_Client()\MessageTypes = #False
+      ProcedureReturn
+  EndIf
+  
+  Message = ReplaceString(Message, "<br>", Chr(10))
+  
+  Message = String_Multiline(Message)
+  
+  Message = String_GV(Message)
+  
+  Message = Emote_Replace(Message)
+  
+  Lines = CountString(Message, Chr(10)) + 1
+  
+  For i = 1 To Lines
+    Text.s = StringField(Message, i, Chr(10))
+    If String_IV(Right(Text, 1)) And Network_Client()\EmoteFix = #False
+      Text = Text + "." ; Suffix emotes for non-fixed clients.
+    EndIf
+    Text = LSet(Text, 64, " ")
+    If Text <> LSet("", 64, " ") And Text <> ""
+      If Network_Client_Select(Client_ID)
+        Network_Client_Output_Write_Byte(Network_Client()\ID, 13)
+        Network_Client_Output_Write_Byte(Network_Client()\ID, 100)
+        Network_Client_Output_Write_String(Network_Client()\ID, Text, 64)
+      EndIf
+    EndIf
+  Next
+  
+  If *Network_Client_Old
+    ChangeCurrentElement(Network_Client(), *Network_Client_Old)
+  EndIf
+EndProcedure
+
+Procedure System_Message_Announcement_Send_2_All(Map_ID, Message.s)
+  If ListIndex(Network_Client()) <> -1
+    *Network_Client_Old = Network_Client()
+  Else
+    *Network_Client_Old = 0
+  EndIf
+  
+  Message = ReplaceString(Message, "<br>", Chr(10))
+  
+  Message = String_Multiline(Message)
+  
+  Message = String_GV(Message)
+  
+  Message = Emote_Replace(Message)
+  
+  Lines = CountString(Message, Chr(10)) + 1
+  
+  For i = 1 To Lines
+    Text.s = StringField(Message, i, Chr(10))
+    If String_IV(Right(Text, 1)) And Network_Client()\EmoteFix = #False
+      Text = Text + "." ; Suffix emotes for non-fixed clients.
+    EndIf
+    Text = LSet(Text, 64, " ")
+    If Text <> LSet("", 64, " ") And Text <> ""
+      ForEach Network_Client()
+        If (Network_Client()\Player\Map_ID = Map_ID Or Map_ID = -1) And Network_Client()\MessageTypes = #True
+          Network_Client_Output_Write_Byte(Network_Client()\ID, 13)
+          Network_Client_Output_Write_Byte(Network_Client()\ID, 100)
+          Network_Client_Output_Write_String(Network_Client()\ID, Text, 64)
+        EndIf
+      Next
+    EndIf
+  Next
+  
+  If *Network_Client_Old
+    ChangeCurrentElement(Network_Client(), *Network_Client_Old)
+  EndIf   
+EndProcedure
 ; ######################################## Map
 
 Procedure Network_Out_Block_Set(Client_ID, X, Y, Z, Type.a) ; Sendet einen Block zu "Client_ID"
@@ -121,7 +769,12 @@ Procedure Network_Out_Block_Set(Client_ID, X, Y, Z, Type.a) ; Sendet einen Block
     Network_Client_Output_Write_Word(Network_Client()\ID, X)
     Network_Client_Output_Write_Word(Network_Client()\ID, Z)
     Network_Client_Output_Write_Word(Network_Client()\ID, Y)
-    Network_Client_Output_Write_Byte(Network_Client()\ID, Block(Type)\On_Client)
+    
+    If Block(Type)\CPE_Level > Network_Client()\CustomBlocks_Level
+      Network_Client_Output_Write_Byte(Network_Client()\ID, Block(Type)\CPE_Replace)
+    Else
+      Network_Client_Output_Write_Byte(Network_Client()\ID, Block(Type)\On_Client)
+    EndIf
   EndIf
 EndProcedure
 
@@ -132,7 +785,12 @@ Procedure Network_Out_Block_Set_2_Map(Map_ID, X, Y, Z, Type.a) ; Sendet einen Bl
       Network_Client_Output_Write_Word(Network_Client()\ID, X)
       Network_Client_Output_Write_Word(Network_Client()\ID, Z)
       Network_Client_Output_Write_Word(Network_Client()\ID, Y)
-      Network_Client_Output_Write_Byte(Network_Client()\ID, Block(Type)\On_Client)
+      
+      If Block(Type)\CPE_Level > Network_Client()\CustomBlocks_Level
+        Network_Client_Output_Write_Byte(Network_Client()\ID, Block(Type)\CPE_Replace)
+      Else
+        Network_Client_Output_Write_Byte(Network_Client()\ID, Block(Type)\On_Client)
+      EndIf
     EndIf
   Next
 EndProcedure
@@ -154,14 +812,22 @@ Procedure Network_Out_Entity_Add(Client_ID, ID_Client, Name.s, X.f, Y.f, Z.f, Ro
     Rotation = Rotation/360*256
     Look = Look/360*256
     
-    Network_Client_Output_Write_Byte(Client_ID, 7)
-    Network_Client_Output_Write_Byte(Client_ID, ID_Client)
-    Network_Client_Output_Write_String(Client_ID, Name, 64)
-    Network_Client_Output_Write_Word(Client_ID, X)
-    Network_Client_Output_Write_Word(Client_ID, Z)
-    Network_Client_Output_Write_Word(Client_ID, Y)
-    Network_Client_Output_Write_Byte(Client_ID, Rotation)
-    Network_Client_Output_Write_Byte(Client_ID, Look)
+;     If Network_Client()\ExtPlayerList = #False
+      Network_Client_Output_Write_Byte(Client_ID, 7)
+      Network_Client_Output_Write_Byte(Client_ID, ID_Client)
+      Network_Client_Output_Write_String(Client_ID, Name, 64)
+      Network_Client_Output_Write_Word(Client_ID, X)
+      Network_Client_Output_Write_Word(Client_ID, Z)
+      Network_Client_Output_Write_Word(Client_ID, Y)
+      Network_Client_Output_Write_Byte(Client_ID, Rotation)
+      Network_Client_Output_Write_Byte(Client_ID, Look)
+;     Else
+;       Network_Client_Output_Write_Byte(Client_ID, 23) ; CPE ExtAddEntity
+;       Network_Client_Output_Write_Byte(Client_ID, ID_Client)
+;       Network_Client_Output_Write_String(Client_ID, Name, 64)
+;       Network_Client_Output_Write_String(Client_ID, Name, 64)
+;       System_Message_Network_Send_2_All(-1, "Sent ExtAddEntity")
+;     EndIf
     
   EndIf
   
@@ -217,9 +883,10 @@ EndProcedure
 Procedure Network_Functions_Main() ; Verwaltet Spieler, verschickt änderungen
   
 EndProcedure
-; IDE Options = PureBasic 4.50 (Windows - x86)
-; CursorPosition = 129
-; FirstLine = 117
-; Folding = --
+; IDE Options = PureBasic 5.00 (Windows - x86)
+; CursorPosition = 183
+; FirstLine = 157
+; Folding = --fA+
 ; EnableXP
 ; DisableDebugger
+; CompileSourceDirectory

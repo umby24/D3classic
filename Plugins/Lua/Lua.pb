@@ -370,6 +370,20 @@ ProcedureCDLL Event_Chat_Private(*Entity.Entity, Player_Name.s, Message.s)
   ProcedureReturn Result
 EndProcedure
 
+ProcedureCDLL Event_Entity_Map_Change(Client_ID, New_Map_ID, Old_Map_ID)
+    Result = 1
+    
+    If Client_ID
+        ForEach Lua_Event()
+            If Lua_Event()\Type = #Lua_Event_Entity_Map_Change
+                Result = Lua_Do_Function_Event_Entity_Map_Change(Result, Lua_Event()\Function, Client_ID, New_Map_ID, Old_Map_ID)
+            EndIf
+        Next
+    EndIf
+    
+    ProcedureReturn Result
+EndProcedure
+
 ProcedureCDLL Main()
   If Lua_Main\State
     If Lua_Main\Timer_File_Check < Milliseconds()
@@ -402,13 +416,14 @@ ProcedureCDLL Main()
   Next
   
 EndProcedure
-; IDE Options = PureBasic 5.11 (Windows - x64)
+; IDE Options = PureBasic 5.00 (Windows - x86)
 ; ExecutableFormat = Shared Dll
-; CursorPosition = 36
+; CursorPosition = 378
+; FirstLine = 372
 ; Folding = ------
 ; EnableThread
 ; EnableXP
 ; EnableOnError
 ; Executable = lua.x86.so
 ; DisableDebugger
-; Compiler = PureBasic 5.11 (Windows - x86)
+; Compiler = PureBasic 5.00 (Windows - x86)

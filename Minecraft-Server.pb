@@ -120,7 +120,7 @@ UseSQLiteDatabase()
 ; - Kartenspeichern, verschieben nur wenn Temp gespeichert!
 ; - Beim synchronen Login von zwei Spielern wird der Name verstauscht.
 
-; ########################################## Variablen ##########################################
+; ########################################## Variablen / Variables ##########################################
 
 Structure Main
   Version.l           ; Version 1000 = V.1.000
@@ -133,16 +133,17 @@ XIncludeFile "Shared Includes/Main_Structures.pbi"
 Global NewList Player_List.Player_List()
 Global NewList Map_Data.Map_Data()
 Global NewList Entity.Entity()
+Global FreeID.w = 0
+Global NextID.w = 0
+; ########################################## Ladekram / Loading ############################################
 
-; ########################################## Ladekram ############################################
-
-Main\Version = 1004;#PB_Editor_CompileCount*0.4 + #PB_Editor_BuildCount*4.9
+Main\Version = 1010 ;#PB_Editor_CompileCount*0.4 + #PB_Editor_BuildCount*4.9
 
 Main\Running_Time = Date()
 
 ; ########################################## Declares ############################################
 
-Declare Log_Add(Module_.s, Message.s, Type, PB_File.s, PB_Line, PB_Procedure.s)
+Declare Log_Add(Module.s, Message.s, Type, PB_File.s, PB_Line, PB_Procedure.s)
 
 Declare.s Lang_Get(Language.s, Input.s, Field_0.s = "", Field_1.s = "", Field_2.s = "", Field_3.s = "")
 
@@ -184,6 +185,7 @@ Declare Map_Block_Change(Player_Number, *Map_Data.Map_Data, X, Y, Z, Type.a, Und
 Declare Map_Block_Change_Player(*Player.Player_List, *Map_Data.Map_Data, X, Y, Z, Type.a, Undo.a, Physic.a, Send.a, Send_Priority.a)
 Declare Map_Block_Move(*Map_Data.Map_Data, X_0, Y_0, Z_0, X_1, Y_1, Z_1, Priority, Undo, Physic)
 Declare Map_Select_ID(Map_ID, Log=1)
+Declare Map_HackControl_Set(*Map_Data.Map_Data, Flying, NoClip, Speeding, SpawnControl, ThirdPerson, Weather, JumpHeight.w)
 
 Declare Physic_Block_Compute_10(Map_ID, X.l, Y.l, Z.l)
 Declare Physic_Block_Compute_11(Map_ID, X.l, Y.l, Z.l)
@@ -257,6 +259,7 @@ Declare Plugin_Event_Build_Mode(Destination.s, *Client.Network_Client, *Map_Data
 Declare Plugin_Event_Client_Add(*Client.Network_Client)
 Declare Plugin_Event_Client_Delete(*Client.Network_Client)
 Declare Plugin_Event_Client_Verify_Name(Name.s, Pass.s)
+Declare Plugin_Event_Client_Verify_Name_MC(Name.s, Pass.s)
 Declare Plugin_Event_Client_Login(*Client.Network_Client)
 Declare Plugin_Event_Client_Logout(*Client.Network_Client)
 Declare Plugin_Event_Map_Add(*Map_Data.Map_Data)
@@ -277,8 +280,51 @@ Declare Undo_Do_Time(Map_ID, Time)
 Declare Undo_Do_Player(Map_ID, Player_Number, Time)
 Declare Undo_Clear_Map(Map_ID)
 
-Declare Protect_Destruct_Start()
+;Declare Protect_Destruct_Start()
 
+Declare CPE_Send_ExtInfo(Client_ID, Name.s, MPPass.s, Version)
+Declare CPE_Send_Extensions(Client_ID)
+Declare CPE_HoldThis(Client_ID, Block, CanChange)
+Declare.s Emote_Replace(Message.s)
+
+Declare CPE_Selection_Cuboid_Add(Client_ID, SelectionID, Label.s, StartX.w, StartY.w, StartZ.w, EndX.w, EndY.w, EndZ.w, Red.w, Green.w, Blue.w, Opacity.w)
+Declare CPE_Selection_Cuboid_Delete(Client_ID, Selection_ID)
+
+Declare.i Map_Export_Get_Size_X(Filename.s)
+Declare.i Map_Export_Get_Size_Y(Filename.s)
+Declare.i Map_Export_Get_Size_Z(Filename.s)
+
+Declare CPE_Model_Change(Client_ID, Model.s)
+Declare CPE_Handle_Entity()
+Declare CPE_Set_Weather(Client_ID, Weather.b)
+Declare CPE_Aftermap_Actions(Client_ID, *MapData)
+Declare Map_Env_Colors_Change(*Map_Data.Map_Data, Red, Green, Blue, Type)
+
+Declare System_Message_Status1_Send(Client_ID, Message.s)
+Declare System_Message_Status2_Send(Client_ID, Message.s)
+Declare System_Message_Status3_Send(Client_ID, Message.s)
+Declare System_Message_BR1_Send(Client_ID, Message.s)
+Declare System_Message_BR2_Send(Client_ID, Message.s)
+Declare System_Message_BR3_Send(Client_ID, Message.s)
+Declare System_Message_TopLeft_Send(Client_ID, Message.s)
+Declare System_Message_Announcement_Send(Client_ID, Message.s)
+
+Declare System_Message_Status1_Send_2_All(Map_ID, Message.s)
+Declare System_Message_Status2_Send_2_All(Map_ID, Message.s)
+Declare System_Message_Status3_Send_2_All(Map_ID, Message.s)
+Declare System_Message_BR1_Send_2_All(Map_ID, Message.s)
+Declare System_Message_BR2_Send_2_All(Map_ID, Message.s)
+Declare System_Message_BR3_Send_2_All(Map_ID, Message.s)
+Declare System_Message_TopLeft_Send_2_All(Map_ID, Message.s)
+Declare System_Message_Announcement_Send_2_All(Map_ID, Message.s)
+
+Declare CPE_Client_Set_Block_Permissions(Client_ID, Block_ID, CanPlace, CanDelete)
+Declare CPE_Client_Send_Map_Appearence(Client_ID, URL.s, Side_Block, Edge_Block, Side_Level.w)
+Declare Map_Env_Appearance_Set(*Map_Data.Map_Data, Texture.s, Side_Block, Edge_Block, Side_Level.w)
+Declare CPE_Client_Hackcontrol_Send(Client_ID, Flying, Noclip, Speeding, SpawnControl, ThirdPerson, WeatherControl, Jumpheight.w)
+Declare CPE_Client_Send_Hotkeys(Client_ID)
+Declare Hotkey_Add(Label.s, Action.s, Keycode.l, Keymods.b)
+Declare Hotkey_Remove(Label.s)
 ; ########################################## Macros ##############################################
 
 Macro List_Store(Pointer, Listname)
@@ -300,6 +346,7 @@ Macro Milliseconds()
 EndMacro
 
 ; ########################################## Includes ############################################
+
 
 XIncludeFile "Includes/Files.pbi"
 XIncludeFile "Includes/Math.pbi"
@@ -326,23 +373,22 @@ XIncludeFile "Includes/Client.pbi"
 XIncludeFile "Includes/Chat.pbi"
 XIncludeFile "Includes/Build_Mode.pbi"
 XIncludeFile "Includes/Plugin.pbi"
-XIncludeFile "Includes/Trace.pbi"
+;XIncludeFile "Includes/Trace.pbi"
 XIncludeFile "Includes/Command.pbi"
 XIncludeFile "Includes/Answer.pbi"
-;XIncludeFile "Includes/Heartbeat.pbi"
 XIncludeFile "Includes/TMessage.pbi"
 XIncludeFile "Includes/Font.pbi"
-;XIncludeFile "Includes/Lua.pbi"
-;XIncludeFile "Includes/Lua_Event.pbi"
 XIncludeFile "Includes/Undo.pbi"
-XIncludeFile "Includes/Protect.pbi"
+;XIncludeFile "Includes/Protect.pbi"
 XIncludeFile "Includes/View_3D.pbi"
 XIncludeFile "Includes/Network_Functions.pbi"
 XIncludeFile "Includes/Entity.pbi"
+XIncludeFile "Includes/Hotkey.pbi"
+XIncludeFile "Includes/CPE.pbi"
 
-; ########################################## Proceduren ##########################################
+; ########################################## Proceduren / Procedures ##########################################
 
-; ########################################## Initkram ##########################################
+; ########################################## Initkram / Init ##########################################
 
 CompilerIf #PB_Compiler_OS = #PB_OS_Windows
   OpenConsole()
@@ -373,13 +419,15 @@ Map_Main\Blockchanging_Thread_ID = CreateThread(@Map_Blockchanging_Thread(), 0)
 Map_Main\Physic_Thread_ID = CreateThread(@Map_Physic_Thread(), 0)
 Map_Main\Action_Thread_ID = CreateThread(@Map_Action_Thread(), 0)
 Client_Main\Login_Thread_ID = CreateThread(@Client_Login_Thread(), 0)
+Plugin_Main\Plugin_Thread_ID = CreateThread(@Plugin_Thread(), 0) ; -- oo, shiny.
 
 Watchdog_Thread_ID_Set("Map_Blockchanging", Map_Main\Blockchanging_Thread_ID)
 Watchdog_Thread_ID_Set("Map_Physic", Map_Main\Physic_Thread_ID)
 Watchdog_Thread_ID_Set("Map_Action", Map_Main\Action_Thread_ID)
 Watchdog_Thread_ID_Set("Client_Login", Client_Main\Login_Thread_ID)
+Watchdog_Thread_ID_Set("Plugin_Main", Plugin_Main\Plugin_Thread_ID) ; -- New!
 
-; ########################################## Hautpschleife ##########################################
+; ########################################## Hautpschleife / Main Loop ##########################################
 
 Repeat
   
@@ -389,91 +437,127 @@ Repeat
   
   Watchdog_Watch("Main", "Before: Files_Main()", 1)
   Files_Main()
+  
   Watchdog_Watch("Main", "Before: Mem_Main()", 1)
   Mem_Main()
+  
   Watchdog_Watch("Main", "Before: Network_Events()", 1)
   Network_Events()
+  
   Watchdog_Watch("Main", "Before: Network_Input_Do()", 1)
   Network_Input_Do()
+  
   Watchdog_Watch("Main", "Before: Network_Output_Do()", 1)
   Network_Output_Do()
+  
   Watchdog_Watch("Main", "Before: Network_Output_Send()", 1)
   Network_Output_Send()
+  
   Watchdog_Watch("Main", "Before: Network_Main()", 1)
   Network_Main()
+  
   Watchdog_Watch("Main", "Before: System_Main()", 1)
   System_Main()
+  
   Watchdog_Watch("Main", "Before: Location_Main()", 1)
   Location_Main()
+  
   Watchdog_Watch("Main", "Before: Teleporter_Main()", 1)
   Teleporter_Main()
+  
   Watchdog_Watch("Main", "Before: Log_Main()", 1)
   Log_Main()
+  
   Watchdog_Watch("Main", "Before: Player_List_Main()", 1)
   Player_List_Main()
+  
   Watchdog_Watch("Main", "Before: Player_Main()", 1)
   Player_Main()
+  
   Watchdog_Watch("Main", "Before: Client_Main()", 1)
   Client_Main()
+  
   Watchdog_Watch("Main", "Before: Language_Main()", 1)
   Language_Main()
+  
   Watchdog_Watch("Main", "Before: Block_Main()", 1)
   Block_Main()
+  
   Watchdog_Watch("Main", "Before: Map_Main()", 1)
   Map_Main()
+  
   Watchdog_Watch("Main", "Before: Build_Main()", 1)
   Build_Main()
+  
   Watchdog_Watch("Main", "Before: Physic_Main()", 1)
   Physic_Main()
+  
   ;Watchdog_Watch("Main", "Before: Heartbeat_Main()", 1)
   ;Heartbeat_Main()
+  
   Watchdog_Watch("Main", "Before: Build_Mode_Main()", 1)
   Build_Mode_Main()
+  
   Watchdog_Watch("Main", "Before: Command_Main()", 1)
   Command_Main()
+  
   Watchdog_Watch("Main", "Before: Answer_Main()", 1)
   Answer_Main()
+  
   Watchdog_Watch("Main", "Before: Rank_Main()", 1)
   Rank_Main()
+  
   Watchdog_Watch("Main", "Before: TMessage_Main()", 1)
   TMessage_Main()
+  
   Watchdog_Watch("Main", "Before: String_Main()", 1)
   String_Main()
+  
   Watchdog_Watch("Main", "Before: Font_Main()", 1)
   Font_Main()
+  
   Watchdog_Watch("Main", "Before: Undo_Main()", 1)
   Undo_Main()
-  Watchdog_Watch("Main", "Before: Protect_Main()", 1)
-  Protect_Main()
+  
+  ;Watchdog_Watch("Main", "Before: Protect_Main()", 1)
+  ;Protect_Main()
+  
   Watchdog_Watch("Main", "Before: View_3D_Main()", 1)
   View_3D_Main()
-  Watchdog_Watch("Main", "Before: Plugin_Main()", 1)
-  Plugin_Main()
+  
+  ;Watchdog_Watch("Main", "Before: Plugin_Main()", 1)    -- Now handled in threads!
+  ;Plugin_Main()
+  
   Watchdog_Watch("Main", "Before: Entity_Main()", 1)
   Entity_Main()
-  Watchdog_Watch("Main", "Before: Trace_Main()", 1)
-  Trace_Main()
+  
+  ;Watchdog_Watch("Main", "Before: Trace_Main()", 1)
+  ;Trace_Main()
+  
+  Watchdog_Watch("Main", "Before: Hotkey_Main()", 1)
+  Hotkey_Main()
   
   UnlockMutex(Main\Mutex)
   
   Watchdog_Watch("Main", "End Mainslope", 2)
   
-  Delay(3) ; ############## Sicherer Wartebereich
+  Delay(3) ; ############## Sicherer Wartebereich / Safe Waiting Area
   
 ForEver
 
-; ########################################## Ende ##########################################
-; IDE Options = PureBasic 5.21 LTS Beta 1 (Windows - x64)
+; ########################################## Ende / End ##########################################
+; IDE Options = PureBasic 5.00 (Linux - x86)
 ; ExecutableFormat = Console
-; CursorPosition = 144
-; FirstLine = 124
+; CursorPosition = 382
+; FirstLine = 373
 ; Folding = -
 ; EnableThread
 ; EnableXP
 ; EnableOnError
-; Executable = Minecraft-Server.x64.exe
+; Executable = Minecraft-Server.x86.exe
 ; DisableDebugger
-; Compiler = PureBasic 5.11 (Windows - x64)
+; CompileSourceDirectory
+; Compiler = PureBasic 5.00 (Windows - x86)
 ; EnablePurifier
-; EnableCompileCount = 3103
-; EnableBuildCount = 184
+; EnableCompileCount = 3273
+; EnableBuildCount = 205

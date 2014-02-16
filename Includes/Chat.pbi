@@ -22,12 +22,17 @@ Procedure Chat_Message_Network_Send_2_Map(Entity_ID, Message.s) ; Sendet eine Na
         Map_ID = Entity()\Map_ID
         Text.s = Message
         
-        ;For i = 0 To 9
-        ;  Text.s = ReplaceString(Text, "%"+Str(i), "&"+Str(i))
-        ;Next
-        ;For i = 97 To 102
-        ;  Text.s = ReplaceString(Text, "%"+Chr(i), "&"+Chr(i))
-        ;Next
+        Text = ReplaceString(Text, "%%", "§")
+        For i = 0 To 9
+          Text.s = ReplaceString(Text, "%"+Str(i), "&"+Str(i))
+        Next
+        For i = 97 To 102
+          Text.s = ReplaceString(Text, "%"+Chr(i), "&"+Chr(i))
+        Next
+        
+        Text = ReplaceString(Text, "§", "%")
+        
+        
         Text = ReplaceString(Text, "<br>", Chr(10))
         Text = ReplaceString(Text, Chr(10), Chr(10)+Entity_Displayname_Get(Entity_ID)+"&f: ")
         
@@ -61,12 +66,18 @@ Procedure Chat_Message_Network_Send_2_All(Entity_ID, Message.s) ; Sendet eine Na
         Map_ID = Entity()\Map_ID
         Text.s = Message
         
-        ;For i = 0 To 9
-        ;  Text.s = ReplaceString(Text, "%"+Str(i), "&"+Str(i))
-        ;Next
-        ;For i = 97 To 102
-        ;  Text.s = ReplaceString(Text, "%"+Chr(i), "&"+Chr(i))
-        ;Next
+        Text = ReplaceString(Text, "%%", "§")     
+        
+        For i = 0 To 9
+          Text.s = ReplaceString(Text, "%"+Str(i), "&"+Str(i))
+        Next
+        For i = 97 To 102
+          Text.s = ReplaceString(Text, "%"+Chr(i), "&"+Chr(i))
+        Next
+        
+        Text = ReplaceString(Text, "§", "%")
+        
+                
         Text = ReplaceString(Text, "<br>", Chr(10))
         Text = ReplaceString(Text, Chr(10), Chr(10)+Lang_Get("", "Ingame: Global_Message")+" "+Entity_Displayname_Get(Entity_ID)+"&f: ")
         
@@ -103,12 +114,19 @@ Procedure Chat_Message_Network_Send(Entity_ID, Player_Name.s, Message.s) ; Sende
       If Entity()\Player_List\Time_Muted < Date()
         
         Text.s = Message
-        ;For i = 0 To 9
-        ;  Text.s = ReplaceString(Text, "%"+Str(i), "&"+Str(i))
-        ;Next
-        ;For i = 97 To 102
-        ;  Text.s = ReplaceString(Text, "%"+Chr(i), "&"+Chr(i))
-        ;Next
+        
+        Text = ReplaceString(Text, "%%", "§")
+        
+        For i = 0 To 9
+          Text.s = ReplaceString(Text, "%"+Str(i), "&"+Str(i))
+        Next
+        For i = 97 To 102
+          Text.s = ReplaceString(Text, "%"+Chr(i), "&"+Chr(i))
+        Next
+        
+        Text = ReplaceString(Text, "§", "%")
+        
+        
         Text.s = ReplaceString(Text, "<br>", Chr(10))
         Text.s = Text
         Text_1.s = Lang_Get("", "Private_Message: From")+" "+Entity_Displayname_Get(Entity_ID)+"&f: "+Text
@@ -149,8 +167,9 @@ Procedure Chat_Message_Network_Send(Entity_ID, Player_Name.s, Message.s) ; Sende
   List_Restore(*Pointer, Entity())
   List_Restore(*Pointer_2, Network_Client())
 EndProcedure
-; IDE Options = PureBasic 5.11 (Windows - x64)
-; CursorPosition = 24
+; IDE Options = PureBasic 5.00 (Windows - x64)
+; CursorPosition = 127
+; FirstLine = 78
 ; Folding = -
 ; EnableXP
 ; DisableDebugger

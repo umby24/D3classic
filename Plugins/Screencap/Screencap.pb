@@ -26,10 +26,10 @@ XIncludeFile "/../Include/Include.pbi"
 #Plugin_Name = "ScreenCap"
 #Plugin_Author = "David Vogel"
 
-Global ScreenCap_Map_ID = 0
+Global ScreenCap_Map_ID = 7
 Global ScreenCap_Offset_X = 0     ; Offset der Eingabe
 Global ScreenCap_Offset_Y = 130   ; Offset der Eingabe
-Global ScreenCap_Scale = 1        ; Skalierung der Eingabe
+Global ScreenCap_Scale = 2        ; Skalierung der Eingabe
 Global ScreenCap_Size_X = 200     ; Ausgabegröße (Eingabegroße = Size_X * Scale)
 Global ScreenCap_Size_Y = 150     ; Ausgabegröße (Eingabegroße = Size_X * Scale)
 Global ScreenCap_Time = 250
@@ -241,12 +241,11 @@ ProcedureCDLL Main()
     
   EndIf
 EndProcedure
-; IDE Options = PureBasic 4.51 (Windows - x86)
+; IDE Options = PureBasic 5.00 (Windows - x86)
 ; ExecutableFormat = Shared Dll
-; CursorPosition = 34
-; FirstLine = 9
+; CursorPosition = 31
 ; Folding = --
 ; EnableXP
 ; EnableOnError
-; Executable = Screenap.x86.dll
+; Executable = C:\Users\Tommy\Desktop\Screenap.x86.dll
 ; DisableDebugger

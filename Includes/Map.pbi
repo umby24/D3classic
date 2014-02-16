@@ -632,6 +632,7 @@ Procedure Map_Save(*Map_Data_Element.Map_Data, Directory.s) ; Komprimiert und Sp
       
       WriteStringN(File_ID, "; Overview_Types: 0=Nothing, 1=2D, 2=Iso(fast)")
       WriteStringN(File_ID, "; Save_Intervall: in minutes (0 = Disabled)")
+      WriteStringN(File_ID, "; Jumpheight: -1 = Default")
       WriteStringN(File_ID, ";")
       
       WriteStringN(File_ID, "Server_Version = "+Str(Main\Version))
@@ -652,7 +653,25 @@ Procedure Map_Save(*Map_Data_Element.Map_Data, Directory.s) ; Komprimiert und Sp
       WriteStringN(File_ID, "Spawn_Z = "+StrF(*Map_Data_Element\Spawn_Z))
       WriteStringN(File_ID, "Spawn_Rot = "+StrF(*Map_Data_Element\Spawn_Rot))
       WriteStringN(File_ID, "Spawn_Look = "+StrF(*Map_Data_Element\Spawn_Look))
-      
+      WriteStringN(File_ID, "Colors_Set = " + Str(*Map_Data_Element\ColorsSet))
+      WriteStringN(File_ID, "Sky_Color = " + Str(*Map_Data_Element\SkyColor))
+      WriteStringN(File_ID, "Cloud_Color = " + Str(*Map_Data_Element\CloudColor))
+      WriteStringN(File_ID, "Fog_Color = " + Str(*Map_Data_Element\FogColor))
+      WriteStringN(File_ID, "A_Light = " + Str(*Map_Data_Element\alight))
+      WriteStringN(File_ID, "D_Light = " + Str(*Map_Data_Element\dlight))
+      WriteStringN(File_ID, "Custom_Appearance = " + Str(*Map_Data_Element\CustomAppearance))
+      WriteStringN(File_ID, "Custom_Texture_Url = " + *Map_Data_Element\CustomURL)
+      WriteStringN(File_ID, "Custom_Side_Block = " + Str(*Map_Data_Element\Side_Block))
+      WriteStringN(File_ID, "Custom_Edge_Block = " + Str(*Map_Data_Element\Edge_Block))
+      WriteStringN(File_ID, "Custom_Side_Level = " + Str(*Map_Data_Element\Side_level))
+      WriteStringN(File_ID, "Allow_Flying = " + Str(*Map_Data_Element\Flying))
+      WriteStringN(File_ID, "Allow_Noclip = " + Str(*Map_Data_Element\NoClip))
+      WriteStringN(File_ID, "Allow_Fastwalk = " + Str(*Map_Data_Element\Speeding))
+      WriteStringN(File_ID, "Allow_Respawn = " + Str(*Map_Data_Element\SpawnControl))
+      WriteStringN(File_ID, "Allow_Thirdperson = " + Str(*Map_Data_Element\ThirdPerson))
+      WriteStringN(File_ID, "Allow_Weatherchange = " + Str(*Map_Data_Element\Weather))
+      WriteStringN(File_ID, "Jumpheight = " + Str(*Map_Data_Element\JumpHeight))
+
       CloseFile(File_ID)
     Else
       Log_Add("Map", Lang_Get("", "File not saved", Filename_Config), 10, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
@@ -727,7 +746,7 @@ Procedure Map_Save(*Map_Data_Element.Map_Data, Directory.s) ; Komprimiert und Sp
   ProcedureReturn Save_Result
 EndProcedure
 
-Procedure Map_Load(Map_ID, Directory.s) ; Dekomprimiert und lädt die Informationen in die aktuelle Karte
+Procedure Map_Load(Map_ID, Directory.s) ; Dekomprimiert und lädt die Informationen in die aktuelle Karte / Decompresses and loads the information into the current map
   
   *Pointer.Map_Block
   
@@ -772,6 +791,25 @@ Procedure Map_Load(Map_ID, Directory.s) ; Dekomprimiert und lädt die Information
         Map_Data()\Spawn_Z = ReadPreferenceFloat("Spawn_Z", 0)
         Map_Data()\Spawn_Rot = ReadPreferenceFloat("Spawn_Rot", 0)
         Map_Data()\Spawn_Look = ReadPreferenceFloat("Spawn_Look", 0)
+        Map_Data()\ColorsSet = ReadPreferenceInteger("Colors_Set", 0)
+        Map_Data()\SkyColor = ReadPreferenceInteger("Sky_Color", -1)
+        Map_Data()\CloudColor = ReadPreferenceInteger("Cloud_Color", -1)
+        Map_Data()\FogColor = ReadPreferenceInteger("Fog_Color", -1)
+        Map_Data()\alight = ReadPreferenceInteger("A_Light", -1)
+        Map_Data()\dlight = ReadPreferenceInteger("D_Light", -1)
+        Map_Data()\CustomAppearance = ReadPreferenceInteger("Custom_Appearance", 0)
+        Map_Data()\CustomURL = ReadPreferenceString("Custom_Texture_Url", "")
+        Map_Data()\Side_Block = ReadPreferenceInteger("Custom_Side_Block", 7)
+        Map_Data()\Edge_Block = ReadPreferenceInteger("Custom_Edge_Block", 8)
+        Map_Data()\Side_level = ReadPreferenceInteger("Custom_Side_Level", Map_Size_Y / 2)
+        Map_data()\Flying = ReadPreferenceInteger("Allow_Flying", 1)
+        Map_Data()\NoClip = ReadPreferenceInteger("Allow_Noclip", 1)
+        Map_Data()\Speeding = ReadPreferenceInteger("Allow_Fastwalk", 1)
+        Map_Data()\SpawnControl = ReadPreferenceInteger("Allow_Respawn", 1)
+        Map_Data()\ThirdPerson = ReadPreferenceInteger("Allow_Thirdperson", 1)
+        Map_Data()\Weather = ReadPreferenceInteger("Allow_Weatherchange", 1)
+        Map_Data()\JumpHeight = ReadPreferenceInteger("Jumpeheight", -1)
+        
         If GZip_Decompress_From_File(Filename_Data, Map_Data()\Data, Map_Size*#Map_Block_Element_Size) = Map_Size*#Map_Block_Element_Size
           
           Undo_Clear_Map(Map_Data()\ID)
@@ -862,15 +900,14 @@ Procedure Map_Load(Map_ID, Directory.s) ; Dekomprimiert und lädt die Information
   ProcedureReturn ProcedureResult
 EndProcedure
 
-Procedure Map_Send(Client_ID, Map_ID)        ; Komprimiert und sendet die Karte an Client
-  
+Procedure Map_Send(Client_ID, Map_ID)        ; Komprimiert und sendet die Karte an Client / Compresses and sends the map to the client
   ProcedureResult = 0
   
   If Network_Client_Select(Client_ID)
     
     If Map_Select_ID(Map_ID)
       *Map_Data.Map_Data = Map_Data()
-      
+
       ; Anzahl Blöcke
       Map_Size_X = *Map_Data\Size_X
       Map_Size_Y = *Map_Data\Size_Y
@@ -891,7 +928,12 @@ Procedure Map_Send(Client_ID, Map_ID)        ; Komprimiert und sendet die Karte 
         
         For i = 0 To Map_Size_X*Map_Size_Y*Map_Size_Z-1
           *Pointer.Map_Block = *Map_Data\Data + i * #Map_Block_Element_Size
-          PokeB(*Temp_Buffer+Temp_Buffer_Offset, Block(*Pointer\Type)\On_Client) : Temp_Buffer_Offset + 1
+
+          If Block(*Pointer\Type)\CPE_Level > Network_Client()\CustomBlocks_Level
+            PokeB(*Temp_Buffer+Temp_Buffer_Offset, Block(*Pointer\Type)\CPE_Replace) : Temp_Buffer_Offset + 1
+          Else
+            PokeB(*Temp_Buffer+Temp_Buffer_Offset, Block(*Pointer\Type)\On_Client) : Temp_Buffer_Offset + 1
+          EndIf
         Next
         
         Temp_Buffer_2_Size = GZip_CompressBound(Temp_Buffer_Offset) + 1024 + 512
@@ -913,16 +955,15 @@ Procedure Map_Send(Client_ID, Map_ID)        ; Komprimiert und sendet die Karte 
             *Map_Data.Map_Data = Map_Data()
             *Map_Data\Blockchange_Stopped = 0
           EndIf
-          
           If Compressed_Size <> -1
             If Network_Client_Select(Client_ID)
               
               Compressed_Size + (1024 - (Compressed_Size % 1024))
-              
               Network_Client_Output_Write_Byte(Network_Client()\ID, 02)
               
               Bytes_2_Send = Compressed_Size
               Bytes_Sent = 0
+              
               While Bytes_2_Send > 0
                 Bytes_In_Block = Bytes_2_Send
                 If Bytes_In_Block > 1024 : Bytes_In_Block = 1024 : EndIf
@@ -934,11 +975,14 @@ Procedure Map_Send(Client_ID, Map_ID)        ; Komprimiert und sendet die Karte 
                 Bytes_2_Send - Bytes_In_Block
                 
               Wend
+              ;CPE_Aftermap_Actions(Network_Client()\ID, *Map_Data)
               
               Network_Client_Output_Write_Byte(Network_Client()\ID, 4)
               Network_Client_Output_Write_Word(Network_Client()\ID, Map_Size_X)
               Network_Client_Output_Write_Word(Network_Client()\ID, Map_Size_Z)
               Network_Client_Output_Write_Word(Network_Client()\ID, Map_Size_Y)
+              CPE_Aftermap_Actions(Network_Client()\ID, *Map_Data)
+              ;CPE_Aftermap_Actions(Network_Client()\ID) ; Process any needed after-map CPE actions on the client.
               
               ProcedureResult = 1
             EndIf
@@ -1121,10 +1165,10 @@ Procedure Map_Import_Player(Player_Number, Filename.s, Map_ID, X, Y, Z, SX, SY, 
   ProcedureReturn ProcedureResult
 EndProcedure
 
-Procedure Map_Resend(Map_ID) ; Sendet die Karte an alle neu
+Procedure Map_Resend(Map_ID) ; Sendet die Karte an alle neu / Sends the map to all new clients
   ForEach Network_Client()
     If Network_Client()\Player\Map_ID = Map_ID
-      Network_Client()\Player\Map_ID = -1 ; Setzt den Client auf eine ungültige Karte.
+      Network_Client()\Player\Map_ID = -1 ; Setzt den Client auf eine ungültige Karte. / Set the client to an invalid map
     EndIf
   Next
   
@@ -1438,7 +1482,77 @@ Procedure Map_Action_Thread(*Dummy)
 EndProcedure
 
 ;-
+Procedure Map_Env_Colors_Change(*Map_Data.Map_Data, Red, Green, Blue, Type)
+    If Not *Map_Data
+        ProcedureReturn
+    EndIf
+    
+    
+    *Map_Data\ColorsSet = #True
+    
+    Select Type
+        Case 0
+            *Map_Data\SkyColor = RGB(Red, Green, Blue)
+        Case 1
+            *Map_Data\CloudColor = RGB(Red, Green, Blue)
+        Case 2
+            *Map_Data\FogColor = RGB(Red, Green, Blue)
+        Case 3
+            *Map_Data\alight = RGB(Red, Green, Blue)
+        Case 4
+            *Map_Data\dlight = RGB(Red, Green, Blue)
+    EndSelect
+    
+    List_Store(*Network_Client_Old, Network_Client())
+    
+    ForEach Network_Client()
+        CPE_Aftermap_Actions(Network_Client()\ID, *Map_Data)    
+    Next
+    
+    List_Restore(*Network_Client_Old, Network_Client()) 
+EndProcedure
 
+Procedure Map_Env_Appearance_Set(*Map_Data.Map_Data, Texture.s, Side_Block, Edge_Block, Side_Level.w)
+    If Not *Map_Data
+        ProcedureReturn
+    EndIf
+    
+    
+    *Map_Data\CustomAppearance = #True
+    *Map_Data\CustomURL = Texture
+    *Map_Data\Side_Block = Side_Block
+    *Map_Data\Edge_Block = Edge_Block
+    *Map_Data\Side_level = Side_Level
+    
+    List_Store(*Network_Client_Old, Network_Client()) ; Is against CPE Spec
+    
+    ForEach Network_Client()
+        CPE_Aftermap_Actions(Network_Client()\ID, *Map_Data)    
+    Next
+    
+    List_Restore(*Network_Client_Old, Network_Client()) 
+EndProcedure
+
+Procedure Map_HackControl_Set(*Map_Data.Map_Data, Flying, NoClip, Speeding, SpawnControl, ThirdPerson, Weather, JumpHeight.w)
+    If Not *Map_Data
+        ProcedureReturn
+    EndIf
+    
+    *Map_Data\Flying = Flying
+    *Map_Data\NoClip = NoClip
+    *Map_Data\Speeding = Speeding
+    *Map_Data\SpawnControl = SpawnControl
+    *Map_Data\ThirdPerson = ThirdPerson
+    *Map_Data\Weather = Weather
+    *Map_Data\JumpHeight = JumpHeight
+    
+    ForEach Network_Client()
+        CPE_Client_Hackcontrol_Send(Network_Client()\ID, Flying, NoClip, SPeeding, SpawnControl, ThirdPerson, Weather, JumpHeight)
+    Next
+    
+EndProcedure
+
+;-
 Procedure Map_Block_Changed_Add(*Map_Data.Map_Data, X, Y, Z, Priority.a, Old_Material.w)
   If X >= 0 And X < *Map_Data\Size_X And Y >= 0 And Y < *Map_Data\Size_Y And Z >= 0 And Z < *Map_Data\Size_Z
     ;Found = 0
@@ -1841,7 +1955,7 @@ Procedure Map_Physic_Thread(*Dummy) ; Thread, für Physik
     
     ForEach Map_Data()
       If Map_Data()\Physic_Stopped = 0
-        SortStructuredList(Map_Data()\Map_Block_Do(), #PB_Sort_Ascending, OffsetOf(Map_Block_Do\Time), #PB_Long)
+        SortStructuredList(Map_Data()\Map_Block_Do(), #PB_Sort_Ascending, OffsetOf(Map_Block_Do\Time), #PB_Sort_Long)
         
         Watchdog_Watch("Map_Physic", "After: SortStructuredList(Map_Block_Do())", 1)
         
@@ -1990,12 +2104,13 @@ Procedure Map_Main()
     
   EndIf
 EndProcedure
-; IDE Options = PureBasic 5.21 LTS Beta 1 (Windows - x64)
-; CursorPosition = 1843
-; FirstLine = 1832
-; Folding = --------
+; IDE Options = PureBasic 5.00 (Linux - x86)
+; CursorPosition = 988
+; FirstLine = 973
+; Folding = ---4----
 ; EnableThread
 ; EnableXP
 ; DisableDebugger
+; CompileSourceDirectory
 ; EnableCompileCount = 0
 ; EnableBuildCount = 0

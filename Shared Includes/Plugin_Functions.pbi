@@ -80,7 +80,7 @@ Structure Plugin_Function     ; Aufrufbare Serverfunktionen / Callable server-fu
   *Map_Action_Add_Resize
   *Map_Action_Add_Fill
   *Map_Action_Add_Delete
-  *Map_Export
+  *Map_Export  
   *Map_Import_Player
   *Map_Resend
   
@@ -115,9 +115,51 @@ Structure Plugin_Function     ; Aufrufbare Serverfunktionen / Callable server-fu
   *Files_Folder_Get
   
   *Log_Add
+  
+  *CPE_Selection_Cuboid_Add
+  *CPE_Selection_Cuboid_Delete
+  
+  *Map_Export_Get_Size_X
+  *Map_Export_Get_Size_Y
+  *Map_Export_Get_Size_Z
+  
+  *CPE_HoldThis
+  *CPE_Model_Change
+  *CPE_Set_Weather
+  
+  *Map_Env_Colors_Change
+  
+  *System_Message_Status1_Send
+  *System_Message_Status2_Send
+  *System_Message_Status3_Send
+  *System_Message_BR1_Send
+  *System_Message_BR2_Send
+  *System_Message_BR3_Send
+  *System_Message_TopLeft_Send
+  *System_Message_Announcement_Send
+  
+  *System_Message_Status1_Send_2_All
+  *System_Message_Status2_Send_2_All
+  *System_Message_Status3_Send_2_All
+  *System_Message_BR1_Send_2_All
+  *System_Message_BR2_Send_2_All
+  *System_Message_BR3_Send_2_All
+  *System_Message_TopLeft_Send_2_All
+  *System_Message_Announcement_Send_2_All 
+  
+  *CPE_Client_Set_Block_Permissions
+  *Map_Env_Appearance_Set
+  *CPE_Client_Send_Map_Appearence
+  *CPE_Client_Hackcontrol_Send
+  *CPE_Client_Send_Hotkeys
+  *Hotkey_Add
+  *Hotkey_Remove
+  *Map_HackControl_Set
+  
 EndStructure
-; IDE Options = PureBasic 4.51 (Windows - x86)
-; CursorPosition = 106
-; FirstLine = 65
+; IDE Options = PureBasic 5.00 (Windows - x86)
+; CursorPosition = 157
+; FirstLine = 103
 ; EnableXP
 ; DisableDebugger
+; CompileSourceDirectory

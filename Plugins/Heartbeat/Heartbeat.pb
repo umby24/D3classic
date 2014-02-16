@@ -146,7 +146,7 @@ EndProcedure
 
 ProcedureCDLL Event_Client_Verify_Name(Name.s, Pass.s)
   Fingerprint.s = Heartbeat_Main\Salt + Name
-  Pass_Valid.s = LTrim( MD5Fingerprint(@Fingerprint, Len(Fingerprint)) , "0")
+  Pass_Valid.s = MD5Fingerprint(@Fingerprint, Len(Fingerprint))
   
   If Trim(LCase(Pass_Valid)) = Trim(LCase(Pass))
     ProcedureReturn #True
@@ -199,14 +199,15 @@ ProcedureCDLL Main()
     Heartbeat_Save(PeekS(Files_File_Get("Heartbeat")))
   EndIf
 EndProcedure
-; IDE Options = PureBasic 5.11 (Windows - x64)
-; ExecutableFormat = Shared Dll
-; CursorPosition = 144
-; FirstLine = 125
+; IDE Options = PureBasic 5.00 (Linux - x86)
+; ExecutableFormat = Shared .so
+; CursorPosition = 148
+; FirstLine = 130
 ; Folding = --
 ; EnableThread
 ; EnableXP
 ; EnableOnError
-; Executable = Heartbeat.x64.dll
+; Executable = Heartbeat.x86.dll
 ; DisableDebugger
-; Compiler = PureBasic 5.11 (Windows - x86)
+; CompileSourceDirectory
+; Compiler = PureBasic 5.00 (Linux - x86)

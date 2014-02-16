@@ -23,7 +23,7 @@
 
 ; ################################################### Konstants #############################################
 
-#Plugin_Version = 503
+#Plugin_Version = 508
 
 ; ################################################### Variables/Structures ##################################
 
@@ -130,7 +130,6 @@ Prototype   Map_Action_Add_Delete(Client_ID, Map_ID)
 Prototype   Map_Export(Map_ID, X_0, Y_0, Z_0, X_1, Y_1, Z_1, Filename.s)
 Prototype   Map_Import_Player(Player_Number, Filename.s, Map_ID, X, Y, Z, SX, SY, SZ)
 Prototype   Map_Resend(Map_ID)
-
 Prototype   Block_Count_Elements()
 Prototype   Block_Get_Array(*Memory)
 Prototype   Block_Get_Pointer(Number)
@@ -162,7 +161,47 @@ Prototype.i Files_File_Get(File.s)
 Prototype.i Files_Folder_Get(Name.s)
 
 Prototype   Log_Add(Module.s, Message.s, Type, PB_File.s, PB_Line, PB_Procedure.s)
+  
+Prototype CPE_Selection_Cuboid_Add(Client_ID, SelectionID, Label.s, StartX.w, StartY.w, StartZ.w, EndX.w, EndY.w, EndZ.w, Red.w, Green.w, Blue.w, Opacity.w)
+Prototype CPE_Selection_Cuboid_Delete(Client_ID, Selection_ID)
 
+Prototype.i Map_Export_Get_Size_X(Filename.s)
+Prototype.i Map_Export_Get_Size_Y(Filename.s)
+Prototype.i Map_Export_Get_Size_Z(Filename.s)
+
+Prototype CPE_HoldThis(Client_ID, Block, CanChange)
+Prototype CPE_Model_Change(Client_ID, Model.s)
+Prototype CPE_Set_Weather(Client_ID, Weather.b)
+
+Prototype Map_Env_Colors_Change(*Map_Data.Map_Data, Red, Green, Blue, Type)
+
+Prototype System_Message_Status1_Send(Client_ID, Message.s)
+Prototype System_Message_Status2_Send(Client_ID, Message.s)
+Prototype System_Message_Status3_Send(Client_ID, Message.s)
+Prototype System_Message_BR1_Send(Client_ID, Message.s)
+Prototype System_Message_BR2_Send(Client_ID, Message.s)
+Prototype System_Message_BR3_Send(Client_ID, Message.s)
+Prototype System_Message_TopLeft_Send(Client_ID, Message.s)
+Prototype System_Message_Announcement_Send(Client_ID, Message.s)
+
+Prototype System_Message_Status1_Send_2_All(Map_ID, Message.s)
+Prototype System_Message_Status2_Send_2_All(Map_ID, Message.s)
+Prototype System_Message_Status3_Send_2_All(Map_ID, Message.s)
+Prototype System_Message_BR1_Send_2_All(Map_ID, Message.s)
+Prototype System_Message_BR2_Send_2_All(Map_ID, Message.s)
+Prototype System_Message_BR3_Send_2_All(Map_ID, Message.s)
+Prototype System_Message_TopLeft_Send_2_All(Map_ID, Message.s)
+Prototype System_Message_Announcement_Send_2_All(Map_ID, Message.s)
+
+Prototype CPE_Client_Set_Block_Permissions(Client_ID, Block_ID, CanPlace, CanDelete)
+Prototype Map_Env_Appearance_Set(*Map_Data.Map_Data, Texture.s, Side_Block, Edge_Block, Side_Level.w)
+Prototype CPE_Client_Send_Map_Appearence(Client_ID, URL.s, Side_Block, Edge_Block, Side_Level.w)
+
+Prototype CPE_Client_Hackcontrol_Send(Client_ID, Flying, Noclip, Speeding, SpawnControl, ThirdPerson, WeatherControl, Jumpheight.w)
+Prototype CPE_Client_Send_Hotkeys(Client_ID)
+Prototype Hotkey_Add(Label.s, Action.s, Keycode.l, Keymods.b)
+Prototype Hotkey_Remove(Label.s)
+Prototype Map_HackControl_Set(*Map_Data.Map_Data, Flying, NoClip, Speeding, SpawnControl, ThirdPerson, Weather, JumpHeight.w)
 ; ################################################### Macros ################################################
 
 ; ################################################### Procedures ############################################
@@ -253,6 +292,7 @@ Procedure Define_Prototypes(*Pointer.Plugin_Function)
   Global Map_Import_Player.Map_Import_Player = *Pointer\Map_Import_Player
   Global Map_Resend.Map_Resend = *Pointer\Map_Resend
   
+  
   Global Block_Count_Elements.Block_Count_Elements = *Pointer\Block_Count_Elements
   Global Block_Get_Array.Block_Get_Array = *Pointer\Block_Get_Array
   Global Block_Get_Pointer.Block_Get_Pointer = *Pointer\Block_Get_Pointer
@@ -284,10 +324,50 @@ Procedure Define_Prototypes(*Pointer.Plugin_Function)
   Global Files_Folder_Get.Files_Folder_Get = *Pointer\Files_Folder_Get
   
   Global Log_Add.Log_Add = *Pointer\Log_Add
+  
+  Global CPE_Selection_Cuboid_Add.CPE_Selection_Cuboid_Add = *Pointer\CPE_Selection_Cuboid_Add
+  Global CPE_Selection_Cuboid_Delete.CPE_Selection_Cuboid_Delete = *Pointer\CPE_Selection_Cuboid_Delete
+  
+  Global Map_Export_Get_Size_X.Map_Export_Get_Size_X = *Pointer\Map_Export_Get_Size_X
+  Global Map_Export_Get_Size_Y.Map_Export_Get_Size_Y = *Pointer\Map_Export_Get_Size_Y
+  Global Map_Export_Get_Size_Z.Map_Export_Get_Size_Z = *Pointer\Map_Export_Get_Size_Z
+  
+  Global CPE_HoldThis.CPE_HoldThis = *Pointer\CPE_HoldThis
+  Global CPE_Model_Change.CPE_Model_Change = *Pointer\CPE_Model_Change
+  Global CPE_Set_Weather.CPE_Set_Weather = *Pointer\CPE_Set_Weather
+  Global Map_Env_Colors_Change.Map_Env_Colors_Change = *Pointer\Map_Env_Colors_Change
+  
+  Global System_Message_Status1_Send.System_Message_Status1_Send = *Pointer\System_Message_Status1_Send
+  Global System_Message_Status2_Send.System_Message_Status2_Send = *Pointer\System_Message_Status2_Send
+  Global System_Message_Status3_Send.System_Message_Status3_Send = *Pointer\System_Message_Status3_Send
+  Global System_Message_BR1_Send.System_Message_BR1_Send = *Pointer\System_Message_BR1_Send
+  Global System_Message_BR2_Send.System_Message_BR2_Send = *Pointer\System_Message_BR2_Send
+  Global System_Message_BR3_Send.System_Message_BR3_Send = *Pointer\System_Message_BR3_Send
+  Global System_Message_TopLeft_Send.System_Message_TopLeft_Send = *Pointer\System_Message_TopLeft_Send
+  Global System_Message_Announcement_Send.System_Message_Announcement_Send = *Pointer\System_Message_Announcement_Send 
+
+  Global System_Message_Status1_Send_2_All.System_Message_Status1_Send_2_All = *Pointer\System_Message_Status1_Send_2_All 
+  Global System_Message_Status2_Send_2_All.System_Message_Status2_Send_2_All = *Pointer\System_Message_Status2_Send_2_All 
+  Global System_Message_Status3_Send_2_All.System_Message_Status3_Send_2_All = *Pointer\System_Message_Status3_Send_2_All 
+  Global System_Message_BR1_Send_2_All.System_Message_BR1_Send_2_All = *Pointer\System_Message_BR1_Send_2_All
+  Global System_Message_BR2_Send_2_All.System_Message_BR2_Send_2_All = *Pointer\System_Message_BR2_Send_2_All
+  Global System_Message_BR3_Send_2_All.System_Message_BR3_Send_2_All = *Pointer\System_Message_BR3_Send_2_All
+  Global System_Message_TopLeft_Send_2_All.System_Message_TopLeft_Send_2_All = *Pointer\System_Message_TopLeft_Send_2_All
+  Global System_Message_Announcement_Send_2_All.System_Message_Announcement_Send_2_All = *Pointer\System_Message_Announcement_Send_2_All 
+  Global CPE_Client_Set_Block_Permissions.CPE_Client_Set_Block_Permissions = *Pointer\CPE_Client_Set_Block_Permissions
+  Global Map_Env_Appearance_Set.Map_Env_Appearance_Set = *Pointer\Map_Env_Appearance_Set
+  Global CPE_Client_Send_Map_Appearence.CPE_Client_Send_Map_Appearence = *Pointer\CPE_Client_Send_Map_Appearence
+  
+  Global CPE_Client_Hackcontrol_Send.CPE_Client_Hackcontrol_Send = *Pointer\CPE_Client_Hackcontrol_Send
+  Global CPE_Client_Send_Hotkeys.CPE_Client_Send_Hotkeys = *Pointer\CPE_Client_Send_Hotkeys
+  Global Hotkey_Add.Hotkey_Add = *Pointer\Hotkey_Add
+  Global Hotkey_Remove.Hotkey_Remove = *Pointer\Hotkey_Remove
+  Global Map_HackControl_Set.Map_HackControl_Set = *Pointer\Map_HackControl_Set
 EndProcedure
-; IDE Options = PureBasic 4.51 (Windows - x64)
-; CursorPosition = 285
-; FirstLine = 237
+; IDE Options = PureBasic 5.00 (Windows - x86)
+; CursorPosition = 364
+; FirstLine = 309
 ; Folding = -
 ; EnableXP
 ; DisableDebugger
+; CompileSourceDirectory

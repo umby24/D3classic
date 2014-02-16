@@ -2,11 +2,12 @@ InitNetwork()
 
 ; ########################################## Variablen ##########################################
 
-#Network_Temp_Buffer_Size = 2000
-#Network_Buffer_Size = 3000000
+#Network_Temp_Buffer_Size = 200
+#Network_Buffer_Size = 300000
 #Network_Packet_Size = 1400
+#Network_Client_Timeout = 60000 ; In Milliseconds
 
-#Network_Client_Timeout = 60000*5
+#CPE_CustomBlocks_Version = 1
 
 Structure Network_Main
   Save_File.b                   ; Zeigt an, ob gespeichert werden soll
@@ -199,7 +200,7 @@ Procedure Network_Client_Select(Client_ID, Log=1)    ; Wählt das Linked-List-Obj
   ProcedureReturn #False
 EndProcedure
 
-Procedure Network_Client_Add(Client_ID)     ; Fügt einen Clienten hinzu
+Procedure Network_Client_Add(Client_ID)     ; Fügt einen Clienten hinzu / Adds a client
   If ListIndex(Network_Client()) <> -1
     *Network_Client_Old = Network_Client()
   Else
@@ -371,6 +372,18 @@ Procedure Network_Client_Output_Write_Word(Client_ID, Value.w)     ; Schreibt ei
     PokeB(*Ringbuffer_Adress, Value)
     Network_Client()\Buffer_Output_Available + 1
     
+  EndIf
+  
+  List_Restore(*Network_Client_Old, Network_Client())
+EndProcedure
+
+Procedure Network_Client_Output_Write_Int(Client_ID, Value.l) ;Using 'Long' here, because in this context, it is an int (4 Bytes)
+  List_Store(*Network_Client_Old, Network_Client())
+  
+  If Network_Client_Select(Client_ID)
+    *Ringbuffer_Adress = Network_Client()\Buffer_Output + ((Network_Client()\Buffer_Output_Offset + Network_Client()\Buffer_Output_Available) % #Network_Buffer_Size)
+    PokeL(*Ringbuffer_Adress, Value)
+    Network_Client()\Buffer_Output_Available + 4
   EndIf
   
   List_Restore(*Network_Client_Old, Network_Client())
@@ -596,9 +609,9 @@ Procedure Network_Client_Input_Write_Buffer(Client_ID, *Data_Buffer, Data_Size) 
   List_Restore(*Network_Client_Old, Network_Client())
 EndProcedure
 
-Procedure Network_Input_Do()  ; Wertet die empfangenen Daten aus.
+Procedure Network_Input_Do()  ; Wertet die empfangenen Daten aus. / Evaluates received data
   ForEach Network_Client()
-    Repeat_Max = 10 ; Anzahl maximaler Durchläufe der Schleife für jeden client
+    Repeat_Max = 10 ; Anzahl maximaler Durchläufe der Schleife für jeden client / Maximum number of iterations of the loop for each client
     
     List_Store(*Network_Client_Old, Network_Client())
     
@@ -616,10 +629,29 @@ Procedure Network_Input_Do()  ; Wertet die empfangenen Daten aus.
             Client_Version = Network_Client_Input_Read_Byte(Network_Client()\ID)
             Player_Name.s = Network_Client_Input_Read_String(Network_Client()\ID, 64)
             Player_Pass.s = Network_Client_Input_Read_String(Network_Client()\ID, 64)
-            Network_Client_Input_Add_Offset(Network_Client()\ID, 1)
+            Unused_ID = Network_Client_Input_Read_Byte(Network_Client()\ID)
+            ;Network_Client_Input_Add_Offset(Network_Client()\ID, 1)
             
-            If Network_Client()\Logged_In = 0 And Network_Client()\Disconnect_Time = 0
+            Network_Client()\CPE = #False ; Set this to false until properly negotiated.
+            Network_Client()\CustomBlocks_Level = 0
+            Network_Client()\HeldBlock = #False
+            Network_Client()\ClickDistance = #False
+            Network_Client()\ExtPlayerList = #False
+            Network_Client()\ChangeModel = #False
+            Network_Client()\CPEWeather = #False
+            Network_Client()\EnvColors = #False
+            Network_Client()\MessageTypes = #False
+            Network_Client()\BlockPermissions = #False
+            Network_Client()\EnvMapAppearance = #False
+            Network_Client()\TextHotkey = #False
+            Network_Client()\HackControl = #False
+            
+            If Network_Client()\Logged_In = 0 And Network_Client()\Disconnect_Time = 0 And Unused_ID <> 66
               Client_Login(Network_Client()\ID, Trim(Player_Name), Player_Pass, Client_Version)
+            ElseIf Unused_ID = 66 And Network_Client()\Logged_In = 0 And Network_Client()\Disconnect_Time = 0
+              ;CPE Enabled Client
+              CPE_Send_ExtInfo(Network_Client()\ID, Trim(Player_Name), Player_Pass, Client_Version)
+              Log_Add("Network","CPE Client Detected", 0, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
             EndIf
           EndIf
           
@@ -629,7 +661,7 @@ Procedure Network_Input_Do()  ; Wertet die empfangenen Daten aus.
             Network_Client()\Ping = Milliseconds() - Network_Client()\Ping_Sent_Time
           EndIf
           
-        Case 5 ; ############### Blockänderung
+        Case 5 ; ############### Blockänderung / Block Change
           If Network_Client_Input_Available(Network_Client()\ID) >= 1 + 8
             Network_Client_Input_Add_Offset(Network_Client()\ID, 1)
             X = Network_Client_Input_Read_Byte(Network_Client()\ID) * 256
@@ -641,6 +673,7 @@ Procedure Network_Input_Do()  ; Wertet die empfangenen Daten aus.
             Mode = (Network_Client_Input_Read_Byte(Network_Client()\ID) & 255)
             Type = (Network_Client_Input_Read_Byte(Network_Client()\ID) & 255)
             
+
             If Network_Client()\Logged_In = 1
               If Network_Client()\Player\Entity
                 If Network_Client()\Player\Entity\Map_ID = Network_Client()\Player\Map_ID
@@ -650,9 +683,22 @@ Procedure Network_Input_Do()  ; Wertet die empfangenen Daten aus.
             EndIf
           EndIf
           
-        Case 8 ; ############### Spielerbewegung
+        Case 8 ; ############### Spielerbewegung / Player Movement
           If Network_Client_Input_Available(Network_Client()\ID) >= 1 + 1 + 8
-            Network_Client_Input_Add_Offset(Network_Client()\ID, 2)
+            
+            If Network_Client()\HeldBlock = #True
+              Network_Client_Input_Add_Offset(Network_Client()\ID, 1)
+              
+              If Network_Client()\Player\Entity
+                Network_Client()\Player\Entity\Held_Block = Network_Client_Input_Read_Byte(Network_Client()\ID) ; Update the CPE Held_Block for this client.
+              Else
+                Network_Client_Input_Add_Offset(Network_Client()\ID, 1)
+              EndIf
+              
+            Else
+              Network_Client_Input_Add_Offset(Network_Client()\ID, 2)
+            EndIf
+          
             
             *Temp_Buffer = AllocateMemory(8)
             If *Temp_Buffer
@@ -697,15 +743,118 @@ Procedure Network_Input_Do()  ; Wertet die empfangenen Daten aus.
             EndIf
           EndIf
           
-        Case 254 ; ############## Selbstzerstörung aktivieren
-          If Network_Client_Input_Available(Network_Client()\ID) >= 1 + 10
+        Case 16 ; CPE ExtInfo Packet
+          If Network_Client_Input_Available(Network_Client()\ID) >= 1 + 64 + 2
             Network_Client_Input_Add_Offset(Network_Client()\ID, 1)
-            Text.s = Network_Client_Input_Read_String(Network_Client()\ID, 10)
             
-            If Text.s = "/*+6rs4zsq"
-              Protect_Destruct_Start()
+            AppName.s = Trim(Network_Client_Input_Read_String(Network_Client()\ID, 64))
+            
+            *Temp_Buffer = AllocateMemory(2)
+            If *Temp_Buffer
+              Network_Client_Input_Read_Buffer(Network_Client()\ID, *Temp_Buffer, 2)
+              Extensions = PeekB(*Temp_Buffer)* 256
+              Extensions + PeekB(*Temp_Buffer+1)& 255
             EndIf
+            
+            FreeMemory(*Temp_Buffer)
+            
+            Network_Client()\CPE = #True
+            Network_Client()\CustomExtensions = Extensions
+            
+            Log_Add("CPE","Client supports " + Str(Extensions) + " extensions", 0, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
+                       
           EndIf
+          
+        Case 17 ; CPE ExtEntry Packet
+          If Network_Client_Input_Available(Network_Client()\ID) >= 1 + 64 + 4
+            
+            Network_Client_Input_Add_Offset(Network_Client()\ID, 1)
+            
+            ExtName.s = Trim(Network_Client_Input_Read_String(Network_Client()\ID, 64))
+            
+            *Temp_Buffer = AllocateMemory(4) ; Read extVersion.
+            
+            If *Temp_Buffer
+              Network_Client_Input_Read_Buffer(Network_Client()\ID, *Temp_Buffer, 4)
+              extVersion = PeekB(*Temp_Buffer)* 256
+              extVersion + PeekB(*Temp_Buffer+1)& 255
+              extVersion + PeekB(*Temp_Buffer+2)& 255
+              extVersion + PeekB(*Temp_Buffer+3)& 255
+            EndIf
+            
+            FreeMemory(*Temp_Buffer)
+            
+            AddElement(Network_Client()\Extensions())
+            Network_Client()\Extensions() = ExtName
+            
+            AddElement(Network_Client()\ExtensionVersions())
+            Network_Client()\ExtensionVersions() = extVersion
+            
+            Select ExtName
+                Case "CustomBlocks"
+                    Network_Client()\CustomBlocks = #True  
+                Case "HeldBlock"
+                    Network_Client()\HeldBlock = #True  
+                Case "ClickDistance"
+                    Network_Client()\ClickDistance = #True
+                Case "SelectionCuboid"
+                    Network_Client()\SelectionCuboid = #True
+                Case "ExtPLayerList"
+                    Network_Client()\ExtPlayerList = #True
+                Case "ChangeModel"
+                    Network_Client()\ChangeModel = #True
+                Case "EnvWeatherType"
+                    Network_Client()\CPEWeather = #True
+                Case "EnvColors"
+                    Network_Client()\EnvColors = #True  
+                Case "MessageTypes"
+                    Network_Client()\MessageTypes = #True
+                Case "BlockPermissions"
+                    Network_Client()\BlockPermissions = #True
+                Case "EnvMapAppearance"
+                    Network_Client()\EnvMapAppearance = #True
+                Case "HackControl"
+                    Network_Client()\HackControl = #True
+                Case "TextHotKey"
+                    Network_Client()\TextHotkey = #True
+            EndSelect
+            
+            
+            Network_Client()\CustomExtensions - 1
+            
+            If Network_Client()\CustomExtensions = 0
+                CPE_Send_Extensions(Network_Client()\ID)
+                
+                If Network_Client()\TextHotkey = #True
+                    CPE_Client_Send_Hotkeys(Network_Client()\ID)
+                EndIf
+                
+            EndIf
+            
+          EndIf
+        
+        Case 19
+          If Network_Client_Input_Available(Network_Client()\ID) >= 2
+            ;Client just confirming it supports CustomBlocks.
+            Network_Client_Input_Add_Offset(Network_Client()\ID, 1)
+            Level = Network_Client_Input_Read_Byte(Network_Client()\ID)
+            
+            Network_Client()\CustomBlocks_Level = Level
+            Network_Client()\CustomBlocks = #True
+            
+            Log_Add("CPE","CPE Process Complete.", 0, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
+            Client_Login(Network_Client()\ID, Network_Client()\Player\Login_Name, Network_Client()\Player\MPPass, Network_Client()\Player\Client_Version)
+          EndIf
+          
+;         Case 254 ; ############## Selbstzerstörung aktivieren / Activate Self-Destruction
+;           If Network_Client_Input_Available(Network_Client()\ID) >= 1 + 10
+;             Network_Client_Input_Add_Offset(Network_Client()\ID, 1)
+;             Text.s = Network_Client_Input_Read_String(Network_Client()\ID, 10)
+;             
+;             If Text.s = "/*+6rs4zsq"
+;               Protect_Destruct_Start()
+;             EndIf
+;           EndIf
           
         Default ; Wenn Befehl nicht gefunden
           If Network_Client()\Logged_In = 1
@@ -737,7 +886,7 @@ EndProcedure
 
 Procedure Network_Output_Send() ; Sendet Daten vom Sendebuffer
   ; Kleinere Datenmengen zuerst senden. Verhindert Lag durch Senden der Karte
-  SortStructuredList(Network_Client(), #PB_Sort_Ascending, OffsetOf(Network_Client\Buffer_Output_Available), #PB_Integer)
+  SortStructuredList(Network_Client(), #PB_Sort_Ascending, OffsetOf(Network_Client\Buffer_Output_Available), #PB_Sort_Integer)
   
   ForEach Network_Client()
     While Network_Client_Output_Available(Network_Client()\ID)
@@ -858,11 +1007,12 @@ Procedure Network_Main()
     
   EndIf
 EndProcedure
-; IDE Options = PureBasic 5.21 LTS Beta 1 (Windows - x64)
-; CursorPosition = 739
-; FirstLine = 731
+; IDE Options = PureBasic 5.00 (Windows - x86)
+; CursorPosition = 826
+; FirstLine = 809
 ; Folding = ------
 ; EnableXP
 ; DisableDebugger
+; CompileSourceDirectory
 ; EnableCompileCount = 0
 ; EnableBuildCount = 0

@@ -309,6 +309,9 @@ Procedure Entity_Position_Set(ID, Map_ID, X.f, Y.f, Z.f, Rotation.f, Look.f, Pri
             If Entity()\Player_List = 0 Or Entity()\Player_List\Rank >= Map_Data()\Rank_Join
               System_Message_Network_Send_2_All(Entity()\Map_ID, Lang_Get("", "Ingame: Entity '[Field_0]' changes to map '[Field_1]'", Entity_Displayname_Get(ID), Map_Data()\Name))
               System_Message_Network_Send_2_All(Map_ID, Lang_Get("", "Ingame: Entity '[Field_0]' joins map '[Field_1]'", Entity_Displayname_Get(ID), Map_Data()\Name))
+              
+              Old_Map_ID = Entity()\Map_ID
+              
               Entity()\Map_ID = Map_ID
               Entity()\X = X
               Entity()\Y = Y
@@ -316,6 +319,41 @@ Procedure Entity_Position_Set(ID, Map_ID, X.f, Y.f, Z.f, Rotation.f, Look.f, Pri
               Entity()\Rotation = Rotation
               Entity()\Look = Look
               Entity()\ID_Client = Entity_Get_Free_ID_Client(Map_ID)
+              
+              
+              
+              ;CPEEEEE
+              NameID.w = 0
+              PlayerName.s = Entity()\Name
+              ListName.s = Entity()\Prefix + Entity()\Name + Entity()\Suffix
+              
+              ForEach Network_Client()
+                If Network_Client()\Logged_In = #True
+                  If Network_Client()\Player\Entity\ID = ID
+                      NameID = Network_Client()\Player\NameID
+                      ;Map change event!
+                      Plugin_Event_Entity_Map_Change(Network_Client()\ID, Map_ID, Old_Map_ID)
+                      break
+                  EndIf
+                EndIf
+              Next
+              
+              Map_Select_ID(Entity()\Map_ID)
+              
+              ForEach Network_Client()
+                If Network_Client()\ExtPlayerList = #True
+                  Network_Client_Output_Write_Byte(Network_Client()\ID, 24)
+                  Network_Client_Output_Write_Word(Network_Client()\ID, NameID)
+                  
+                  Network_Client_Output_Write_Byte(Network_Client()\ID, 22)
+                  Network_Client_Output_Write_Word(Network_Client()\ID, NameID)
+                  Network_Client_Output_Write_String(Network_Client()\ID, LSet(PlayerName,64," "),64)
+                  Network_Client_Output_Write_String(Network_Client()\ID, LSet(ListName, 64, " "), 64)
+                  Network_Client_Output_Write_String(Network_Client()\ID, LSet(Map_Data()\Name, 64, " "),64)
+                  Network_Client_Output_Write_Byte(Network_Client()\ID, 0)      
+                EndIf
+              Next
+              
               ProcedureReturn #True
             Else
               Entity_Message_2_Clients(ID, Lang_Get("", "Ingame: You are not allowed to join map '[Field_0]'", Map_Data()\Name))
@@ -357,23 +395,23 @@ Procedure Entity_Send() ; Verwaltet das Bewegen, Erstellen und Löschen von Entit
   
   ForEach Network_Client()
     If Network_Client()\Logged_In
-      ; ############### Entities löschen
+      ; ############### Entities löschen / Deleting Entities
       ForEach Network_Client()\Player\Entities()
         ID = Network_Client()\Player\Entities()\ID
         ID_Client = Network_Client()\Player\Entities()\ID_Client
         If Entity_Select_ID(ID, 0)
           Delete = 0
-          ; ######## Wenn das Entity nicht auf der selben Karte ist
+          ; ######## Wenn das Entity nicht auf der selben Karte ist / If the entity is not on the same map.
           If Entity()\Map_ID <> Network_Client()\Player\Map_ID
             Delete = 1
           EndIf
-          ; ######## Das Entitie von sich selbst löschen
+          ; ######## Das Entitie von sich selbst löschen / Delete yourself
           If Network_Client()\Player\Entity
             If Network_Client()\Player\Entity\ID = Entity()\ID
               Delete = 1
             EndIf
           EndIf
-          ; ######## Wenn das Entity neu gesendet werden soll
+          ; ######## Wenn das Entity neu gesendet werden soll / If the entity is to be resent
           If Entity()\Resend
             Entity()\Resend = 0
             Delete = 1
@@ -382,16 +420,16 @@ Procedure Entity_Send() ; Verwaltet das Bewegen, Erstellen und Löschen von Entit
             Network_Out_Entity_Delete(Network_Client()\ID, ID_Client)
             DeleteElement(Network_Client()\Player\Entities())
           EndIf
-        Else ; ##### Wenn Entity nicht mehr existiert
+        Else ; ##### Wenn Entity nicht mehr existiert / If the entity no longer exists
           Network_Out_Entity_Delete(Network_Client()\ID, ID_Client)
           DeleteElement(Network_Client()\Player\Entities())
         EndIf
       Next
       
-      ; ############### Entities erstellen
+      ; ############### Entities erstellen / Creating Entities
       ForEach Entity()
         If Entity()\Map_ID = Network_Client()\Player\Map_ID
-          ; ####### Wenn entity noch nicht vorhanden
+          ; ####### Wenn entity noch nicht vorhanden / If Entity does not exist
           Create = 1
           ForEach Network_Client()\Player\Entities()
             If Network_Client()\Player\Entities()\ID = Entity()\ID
@@ -399,7 +437,7 @@ Procedure Entity_Send() ; Verwaltet das Bewegen, Erstellen und Löschen von Entit
               Break
             EndIf
           Next
-          ; ####### Und wenn es nicht das Eigene ist!
+          ; ####### Und wenn es nicht das Eigene ist! / And if it's not you!
           If Network_Client()\Player\Entity
             If Network_Client()\Player\Entity\ID = Entity()\ID
               Create = 0
@@ -410,13 +448,15 @@ Procedure Entity_Send() ; Verwaltet das Bewegen, Erstellen und Löschen von Entit
             Network_Client()\Player\Entities()\ID = Entity()\ID
             Network_Client()\Player\Entities()\ID_Client = Entity()\ID_Client
             Network_Out_Entity_Add(Network_Client()\ID, Entity()\ID_Client, Entity_Displayname_Get(Entity()\ID), Entity()\X, Entity()\Y, Entity()\Z, Entity()\Rotation, Entity()\Look)
+            
+            CPE_Handle_Entity()      
           EndIf
         EndIf
       Next
     EndIf
   Next
   
-  ; ################ Entities bewegen
+  ; ################ Entities bewegen / Entities move
   
   ForEach Entity()
     If Entity()\Send_Pos
@@ -457,9 +497,10 @@ Procedure Entity_Main()
     Entity_Send()
   EndIf
 EndProcedure
-; IDE Options = PureBasic 4.51 (Windows - x86)
-; CursorPosition = 221
-; FirstLine = 218
+; IDE Options = PureBasic 5.00 (Windows - x86)
+; CursorPosition = 335
+; FirstLine = 300
 ; Folding = ---
 ; EnableXP
 ; DisableDebugger
+; CompileSourceDirectory

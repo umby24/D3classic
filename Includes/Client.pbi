@@ -90,10 +90,66 @@ Procedure Client_Login(Client_ID, Name.s, MPPass.s, Version) ; Ein neuer Spieler
               System_Message_Network_Send_2_All(-1, Lang_Get("", "Ingame: Player '[Field_0]<c>' logged in", Entity_Displayname_Get(Entity()\ID)))
               System_Message_Network_Send(Client_ID, Player_Main\Message_Welcome)
               
+              Entity()\Model = "default"
+              
+              Plugin_Event_Client_Login(Network_Client())
+              
+              ;CPE ExtPlayerList time.
+              
+              tempClient = Network_Client()\ID
+              loginName.s = Network_Client()\Player\Login_Name
+              namePrefix.s = Network_Client()\Player\Entity\Prefix
+              nameSuffix.s = Network_Client()\Player\Entity\Suffix
+              mapName.s = Map_Data()\Name
+              CPE = Network_Client()\ExtPlayerList
+              tempID = FreeID
+              Network_Client()\Player\NameID = FreeID
+              
+              If (FreeID <> NextID)
+                FreeID = NextID  
+              Else
+                FreeID = FreeID + 1
+                NextID = FreeID
+              EndIf
+              
+              ForEach Network_Client()
+                If Network_Client()\ExtPlayerList = #True
+                  ;Send the new player to everyone..
+                  If Network_Client()\ID <> tempClient ;If it is not the new player..
+                    
+                    Network_Client_Output_Write_Byte(Network_Client()\ID, 22) ; - Send the new player's information to the client
+                    Network_Client_Output_Write_Word(Network_Client()\ID, tempID)
+                    Network_Client_Output_Write_String(Network_Client()\ID, LSet(loginName,64," "),64)
+                    Network_Client_Output_Write_String(Network_Client()\ID, LSet(namePrefix + loginName + nameSuffix, 64, " "),64)
+                    Network_Client_Output_Write_String(Network_Client()\ID, LSet(mapName, 64, " "), 64)
+                    Network_Client_Output_Write_Byte(Network_Client()\ID, 0)
+                    If CPE = #True
+                      Map_Select_ID(Network_Client()\Player\Map_ID)
+                      Network_Client_Output_Write_Byte(tempClient, 22) ; - And send the new player the client's information.
+                      Network_Client_Output_Write_Word(tempClient, Network_Client()\Player\NameID)
+                      Network_Client_Output_Write_String(tempClient, LSet(Network_Client()\Player\Login_Name,64," "),64)
+                      Network_Client_Output_Write_String(tempClient, LSet(Network_Client()\Player\Entity\Prefix + Network_Client()\Player\Login_Name + Network_Client()\Player\Entity\Suffix, 64, " "), 64)
+                      Network_Client_Output_Write_String(tempClient, LSet(Map_Data()\Name, 64, " "),64)
+                      Network_Client_Output_Write_Byte(tempClient, 0)    
+                    EndIf
+                  Else
+                    If CPE = #True
+                      Network_Client_Output_Write_Byte(tempClient, 22)
+                      Network_Client_Output_Write_Word(tempClient, tempID)
+                      Network_Client_Output_Write_String(tempClient, LSet(loginName,64," "),64)
+                      Network_Client_Output_Write_String(tempClient, LSet(namePrefix + loginName + nameSuffix, 64, " "), 64)
+                      Network_Client_Output_Write_String(tempClient, LSet(mapName, 64, " "),64)
+                      Network_Client_Output_Write_Byte(tempClient, 0)   
+                    EndIf
+                  EndIf
+                EndIf
+              Next
+              ;##########################################
+              
               Player_List()\Save = 1
               Player_List_Main\Save_File = 1
               
-              Plugin_Event_Client_Login(Network_Client())
+              
             Else
               Log_Add("Client", Lang_Get("", "Login failed: Spawnmap is full (IP=[Field_0], Name='[Field_1]')", Network_Client()\IP, Name), 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
               Network_Client_Kick(Client_ID, Lang_Get("", "Redscreen: Spawnmap is full"), 1)
@@ -119,8 +175,18 @@ Procedure Client_Logout(Client_ID, Message.s, Show_2_All) ; Player hat sich ausg
         Plugin_Event_Client_Logout(Network_Client())
         
         Log_Add("Client", Lang_Get("", "Player logged out (IP=[Field_0], Name='[Field_1]', Message='[Field_2]')", Network_Client()\IP, Network_Client()\Player\Login_Name, Message), 0, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
-        
+        PushListPosition(Network_Client())
         If Network_Client()\Player\Entity
+         loginName = Network_Client()\Player\NameID
+         FreeID = loginName
+         
+         ForEach Network_Client()
+           If Network_Client()\ExtPlayerList = #True
+             Network_Client_Output_Write_Byte(Network_Client()\ID, 24)
+             Network_Client_Output_Write_Word(Network_Client()\ID, loginName)
+           EndIf
+         Next
+         PopListPosition(Network_Client())
           If Show_2_All And Network_Client()\Player\Logout_Hide = 0
             System_Message_Network_Send_2_All(-1, Lang_Get("", "Ingame: Player '[Field_0]<c>' logged out ([Field_1])", Entity_Displayname_Get(Network_Client()\Player\Entity\ID), Message))
           EndIf
@@ -203,9 +269,9 @@ EndProcedure
 Procedure Client_Main()
   
 EndProcedure
-; IDE Options = PureBasic 5.11 (Windows - x64)
-; CursorPosition = 118
-; FirstLine = 110
+; IDE Options = PureBasic 5.00 (Windows - x86)
+; CursorPosition = 180
+; FirstLine = 166
 ; Folding = -
 ; EnableXP
 ; DisableDebugger

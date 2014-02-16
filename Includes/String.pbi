@@ -7,13 +7,13 @@ Global String_Main.String_Main
 
 ; ########################################## Ladekram ############################################
 
-String_Main\Regex_ID = CreateRegularExpression(#PB_Any, "[^A-Za-z0-9!$%&/()=?{}\[\]\\,;.:\-_#'+*<>|@\"+Chr(34)+" "+Chr(10)+"]|&.$|&.(&.)", #PB_RegularExpression_DotAll|#PB_RegularExpression_MultiLine)
+String_Main\Regex_ID = CreateRegularExpression(#PB_Any, "[^A-Za-z0-9!\^\~$%&/()=?{}\[\]\\,;.:\-_#'+*<>|@\"+Chr(34)+" "+Chr(10)+"]|&.$|&.(&.)", #PB_RegularExpression_DotAll|#PB_RegularExpression_MultiLine)
 
 ; ########################################## Declares ############################################
 
 ; ########################################## Proceduren ##########################################
 
-Procedure.s String_GV(Input.s) ; Validiert den String
+Procedure.s String_GV(Input.s) ; Validiert den String / Validates string (replaces invalid characters)
   If IsRegularExpression(String_Main\Regex_ID)
     ProcedureReturn ReplaceRegularExpression(String_Main\Regex_ID, Input, "#")
   EndIf
@@ -25,7 +25,7 @@ Procedure String_IV(Input.s) ; Prüft ob der String valid ist
   EndIf
 EndProcedure
 
-Procedure.s String_Multiline(Input.s) ; Teilt einen String in mehrere Zeilen auf
+Procedure.s String_Multiline(Input.s) ; Teilt einen String in mehrere Zeilen auf / Split a string into multiple lines
   Output_Message.s = ""
   Max_Length = 65
   While Len(Input) > 0
@@ -74,9 +74,8 @@ EndProcedure
 Procedure String_Main()
   
 EndProcedure
-; IDE Options = PureBasic 4.50 (Windows - x86)
-; CursorPosition = 63
-; FirstLine = 28
+; IDE Options = PureBasic 5.00 (Windows - x86)
+; CursorPosition = 9
 ; Folding = -
 ; EnableXP
 ; DisableDebugger

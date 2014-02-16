@@ -83,11 +83,12 @@ Procedure Build_Mode_Distribute(Client_ID, Map_ID, X, Y, Z, Mode, Block_Type.a)
       If Map_ID = -1
         Map_ID = Network_Client()\Player\Entity\Map_ID
       EndIf
-      
+
       ; ###### /Material...
       If Block_Type = 1 And Network_Client()\Player\Entity\Build_Material <> -1
         Block_Type = Network_Client()\Player\Entity\Build_Material
       EndIf
+
       
       Found = 0
       ForEach Build_Mode()
@@ -287,9 +288,9 @@ Procedure Build_Mode_Main()
     EndIf
   Wend
 EndProcedure
-; IDE Options = PureBasic 4.51 (Windows - x86)
-; CursorPosition = 276
-; FirstLine = 241
+; IDE Options = PureBasic 5.00 (Windows - x64)
+; CursorPosition = 90
+; FirstLine = 76
 ; Folding = ----
 ; EnableXP
 ; DisableDebugger

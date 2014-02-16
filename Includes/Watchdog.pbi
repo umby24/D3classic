@@ -1,9 +1,10 @@
-; ########################################## Variablen ##########################################
+; ########################################## Variablen / Variables ##########################################
 
 Structure Watchdog_Main
   Thread_ID.i           ; Watchdog-Thread
   Mutex_ID.i            ; Watchdog-Mutex
 EndStructure
+
 Global Watchdog_Main.Watchdog_Main
 
 Structure Watchdog_Module
@@ -25,6 +26,7 @@ Structure Watchdog_Module
   CPU_User_Time.q       ; CPU-Usermode-Zeit (wenn Thread_ID vorhanden)
   CPU_Usage.d           ; CPU-Nutzung in Prozent
 EndStructure
+
 Global NewList Watchdog_Module.Watchdog_Module()
 
 ; ########################################## Declares ############################################
@@ -61,11 +63,10 @@ AddElement(Watchdog_Module())
 Watchdog_Module()\Name = "Client_Login"
 Watchdog_Module()\Timeout_Max = 2000
 
-; ########################################## Proceduren ##########################################
+; ########################################## Proceduren / Procedures ##########################################
 
 Procedure Watchdog_Thread(*Dummy)
   Repeat
-    
     LockMutex(Watchdog_Main\Mutex_ID)
     
     Generation_Time = Milliseconds()
@@ -75,28 +76,35 @@ Procedure Watchdog_Thread(*Dummy)
     
     ForEach Watchdog_Module()
       Watchdog_Module()\Timeout = Milliseconds()-Watchdog_Module()\Time_Watch
+      
       If Watchdog_Module()\Timeout_Biggest < Watchdog_Module()\Timeout
         Watchdog_Module()\Timeout_Biggest = Watchdog_Module()\Timeout
       EndIf
       
       If Watchdog_Module()\Thread_ID
-        Thread_Handle = ThreadID(Watchdog_Module()\Thread_ID)
-        CompilerIf #PB_Compiler_OS = #PB_OS_Windows
-          GetThreadTimes_(Thread_Handle, @Time_Creation.q, @Time_Exit.q, @Time_Kernel.q, @Time_User.q)
-        CompilerEndIf
-        Watchdog_Module()\CPU_Kernel_Time = Time_Kernel
-        Watchdog_Module()\CPU_User_Time = Time_User
-        Watchdog_Module()\CPU_Usage = (Time_Kernel-Watchdog_Module()\CPU_Kernel_Last) + (Time_User-Watchdog_Module()\CPU_User_Last)
-        Watchdog_Module()\CPU_Usage / (Time * 100)
-        Watchdog_Module()\CPU_Kernel_Last = Time_Kernel
-        Watchdog_Module()\CPU_User_Last = Time_User
-      Else
-        Watchdog_Module()\CPU_Usage = Watchdog_Module()\CPU_Time_4_Percent * 100 / Time ;(%)
-        Watchdog_Module()\CPU_Time_4_Percent = 0
+;         GetExitCodeThread_(Watchdog_Module()\Thread_ID, @ExitCode.l)
+;         If ExitCode = #STATUS_PENDING
+;           Thread_Handle = ThreadID(Watchdog_Module()\Thread_ID)
+;           
+;           CompilerIf #PB_Compiler_OS = #PB_OS_Windows
+;             GetThreadTimes_(Thread_Handle, @Time_Creation.q, @Time_Exit.q, @Time_Kernel.q, @Time_User.q)
+;           CompilerEndIf
+;           
+;           Watchdog_Module()\CPU_Kernel_Time = Time_Kernel
+;           Watchdog_Module()\CPU_User_Time = Time_User
+;           Watchdog_Module()\CPU_Usage = (Time_Kernel-Watchdog_Module()\CPU_Kernel_Last) + (Time_User-Watchdog_Module()\CPU_User_Last)
+;           Watchdog_Module()\CPU_Usage / (Time * 100)
+;           Watchdog_Module()\CPU_Kernel_Last = Time_Kernel
+;           Watchdog_Module()\CPU_User_Last = Time_User
+;         Else
+;           Watchdog_Module()\CPU_Usage = Watchdog_Module()\CPU_Time_4_Percent * 100 / Time ;(%)
+;           Watchdog_Module()\CPU_Time_4_Percent = 0
+;         EndIf
       EndIf
     Next
     
     File_ID = CreateFile(#PB_Any, Files_File_Get("Watchdog_HTML"))
+    
     If IsFile(File_ID)
       
       WriteStringN(File_ID, "<html>")
@@ -120,33 +128,41 @@ Procedure Watchdog_Thread(*Dummy)
       WriteStringN(File_ID, "        <th><b>Kernel-Time</b></th>")
       WriteStringN(File_ID, "        <th><b>Usermode-Time</b></th>")
       WriteStringN(File_ID, "      </tr>")
+      
       ForEach Watchdog_Module()
         WriteStringN(File_ID, "      <tr>")
         WriteStringN(File_ID, "        <td>"+Watchdog_Module()\Name+"</td>")
+        
         If Watchdog_Module()\Timeout_Biggest >= Watchdog_Module()\Timeout_Max
           WriteStringN(File_ID, "      <td><font color="+Chr(34)+"#AA0000"+Chr(34)+"><b>Lagging</b></font></td>")
         Else
           WriteStringN(File_ID, "      <td><font color="+Chr(34)+"#00AA00"+Chr(34)+"><b>Well</b></font></td>")
         EndIf
+        
         WriteStringN(File_ID, "        <td>"+Str(Watchdog_Module()\Timeout_Biggest)+"ms (Max. "+Str(Watchdog_Module()\Timeout_Max)+"ms)</td>")
         WriteStringN(File_ID, "        <td>"+Watchdog_Module()\Message_Biggest+"</td>")
         WriteStringN(File_ID, "        <td>"+Watchdog_Module()\Message_Last+"</td>")
         WriteStringN(File_ID, "        <td>"+StrD(Watchdog_Module()\Calls_Per_Second*1000/Time, 1)+"/s</td>")
         WriteStringN(File_ID, "        <td>"+StrD(Watchdog_Module()\CPU_Usage, 3)+"%</td>")
-        If Watchdog_Module()\Thread_ID
-          WriteStringN(File_ID, "        <td>"+Str(ThreadID(Watchdog_Module()\Thread_ID))+"</td>")
-          WriteStringN(File_ID, "        <td>"+StrD(Watchdog_Module()\CPU_Kernel_Time/10000000,3)+"s</td>")
-          WriteStringN(File_ID, "        <td>"+StrD(Watchdog_Module()\CPU_User_Time/10000000,3)+"s</td>")
-        Else
-          WriteStringN(File_ID, "        <td></td>")
-          WriteStringN(File_ID, "        <td></td>")
-          WriteStringN(File_ID, "        <td></td>")
-        EndIf
+        
+;         GetExitCodeThread_(Watchdog_Module()\Thread_ID, @ExitCode.l)
+;         
+;         If Watchdog_Module()\Thread_ID And ExitCode = #STATUS_PENDING
+;           WriteStringN(File_ID, "        <td>"+Str(ThreadID(Watchdog_Module()\Thread_ID))+"</td>")
+;           WriteStringN(File_ID, "        <td>"+StrD(Watchdog_Module()\CPU_Kernel_Time/10000000,3)+"s</td>")
+;           WriteStringN(File_ID, "        <td>"+StrD(Watchdog_Module()\CPU_User_Time/10000000,3)+"s</td>")
+;         Else
+;           WriteStringN(File_ID, "        <td></td>")
+;           WriteStringN(File_ID, "        <td></td>")
+;           WriteStringN(File_ID, "        <td></td>")
+;         EndIf
+        
         WriteStringN(File_ID, "      </tr>")
         
         Watchdog_Module()\Calls_Per_Second = 0
         Watchdog_Module()\Timeout_Biggest = 0
       Next
+      
       WriteString(File_ID,  "    </table>")
       
       WriteStringN(File_ID, "      <br>")
@@ -162,31 +178,38 @@ Procedure Watchdog_Thread(*Dummy)
     EndIf
     
     UnlockMutex(Watchdog_Main\Mutex_ID)
-    Delay(5000) ; #################### Sicherer Wartebereich
+    Delay(5000) ; #################### Sicherer Wartebereich / Secure Waiting Area
     
   ForEver
 EndProcedure
 
-Procedure Watchdog_Thread_ID_Set(Module_.s, Thread_ID)
-  LockMutex(Watchdog_Main\Mutex_ID)
+Procedure Watchdog_Thread_ID_Set(Module.s, Thread_ID)
+    LockMutex(Watchdog_Main\Mutex_ID)
+    
   ForEach Watchdog_Module()
-    If Watchdog_Module()\Name = Module_
+    If Watchdog_Module()\Name = Module
       Watchdog_Module()\Thread_ID = Thread_ID
     EndIf
   Next
+  
   UnlockMutex(Watchdog_Main\Mutex_ID)
 EndProcedure
 
-Macro Watchdog_Watch(Module_, Message, State)
-  LockMutex(Watchdog_Main\Mutex_ID)
-  ForEach Watchdog_Module()
-    If Watchdog_Module()\Name = Module_
-      Watchdog_Module()\Timeout = Milliseconds()-Watchdog_Module()\Time_Watch
+Macro Watchdog_Watch(Module, Message, State)
+    LockMutex(Watchdog_Main\Mutex_ID)
+    
+    ForEach Watchdog_Module()
+      
+    If Watchdog_Module()\Name = Module
+        Watchdog_Module()\Timeout = Milliseconds()-Watchdog_Module()\Time_Watch
+        
       If Watchdog_Module()\Timeout_Biggest < Watchdog_Module()\Timeout
         Watchdog_Module()\Timeout_Biggest = Watchdog_Module()\Timeout
         Watchdog_Module()\Message_Biggest = Watchdog_Module()\Message_Last
       EndIf
+      
       Watchdog_Module()\Message_Last = Message
+      
       If State = 0
         Watchdog_Module()\CPU_Time_0 = Milliseconds()
       ElseIf State = 2
@@ -194,6 +217,7 @@ Macro Watchdog_Watch(Module_, Message, State)
         Watchdog_Module()\CPU_Time_4_Percent + (Milliseconds() - Watchdog_Module()\CPU_Time_0)
         Watchdog_Module()\Calls_Per_Second + 1
       EndIf
+      
       Watchdog_Module()\Time_Watch = Milliseconds()
       Break
     EndIf
@@ -204,9 +228,9 @@ EndMacro
 Procedure Watchdog_Main()
   
 EndProcedure
-; IDE Options = PureBasic 5.21 LTS Beta 1 (Windows - x64)
-; CursorPosition = 61
-; FirstLine = 58
+; IDE Options = PureBasic 5.00 (Linux - x86)
+; CursorPosition = 157
+; FirstLine = 137
 ; Folding = -
 ; EnableXP
 ; DisableDebugger

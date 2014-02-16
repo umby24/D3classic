@@ -1,6 +1,6 @@
 ; ########################################## Dokumentation ##########################################
 
-; Protection against manipulations
+; Diebstahlsicherung: Überprüft Variablen. bei Manipulation werden zufällige Werte geändert...
 ; 
 ; Zu überprüfende Werte:
 ; - Command_A4EXYZ33485() ob noch aufrufbar...
@@ -21,8 +21,8 @@ CompilerElse
 CompilerEndIf
 
 Structure Protect_Main
-  Timer.l               ; Timer
-  Destroy.b
+  Timer.l               ; Timer für Selbstzerstörung
+  Destroy.b             ; Zerstörung gestartet
 EndStructure
 Global Protect_Main.Protect_Main
 
@@ -107,8 +107,9 @@ Procedure Protect_Main()
     Protect_Destruct()
   EndIf
 EndProcedure
-; IDE Options = PureBasic 5.21 LTS Beta 1 (Windows - x64)
-; CursorPosition = 18
+; IDE Options = PureBasic 4.51 (Windows - x86)
+; CursorPosition = 105
+; FirstLine = 61
 ; Folding = -
 ; EnableXP
 ; DisableDebugger

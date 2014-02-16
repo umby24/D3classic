@@ -105,7 +105,7 @@ Procedure Mem_HTML_Stats()
     
     WriteStringN(File_ID, "      <br>")
     
-    SortStructuredList(Mem_Element(), #PB_Sort_Ascending, OffsetOf(Mem_Element\Memory), #PB_Integer)
+    SortStructuredList(Mem_Element(), #PB_Sort_Ascending, OffsetOf(Mem_Element\Memory), #PB_Sort_Integer)
     
     WriteStringN(File_ID, "      <b><u>Fragmentation:</u></b><br>")
     WriteStringN(File_ID, "      <br>")
@@ -129,7 +129,7 @@ Procedure Mem_HTML_Stats()
     WriteStringN(File_ID, "      <br>")
     WriteStringN(File_ID, "      <br>")
     
-    SortStructuredList(Mem_Element(), #PB_Sort_Descending, OffsetOf(Mem_Element\Size), #PB_Integer)
+    SortStructuredList(Mem_Element(), #PB_Sort_Descending, OffsetOf(Mem_Element\Size), #PB_Sort_Integer)
     
     WriteStringN(File_ID, "      <b><u>Elements:</u></b><br>")
     WriteStringN(File_ID, "      <br>")
@@ -280,9 +280,9 @@ Procedure Mem_Main()
     
   EndIf
 EndProcedure
-; IDE Options = PureBasic 5.21 LTS Beta 1 (Windows - x64)
-; CursorPosition = 131
-; FirstLine = 120
+; IDE Options = PureBasic 4.51 (Windows - x86)
+; CursorPosition = 260
+; FirstLine = 233
 ; Folding = --
 ; EnableXP
 ; DisableDebugger

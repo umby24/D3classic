@@ -65,7 +65,7 @@ Procedure Language_Strings_Save(Filename.s)
   File_ID = CreateFile(#PB_Any, Filename)
   If IsFile(File_ID)
     
-    SortStructuredList(Language_String(), #PB_Sort_Ascending, OffsetOf(Language_String\Input), #PB_String)
+    SortStructuredList(Language_String(), #PB_Sort_Ascending, OffsetOf(Language_String\Input), #PB_Sort_String)
     
     ForEach Language_String()
       WriteStringN(File_ID, "["+Language_String()\Input+"]"+Str(Language_String()\Arguments))
@@ -138,9 +138,9 @@ Procedure Language_Main()
     Language_Strings_Save(Files_File_Get("Language_Strings"))
   EndIf
 EndProcedure
-; IDE Options = PureBasic 5.21 LTS Beta 1 (Windows - x64)
-; CursorPosition = 67
-; FirstLine = 56
+; IDE Options = PureBasic 4.51 (Windows - x86)
+; CursorPosition = 128
+; FirstLine = 92
 ; Folding = -
 ; EnableXP
 ; DisableDebugger

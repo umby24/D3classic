@@ -49,6 +49,8 @@ Procedure Block_Load(Filename.s)
       Block(i)\Killer = ReadPreferenceLong("Killer", 0)
       Block(i)\Special = ReadPreferenceLong("Special", 0)
       Block(i)\Color_Overview = ReadPreferenceLong("Color_Overview", RGB(i,i,i))
+      Block(i)\CPE_Level = ReadPreferenceLong("CPE_Level",0)
+      Block(i)\CPE_Replace = ReadPreferenceLong("CPE_Replace",1)
     Next
     
     Block_Main\Save_File = 1
@@ -90,6 +92,8 @@ Procedure Block_Save(Filename.s)
         WriteStringN(File_ID, "Killer = "+Str(Block(i)\Killer))
         WriteStringN(File_ID, "Special = "+Str(Block(i)\Special))
         WriteStringN(File_ID, "Color_Overview = "+Str(Block(i)\Color_Overview))
+        WriteStringN(File_ID, "CPE_Level = " + Str(Block(i)\CPE_Level))
+        WriteStringN(File_ID, "CPE_Replace = " + Str(Block(i)\CPE_Replace))
       EndIf
       If Block(i)\Replace_By_Load <> -1
         WriteStringN(File_ID, "Replace_By_Load = "+Str(Block(i)\Replace_By_Load))
@@ -130,9 +134,9 @@ Procedure Block_Main()
     EndIf
   EndIf
 EndProcedure
-; IDE Options = PureBasic 4.51 (Windows - x86)
-; CursorPosition = 125
-; FirstLine = 84
+; IDE Options = PureBasic 5.00 (Windows - x64)
+; CursorPosition = 95
+; FirstLine = 59
 ; Folding = -
 ; EnableXP
 ; DisableDebugger

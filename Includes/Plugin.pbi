@@ -1,7 +1,7 @@
 
 ; ########################################## Konstanten ########################################
 
-#Plugin_Version = 503
+#Plugin_Version = 508
 
 ; ######################################### Prototypes ##########################################
 
@@ -16,6 +16,7 @@ PrototypeC   Plugin_Inside_Event_Build_Mode(Argument.s, *Client.Network_Client, 
 PrototypeC   Plugin_Inside_Event_Client_Add(*Client.Network_Client)
 PrototypeC   Plugin_Inside_Event_Client_Delete(*Client.Network_Client)
 PrototypeC   Plugin_Inside_Event_Client_Verify_Name(Name.s, Pass.s)
+PrototypeC   Plugin_Inside_Event_Client_Verify_Name_MC(Name.s, Pass.s)
 PrototypeC   Plugin_Inside_Event_Client_Login(*Client.Network_Client)
 PrototypeC   Plugin_Inside_Event_Client_Logout(*Client.Network_Client)
 PrototypeC   Plugin_Inside_Event_Entity_Add(*Entity.Entity)
@@ -34,12 +35,14 @@ PrototypeC   Plugin_Inside_Event_Map_Block_Change_Player(*Player.Player_List, *M
 PrototypeC   Plugin_Inside_Event_Chat_Map(*Entity.Entity, Message.s)
 PrototypeC   Plugin_Inside_Event_Chat_All(*Entity.Entity, Message.s)
 PrototypeC   Plugin_Inside_Event_Chat_Private(*Entity.Entity, Player_Name.s, Message.s)
-
+PrototypeC   Plugin_Inside_Event_Entity_Map_Change(Client_ID, New_Map_ID, Old_Map_ID)
 ; ########################################## Variablen ##########################################
 
 Structure Plugin_Main
-  Timer_File_Check.l          ; Timer für das überprüfen der Dateigröße
+    Timer_File_Check.l          ; Timer für das überprüfen der Dateigröße
+    Plugin_Thread_ID.i
 EndStructure
+
 Global Plugin_Main.Plugin_Main
 
 Structure Plugin_Info
@@ -47,6 +50,7 @@ Structure Plugin_Info
   Version.l                   ; Pluginversion (Wird geändert wenn ältere Plugins nicht mehr kompatibel sind) /  Pluginversion
   Author.s{16}                ; Autor des Plugins (16 Zeichen!) / Author of the plugin
 EndStructure
+
 Structure Plugin_Inside_Functions
   Main.Plugin_Inside_Main
   Event_Block_Physics.Plugin_Inside_Event_Block_Physics
@@ -59,6 +63,7 @@ Structure Plugin_Inside_Functions
   Event_Client_Add.Plugin_Inside_Event_Client_Add
   Event_Client_Delete.Plugin_Inside_Event_Client_Delete
   Event_Client_Verify_Name.Plugin_Inside_Event_Client_Verify_Name
+  Event_Client_Verify_Name_MC.Plugin_Inside_Event_Client_Verify_Name_MC
   Event_Client_Login.Plugin_Inside_Event_Client_Login
   Event_Client_Logout.Plugin_Inside_Event_Client_Logout
   Event_Entity_Add.Plugin_Inside_Event_Entity_Add
@@ -77,7 +82,9 @@ Structure Plugin_Inside_Functions
   Event_Chat_Map.Plugin_Inside_Event_Chat_Map
   Event_Chat_All.Plugin_Inside_Event_Chat_All
   Event_Chat_Private.Plugin_Inside_Event_Chat_Private
+  Event_Entity_Map_Change.Plugin_Inside_Event_Entity_Map_Change
 EndStructure
+
 Structure Plugin
   Plugin_Info.Plugin_Info
   Functions.Plugin_Inside_Functions
@@ -85,7 +92,15 @@ Structure Plugin
   Library_ID.i                ; Rückgabe von Openlibrary (0: Ungültig)
   File_Date_Last.l            ; Datum letzter Änderung
 EndStructure
+
+Structure UnloadedPlugin
+  Filename.s
+  PluginName.s
+  File_Date_Last.l
+EndStructure
+
 Global NewList Plugin.Plugin()
+Global NewList UnloadedPlugins.UnloadedPlugin()
 
 Structure Plugin_Result_Element
   *Pointer
@@ -230,7 +245,7 @@ Procedure Main_UnlockMutex()
   UnlockMutex(Main\Mutex)
 EndProcedure
 
-; ########################################## Eintragen der Funktionen in die Struktur
+; ########################################## Eintragen der Funktionen in die Struktur / Place the functions into the structure
 
 Plugin_Function\Client_Count_Elements = @Client_Count_Elements()
 Plugin_Function\Client_Get_Array = @Client_Get_Array()
@@ -349,7 +364,46 @@ Plugin_Function\Files_Folder_Get = @Files_Folder_Get()
 
 Plugin_Function\Log_Add = @Log_Add()
 
-;-########################################## Proceduren ##########################################
+Plugin_Function\CPE_Selection_Cuboid_Add = @CPE_Selection_Cuboid_Add()
+Plugin_Function\CPE_Selection_Cuboid_Delete = @CPE_Selection_Cuboid_Delete()
+
+Plugin_Function\Map_Export_Get_Size_X = @Map_Export_Get_Size_X()
+Plugin_Function\Map_Export_Get_Size_Y = @Map_Export_Get_Size_Y()
+Plugin_Function\Map_Export_Get_Size_Z = @Map_Export_Get_Size_Z()
+
+Plugin_Function\CPE_HoldThis = @CPE_HoldThis()
+Plugin_Function\CPE_Model_Change = @CPE_Model_Change()
+Plugin_Function\CPE_Set_Weather = @CPE_Set_Weather()
+
+Plugin_Function\Map_Env_Colors_Change = @Map_Env_Colors_Change()
+
+Plugin_Function\System_Message_Status1_Send = @System_Message_Status1_Send()
+Plugin_Function\System_Message_Status2_Send = @System_Message_Status2_Send()
+Plugin_Function\System_Message_Status3_Send = @System_Message_Status3_Send()
+Plugin_Function\System_Message_BR1_Send = @System_Message_BR1_Send()
+Plugin_Function\System_Message_BR2_Send = @System_Message_BR2_Send()
+Plugin_Function\System_Message_BR3_Send = @System_Message_BR3_Send()
+Plugin_Function\System_Message_TopLeft_Send = @System_Message_TopLeft_Send()
+Plugin_Function\System_Message_Announcement_Send = @System_Message_Announcement_Send()
+
+Plugin_Function\System_Message_Status1_Send_2_All = @System_Message_Status1_Send_2_All()
+Plugin_Function\System_Message_Status2_Send_2_All = @System_Message_Status2_Send_2_All()
+Plugin_Function\System_Message_Status3_Send_2_All = @System_Message_Status3_Send_2_All()
+Plugin_Function\System_Message_BR1_Send_2_All = @System_Message_BR1_Send_2_All()
+Plugin_Function\System_Message_BR2_Send_2_All = @System_Message_BR2_Send_2_All()
+Plugin_Function\System_Message_BR3_Send_2_All = @System_Message_BR3_Send_2_All()
+Plugin_Function\System_Message_TopLeft_Send_2_All = @System_Message_TopLeft_Send_2_All()
+Plugin_Function\System_Message_Announcement_Send_2_All = @System_Message_Announcement_Send_2_All()
+Plugin_Function\CPE_Client_Set_Block_Permissions = @CPE_Client_Set_Block_Permissions()
+Plugin_Function\Map_Env_Appearance_Set = @Map_Env_Appearance_Set()
+Plugin_Function\CPE_Client_Send_Map_Appearence = @CPE_Client_Send_Map_Appearence()
+Plugin_Function\CPE_Client_Hackcontrol_Send = @CPE_Client_Hackcontrol_Send()
+Plugin_Function\CPE_Client_Send_Hotkeys = @CPE_Client_Send_Hotkeys()
+Plugin_Function\Hotkey_Add = @Hotkey_Add()
+Plugin_Function\Hotkey_Remove = @Hotkey_Remove()
+Plugin_Function\Map_HackControl_Set = @Map_HackControl_Set()
+
+;-########################################## Procedures ##########################################
 
 Procedure Plugin_Event_Block_Physics(Destination.s, *Map_Data.Map_Data, X, Y, Z)
   If FindString(Destination, ":", 1)
@@ -533,6 +587,22 @@ Procedure Plugin_Event_Client_Verify_Name(Name.s, Pass.s)
   ProcedureReturn Result
 EndProcedure
 
+Procedure Plugin_Event_Client_Verify_Name_MC(Name.s, Pass.s)
+  Result = #True
+  
+  ForEach Plugin()
+    If Plugin()\Library_ID
+      If Plugin()\Functions\Event_Client_Verify_Name
+        If Plugin()\Functions\Event_Client_Verify_Name_MC(Name.s, Pass.s) = #False
+          Result = #False
+        EndIf
+      EndIf
+    EndIf
+  Next
+  
+  ProcedureReturn Result
+EndProcedure
+
 Procedure Plugin_Event_Client_Login(*Client.Network_Client)
   Result = #True
   
@@ -604,6 +674,22 @@ Procedure Plugin_Event_Entity_Position_Set(*Entity.Entity, Map_ID, X.f, Y.f, Z.f
     If Plugin()\Library_ID
       If Plugin()\Functions\Event_Entity_Position_Set
         If Plugin()\Functions\Event_Entity_Position_Set(*Entity, Map_ID, X.f, Y.f, Z.f, Rotation.f, Look.f, Priority.a, Send_Own_Client.a) = #False
+          Result = #False
+        EndIf
+      EndIf
+    EndIf
+  Next
+  
+  ProcedureReturn Result
+EndProcedure
+
+Procedure Plugin_Event_Entity_Map_Change(Client_ID, New_Map_ID, Old_Map_ID)
+  Result = #True
+  
+  ForEach Plugin()
+    If Plugin()\Library_ID
+      If Plugin()\Functions\Event_Entity_Map_Change
+        If Plugin()\Functions\Event_Entity_Map_Change(Client_ID, New_Map_ID, Old_Map_ID) = #False
           Result = #False
         EndIf
       EndIf
@@ -840,6 +926,7 @@ Procedure Plugin_Initialize(Filename.s) ; Initialisiert Plugin und übergibt Funk
         Plugin()\Functions\Event_Client_Add = GetFunction(Plugin()\Library_ID, "Event_Client_Add")
         Plugin()\Functions\Event_Client_Delete = GetFunction(Plugin()\Library_ID, "Event_Client_Delete")
         Plugin()\Functions\Event_Client_Verify_Name = GetFunction(Plugin()\Library_ID, "Event_Client_Verify_Name")
+        Plugin()\Functions\Event_Client_Verify_Name_MC = GetFunction(Plugin()\Library_ID, "Event_Client_Verify_Name_MC")
         Plugin()\Functions\Event_Client_Login = GetFunction(Plugin()\Library_ID, "Event_Client_Login")
         Plugin()\Functions\Event_Client_Logout = GetFunction(Plugin()\Library_ID, "Event_Client_Logout")
         Plugin()\Functions\Event_Entity_Add = GetFunction(Plugin()\Library_ID, "Event_Entity_Add")
@@ -858,6 +945,7 @@ Procedure Plugin_Initialize(Filename.s) ; Initialisiert Plugin und übergibt Funk
         Plugin()\Functions\Event_Chat_Map = GetFunction(Plugin()\Library_ID, "Event_Chat_Map")
         Plugin()\Functions\Event_Chat_All = GetFunction(Plugin()\Library_ID, "Event_Chat_All")
         Plugin()\Functions\Event_Chat_Private = GetFunction(Plugin()\Library_ID, "Event_Chat_Private")
+        Plugin()\Functions\Event_Entity_Map_Change = GetFunction(Plugin()\Library_ID, "Event_Entity_Map_Change")
         
         ProcedureReturn #True
       Else
@@ -882,15 +970,24 @@ Procedure Plugin_Deinitialize(Filename.s) ; Deinitialisiert Plugin...
   ProcedureReturn #False
 EndProcedure
 
-Procedure Plugin_Unload(Filename.s) ; Entlädt die Lib, löscht sie aber nicht aus der Liste
+Procedure Plugin_Unload(Filename.s) ; Entlädt die Lib, löscht sie aber nicht aus der Liste / Unloads plugin but does not remove from list
   List_Store(*Pointer, Plugin())
+  
   ForEach Plugin()
     If Plugin()\Filename = Filename
-      If Plugin()\Library_ID
+      If Plugin()\Library_ID And Plugin()\Library_ID <> 0
         Plugin_Deinitialize(Filename)
         CloseLibrary(Plugin()\Library_ID)
         Plugin()\Library_ID = 0
         Log_Add("Plugin", Lang_Get("", "Plugin unloaded", Filename), 0, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
+        
+        AddElement(UnloadedPlugins())
+        UnloadedPlugins()\Filename = Plugin()\Filename
+        UnloadedPlugins()\PluginName = Plugin()\Plugin_Info\Name
+        UnloadedPlugins()\File_Date_Last = Plugin()\File_Date_Last
+        
+        DeleteElement(Plugin())
+        
         List_Restore(*Pointer, Plugin())
         ProcedureReturn #True
       EndIf
@@ -901,27 +998,52 @@ Procedure Plugin_Unload(Filename.s) ; Entlädt die Lib, löscht sie aber nicht aus
   ProcedureReturn #False
 EndProcedure
 
-Procedure Plugin_Load(Filename.s) ; Lädt die Lib (Wenn in der Liste vorhanden)
+Procedure Plugin_Load(Filename.s) ; Lädt die Lib (Wenn in der Liste vorhanden) / Loads the library (If its in the list)
+  PrevUnloaded = 0
+  ForEach UnloadedPlugins()
+    If UnloadedPlugins()\Filename = Filename
+      PrevUnloaded = 1
+      AddElement(Plugin())
+      Plugin()\Filename = Filename
+      Plugin()\Plugin_Info\Name = UnloadedPlugins()\PluginName
+      Plugin()\File_Date_Last = GetFileDate(Plugin()\Filename, #PB_Date_Modified)
+      
+      DeleteElement(UnloadedPlugins())
+      Break
+    EndIf
+  Next
+  
   ForEach Plugin()
     If Plugin()\Filename = Filename
-      Plugin_Unload(Filename)
+      
+      If PrevUnloaded <> 1
+        Plugin_Unload(Filename)
+      EndIf
+      
       Plugin()\Library_ID = OpenLibrary(#PB_Any, Filename)
       
       If Plugin()\Library_ID
+        
         If Plugin_Initialize(Filename) = #True
           Log_Add("Plugin", Lang_Get("", "Plugin loaded", Filename, Plugin()\Plugin_Info\Name, Plugin()\Plugin_Info\Author), 0, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
+          
           ProcedureReturn #True
         Else
           Plugin_Unload(Filename)
           Log_Add("Plugin", Lang_Get("", "Plugin not loaded: Incompatible", Filename, Str(Plugin()\Plugin_Info\Version)), 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
+          
           ProcedureReturn #False
         EndIf
+        
       Else
         Plugin_Unload(Filename)
         Log_Add("Plugin", Lang_Get("", "Plugin not loaded: Can't open it", Filename), 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
+        
         ProcedureReturn #False
       EndIf
+      
     EndIf
+    
   Next
   
   ProcedureReturn #False
@@ -943,7 +1065,7 @@ Procedure Plugin_Check_Files(Directory.s)
     CompilerEndIf
   CompilerEndIf
   
-  ; ##################### gelöschte Plugins entladen + von Liste entfernen
+  ; ##################### gelöschte Plugins entladen + von Liste entfernen / Removed unused plugins from list
   
   ForEach Plugin()
     If FileSize(Plugin()\Filename) = -1
@@ -953,13 +1075,14 @@ Procedure Plugin_Check_Files(Directory.s)
     EndIf
   Next
   
-  ; ##################### neue Plugins zur Liste hinzufügen
+  ; ##################### neue Plugins zur Liste hinzufügen / Add new plugins to the list
   
   If Right(Directory, 1) = "/" Or Right(Directory, 1) = "\"
     Directory = Left(Directory, Len(Directory)-1)
   EndIf
   
   Directory_ID = ExamineDirectory(#PB_Any, Directory, "*.*")
+  
   If Directory_ID
     While NextDirectoryEntry(Directory_ID)
       Entry_Name.s = DirectoryEntryName(Directory_ID)
@@ -970,12 +1093,21 @@ Procedure Plugin_Check_Files(Directory.s)
         If DirectoryEntryType(Directory_ID) = #PB_DirectoryEntry_File
           If LCase(Right(Entry_Name, Len(Suffix))) = Suffix
             Found = 0
+            
             ForEach Plugin()
               If Plugin()\Filename = Filename
                 Found = 1
                 Break
               EndIf
             Next
+            
+            ForEach UnloadedPlugins()
+              If UnloadedPlugins()\Filename = Filename
+                Found = 1
+                Break
+              EndIf
+            Next
+            
             If Found = 0
               AddElement(Plugin())
               Plugin()\Filename = Filename
@@ -992,7 +1124,8 @@ Procedure Plugin_Check_Files(Directory.s)
     FinishDirectory(Directory_ID)
   EndIf
   
-  ; ################### Plugins laden
+  ; ################### Plugins laden / Load plugins
+  Found2 = 0
   
   ForEach Plugin()
     File_Date = GetFileDate(Plugin()\Filename, #PB_Date_Modified)
@@ -1001,6 +1134,19 @@ Procedure Plugin_Check_Files(Directory.s)
       Plugin_Load(Plugin()\Filename)
     EndIf
   Next
+  
+  ForEach UnloadedPlugins()
+    File_Date = GetFileDate(UnloadedPlugins()\Filename, #PB_Date_Modified)
+    
+    If UnloadedPlugins()\File_Date_Last <> File_Date
+      DeleteElement(UnloadedPlugins())
+      Found2 = 1
+    EndIf
+  Next
+  
+  If Found2 = 1
+    Plugin_Check_Files(Files_Folder_Get("Plugins"))
+  EndIf
   
 EndProcedure
 
@@ -1011,7 +1157,7 @@ Procedure Plugin_Main()
     Plugin_Check_Files(Files_Folder_Get("Plugins"))
   EndIf
   
-  ; ########## Main bei den Plugins ausführen
+  ; ########## Main bei den Plugins ausführen / Run main function in the plugins
   
   ForEach Plugin()
     If Plugin()\Library_ID
@@ -1021,9 +1167,26 @@ Procedure Plugin_Main()
     EndIf
   Next
 EndProcedure
-; IDE Options = PureBasic 4.51 (Windows - x86)
-; CursorPosition = 1008
-; FirstLine = 975
-; Folding = ---------
+
+Procedure Plugin_Thread(*Dummy)
+    Repeat
+        LockMutex(Main\Mutex)
+        
+        Watchdog_Watch("Plugin_Main", "Begin Thread-Slope", 0)
+        
+        Plugin_Main()
+        
+        UnlockMutex(Main\Mutex)
+    
+        Watchdog_Watch("Plugin_Main", "End Thread-Slope", 2)
+    
+        Delay(100)
+    ForEver
+EndProcedure
+; IDE Options = PureBasic 5.00 (Linux - x86)
+; CursorPosition = 276
+; FirstLine = 267
+; Folding = ----------
 ; EnableXP
 ; DisableDebugger
+; CompileSourceDirectory

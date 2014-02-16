@@ -77,10 +77,10 @@ Procedure Log_File_Write(Filename.s) ; Schreibt das Letzte Element in die Log-Da
   EndIf
 EndProcedure
 
-Procedure Log_Add(Module_.s, Message.s, Type, PB_File.s, PB_Line, PB_Procedure.s) ; Speichert einen Log-Eintrag
+Procedure Log_Add(Module.s, Message.s, Type, PB_File.s, PB_Line, PB_Procedure.s) ; Speichert einen Log-Eintrag
   LastElement(Log_Message())
   If AddElement(Log_Message())
-    Log_Message()\Module = Module_
+    Log_Message()\Module = Module
     Log_Message()\Message = Message
     Log_Message()\PB_File = GetFilePart(PB_File)
     Log_Message()\PB_Line = PB_Line
@@ -97,7 +97,7 @@ Procedure Log_Add(Module_.s, Message.s, Type, PB_File.s, PB_Line, PB_Procedure.s
     Wend
     
     Message = ReplaceString(Message, Chr(7), " ")
-    PrintN(LSet(Str(Type), 2)+"|"+LSet(GetFilePart(PB_File), 15)+"|"+LSet(Str(PB_Line), 4)+"| "+Module_+": "+Trim(Message))
+    PrintN(LSet(Str(Type), 2)+"|"+LSet(GetFilePart(PB_File), 15)+"|"+LSet(Str(PB_Line), 4)+"| "+Module+": "+Trim(Message))
   EndIf
   
 EndProcedure
@@ -105,9 +105,8 @@ EndProcedure
 Procedure Log_Main()
   
 EndProcedure
-; IDE Options = PureBasic 5.21 LTS Beta 1 (Windows - x64)
-; CursorPosition = 13
-; FirstLine = 10
+; IDE Options = PureBasic 4.50 (Windows - x86)
+; CursorPosition = 71
 ; Folding = -
 ; EnableXP
 ; DisableDebugger

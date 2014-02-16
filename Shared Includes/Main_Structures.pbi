@@ -83,6 +83,49 @@ Structure Map_Teleporter_Element
   Dest_Look.f
 EndStructure
 
+Structure CWMap
+    FormatVersion.b
+    MapName.s
+    *UUID
+    Size_X.u
+    Size_Y.u
+    Size_Z.u
+    Creator_Service.s
+    Creator_Username.s
+    Mapgen_Software.s
+    Mapgen_Name.s
+    CreationTime.l
+    AccessTime.l
+    ModifyTime.l
+    Spawn_X.w
+    Spawn_Y.w
+    Spawn_Z.w
+    Spawn_Rot.b
+    Spawn_Look.b
+    *Blocks
+    *OtherMetadata
+    ;CPE Metadata
+    ClickDistanceVersion.l   ; Click-distance
+    Distance.w
+    
+    CustomBlocksVersion.l    ; CustomBlocks
+    CBLevel.w
+    *Fallback
+    
+    EnvColorsVersion.l       ; Enviroment Colors.
+    SkyColor.l
+    CloudColor.l
+    FogColor.l
+    AmbientColor.l
+    SunlightColor.l
+    
+    EnvAppearanceVersion.l   ; Enviroment Appearance
+    TextureURL.s
+    SideBlock.b
+    EdgeBlock.b
+    SideLevel.b
+EndStructure
+
 Structure Map_Data
   ID.l                      ; ID der Karte (Identifikation Intern) (-1 Gibt es nicht)
   Unique_ID.s               ; Einmalige ID der Karte
@@ -114,6 +157,27 @@ Structure Map_Data
   Rank_Join.w               ; Benötigter Rang um Karte zu betreten
   Rank_Show.w               ; Benötigter Rang um die Karte zu sehen (Betreten ist möglich)
   MOTD_Override.s           ; Wenn ungleich "", dann wird beim Betreten der Karte diese MOTD angezeigt
+  
+  SkyColor.l                ; CPE EnvSetColor Parameters.
+  CloudColor.l
+  FogColor.l
+  alight.l
+  dlight.l
+  ColorsSet.b
+  
+  CustomAppearance.b      ; CPE EnvMapAppearance Parameters.
+  CustomURL.s
+  Side_Block.b
+  Edge_Block.b
+  Side_level.w
+  
+  Flying.b               ; CPE Hack Control
+  NoClip.b
+  Speeding.b
+  SpawnControl.b
+  ThirdPerson.b
+  Weather.b
+  JumpHeight.w
 EndStructure
 
 ; ################################################################################################################
@@ -149,6 +213,9 @@ Structure Entity
   Time_Message_Other.l        ; Zeit, ab welcher eine Nachricht ausgegeben wird (Verhindern von Chatspam)
   Last_Private_Message.s      ; Zu wem die letzte private Nachricht gesendet wurde
   ; ---------------------------
+  Held_Block.a                ; ID of held block (As per CPE HeldBlock)
+  Model.s                     ; The current player model.
+  
   Last_Material.a             ; Letzter gebauter Blocktyp
   Build_Material.w            ; Blocktyp, mit welchem gebaut wird. -1 = Normal bauen
   Build_Mode.s                ; Modus, bei dem die Aktion durch Bauen beschrieben wird. (0: Normal >0: Box, Sphere...)
@@ -175,7 +242,7 @@ Structure Player
   
   
   
-  
+  NameID.w                ;Fuckina..
   Last_Private_Message.s  ; Zu wem die letzte private Nachricht geschickt wurde
   Time_Deathmessage.l     ; Wann zuletzt die Todes-Nachricht ausgegeben wurde. (Soll Chatspam verhindern)
   Time_Buildmessage.l     ; Wann zuletzt eine Bau-Nachricht ausgegeben wurde.  (Soll Chatspam verhindern)
@@ -203,6 +270,28 @@ Structure Network_Client
   Ping_Sent_Time.l              ; Zeitpunkt vom letzten Senden
   Ping_Time.l                   ; Zeitpunkt zum nächsten Pingen
   Logged_In.a                   ; Client ist Eingeloggt
+  ;-----------------------
+  CPE.b                       ; If the client supports CPE.
+  CustomExtensions.w          ; How many extensions the client supports
+  CustomBlocks.b              ; If the client supports the CustomBlocks plugin
+  CustomBlocks_Level.b        ; The level of block support the client has.
+  HeldBlock.b                 ; Defines if the client supports CPE HeldBlock
+  EmoteFix.b                  ; Defines if the client supports EmoteFix.
+  ClickDistance.b             ; Defines if the client supports ClickDistance.
+  SelectionCuboid.b           ; Defines if the client supports SelectionCuboid
+  ExtPlayerList.b             ; Defines if the client supports extPlayerList.
+  ChangeModel.b               ; Defines if the client supports ChangeModel.
+  CPEWeather.b                ; Defines if the client support ExtWeatherType.
+  EnvColors.b                 ; Defines if the client supports EnvColors.
+  MessageTypes.b              ; Defines if the client supports MessageTypes.
+  BlockPermissions.b          ; Defines if the client supports BlockPermissions.
+  EnvMapAppearance.b          ; Defines if the client supports EnvMapAppearance.
+  HackControl.b               ; Defines if the client supports HackControl
+  TextHotkey.b                ; Defines if the client supports TextHotkey.
+  
+  List Extensions.s()        ; Holds a list of all supported plugins on the client.
+  List ExtensionVersions.i()  ;Holds a list of the extension versions that work.
+  List Selections.b()        ; Holds a list of all current selections for this player.
 EndStructure
 
 ; #################################################################################################################
@@ -229,6 +318,8 @@ Structure Block
   Killer.a                ; Dieser Block tötet
   Special.a               ; Dieser Block ist besonders (Kann nicht normal gebaut werden, wird mit /materials angezeigt)
   Color_Overview.l        ; Farbe für Übersichtskarte
+  CPE_Level.a             ; What CPE CustomBlock Level this block is a part of
+  CPE_Replace.a           ; What block to replace this with if the Client's Level does not match.
 EndStructure
 
 ; #################################################################################################################
@@ -240,8 +331,9 @@ Structure Rank
   Suffix.s            ; Suffix
   On_Client.b         ; Byte, welches zum Clienten gesendet wird
 EndStructure
-; IDE Options = PureBasic 4.51 (Windows - x86)
-; CursorPosition = 107
-; FirstLine = 66
+; IDE Options = PureBasic 5.00 (Windows - x86)
+; CursorPosition = 179
+; FirstLine = 130
 ; EnableXP
 ; DisableDebugger
+; CompileSourceDirectory

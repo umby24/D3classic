@@ -10,4 +10,4 @@ Supports ALL CPE Extensions.
 
 The server is written in Purebasic.
 
-You can find documentation (http://umby.d3s.co/CCD3/)[Here]
+You can find documentation here http://umby.d3s.co/CCD3/

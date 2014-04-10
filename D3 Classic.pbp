@@ -7,7 +7,7 @@
   <section name="data">
     <explorer view="" pattern="0"/>
     <log show="1"/>
-    <lastopen date="2014-02-16 16:52" user="Tommy" host="UNKNOWN"/>
+    <lastopen date="2014-03-26 21:10" user="Tommy" host="UNKNOWN"/>
   </section>
   <section name="files">
     <file name="Find_Language_Strings.pb">
@@ -27,8 +27,60 @@
       <fingerprint md5="2cbcc92cbbb7401eef11f8df8b55b5c6"/>
     </file>
     <file name="Includes\Build.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="++"/>
       <fingerprint md5="064ae9fab80930a152f9b8bd529c7676"/>
+    </file>
+    <file name="Includes\Protect.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+      <fingerprint md5="f4c6da277ebf6639f309e7900a98f005"/>
+    </file>
+    <file name="Includes\Rank.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+      <fingerprint md5="13be77a8f621794489c8c92c70052f12"/>
+    </file>
+    <file name="Includes\String.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+      <fingerprint md5="0b3bcb78301a7d408051f3b30dc5c3d9"/>
+    </file>
+    <file name="Includes\System.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+      <fingerprint md5="4e452d946edb4d9d9a89add68574334f"/>
+    </file>
+    <file name="Includes\Teleporter.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+      <fingerprint md5="51a0e7bb6cd85a8f66d56ddcdeb11c33"/>
+    </file>
+    <file name="Includes\TMessage.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+      <fingerprint md5="6b93dfcd25c147d23687efbf55fad302"/>
+    </file>
+    <file name="Includes\Trace.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+      <fingerprint md5="65273db1cbb1ba18feda0511d84045dd"/>
+    </file>
+    <file name="Includes\Undo.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="++"/>
+      <fingerprint md5="b55237481b556aac6edcd46da891421e"/>
+    </file>
+    <file name="Includes\View_3D.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+      <fingerprint md5="4695bd09ebfc1782f7034d98673d2b7f"/>
+    </file>
+    <file name="Includes\Watchdog.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="++"/>
+      <fingerprint md5="196aec5b0fd5f67de30aede559bebac5"/>
+    </file>
+    <file name="Shared Includes\Main_Structures.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+-"/>
+      <fingerprint md5="5d94df7f2c6c248a7b49e7d239d93e17"/>
+    </file>
+    <file name="Shared Includes\Plugin_Functions.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+-"/>
+      <fingerprint md5="f30e2e6d16c72961d9b91538b809a05d"/>
+    </file>
+    <file name="Includes\Hotkey.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+      <fingerprint md5="b3ced6403c6dd9aa11761df6d3837e01"/>
     </file>
     <file name="Includes\Build_Mode.pbi">
       <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="++"/>
@@ -137,58 +189,6 @@
     <file name="Includes\Plugin.pbi">
       <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="++"/>
       <fingerprint md5="aa8fa66787343cdb2f383a77b14e259c"/>
-    </file>
-    <file name="Includes\Protect.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
-      <fingerprint md5="f4c6da277ebf6639f309e7900a98f005"/>
-    </file>
-    <file name="Includes\Rank.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
-      <fingerprint md5="13be77a8f621794489c8c92c70052f12"/>
-    </file>
-    <file name="Includes\String.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
-      <fingerprint md5="0b3bcb78301a7d408051f3b30dc5c3d9"/>
-    </file>
-    <file name="Includes\System.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
-      <fingerprint md5="4e452d946edb4d9d9a89add68574334f"/>
-    </file>
-    <file name="Includes\Teleporter.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
-      <fingerprint md5="51a0e7bb6cd85a8f66d56ddcdeb11c33"/>
-    </file>
-    <file name="Includes\TMessage.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
-      <fingerprint md5="6b93dfcd25c147d23687efbf55fad302"/>
-    </file>
-    <file name="Includes\Trace.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
-      <fingerprint md5="65273db1cbb1ba18feda0511d84045dd"/>
-    </file>
-    <file name="Includes\Undo.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
-      <fingerprint md5="b55237481b556aac6edcd46da891421e"/>
-    </file>
-    <file name="Includes\View_3D.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
-      <fingerprint md5="4695bd09ebfc1782f7034d98673d2b7f"/>
-    </file>
-    <file name="Includes\Watchdog.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="++"/>
-      <fingerprint md5="196aec5b0fd5f67de30aede559bebac5"/>
-    </file>
-    <file name="Shared Includes\Main_Structures.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="+-"/>
-      <fingerprint md5="5d94df7f2c6c248a7b49e7d239d93e17"/>
-    </file>
-    <file name="Shared Includes\Plugin_Functions.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+-"/>
-      <fingerprint md5="f30e2e6d16c72961d9b91538b809a05d"/>
-    </file>
-    <file name="Includes\Hotkey.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
-      <fingerprint md5="b3ced6403c6dd9aa11761df6d3837e01"/>
     </file>
   </section>
   <section name="targets">

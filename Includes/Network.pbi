@@ -799,7 +799,7 @@ Procedure Network_Input_Do()  ; Wertet die empfangenen Daten aus. / Evaluates re
                     Network_Client()\ClickDistance = #True
                 Case "SelectionCuboid"
                     Network_Client()\SelectionCuboid = #True
-                Case "ExtPLayerList"
+                Case "ExtPlayerList"
                     Network_Client()\ExtPlayerList = #True
                 Case "ChangeModel"
                     Network_Client()\ChangeModel = #True

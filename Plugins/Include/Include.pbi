@@ -23,7 +23,7 @@
 
 ; ################################################### Konstants #############################################
 
-#Plugin_Version = 508
+#Plugin_Version = 509
 
 ; ################################################### Variables/Structures ##################################
 
@@ -146,8 +146,8 @@ Prototype   Teleporter_Get_Pointer(*Map_Data.Map_Data, ID.s)
 Prototype   Teleporter_Add(*Map_Data.Map_Data, ID.s, X_0, Y_0, Z_0, X_1, Y_1, Z_1, Dest_Map_Unique_ID.s, Dest_Map_ID, X.f, Y.f, Z.f, Rot.f, Look.f)
 Prototype   Teleporter_Delete(*Map_Data.Map_Data, ID.s)
 
-Prototype   System_Message_Network_Send_2_All(Map_ID, Message.s)
-Prototype   System_Message_Network_Send(Client_ID, Message.s)
+Prototype   System_Message_Network_Send_2_All(Map_ID, Message.s, Type=0)
+Prototype   System_Message_Network_Send(Client_ID, Message.s, Type=0)
 Prototype.i System_Get_Server_Name()
 
 Prototype   Network_Out_Block_Set(Client_ID, X, Y, Z, Type.a)
@@ -174,24 +174,6 @@ Prototype CPE_Model_Change(Client_ID, Model.s)
 Prototype CPE_Set_Weather(Client_ID, Weather.b)
 
 Prototype Map_Env_Colors_Change(*Map_Data.Map_Data, Red, Green, Blue, Type)
-
-Prototype System_Message_Status1_Send(Client_ID, Message.s)
-Prototype System_Message_Status2_Send(Client_ID, Message.s)
-Prototype System_Message_Status3_Send(Client_ID, Message.s)
-Prototype System_Message_BR1_Send(Client_ID, Message.s)
-Prototype System_Message_BR2_Send(Client_ID, Message.s)
-Prototype System_Message_BR3_Send(Client_ID, Message.s)
-Prototype System_Message_TopLeft_Send(Client_ID, Message.s)
-Prototype System_Message_Announcement_Send(Client_ID, Message.s)
-
-Prototype System_Message_Status1_Send_2_All(Map_ID, Message.s)
-Prototype System_Message_Status2_Send_2_All(Map_ID, Message.s)
-Prototype System_Message_Status3_Send_2_All(Map_ID, Message.s)
-Prototype System_Message_BR1_Send_2_All(Map_ID, Message.s)
-Prototype System_Message_BR2_Send_2_All(Map_ID, Message.s)
-Prototype System_Message_BR3_Send_2_All(Map_ID, Message.s)
-Prototype System_Message_TopLeft_Send_2_All(Map_ID, Message.s)
-Prototype System_Message_Announcement_Send_2_All(Map_ID, Message.s)
 
 Prototype CPE_Client_Set_Block_Permissions(Client_ID, Block_ID, CanPlace, CanDelete)
 Prototype Map_Env_Appearance_Set(*Map_Data.Map_Data, Texture.s, Side_Block, Edge_Block, Side_Level.w)
@@ -337,23 +319,6 @@ Procedure Define_Prototypes(*Pointer.Plugin_Function)
   Global CPE_Set_Weather.CPE_Set_Weather = *Pointer\CPE_Set_Weather
   Global Map_Env_Colors_Change.Map_Env_Colors_Change = *Pointer\Map_Env_Colors_Change
   
-  Global System_Message_Status1_Send.System_Message_Status1_Send = *Pointer\System_Message_Status1_Send
-  Global System_Message_Status2_Send.System_Message_Status2_Send = *Pointer\System_Message_Status2_Send
-  Global System_Message_Status3_Send.System_Message_Status3_Send = *Pointer\System_Message_Status3_Send
-  Global System_Message_BR1_Send.System_Message_BR1_Send = *Pointer\System_Message_BR1_Send
-  Global System_Message_BR2_Send.System_Message_BR2_Send = *Pointer\System_Message_BR2_Send
-  Global System_Message_BR3_Send.System_Message_BR3_Send = *Pointer\System_Message_BR3_Send
-  Global System_Message_TopLeft_Send.System_Message_TopLeft_Send = *Pointer\System_Message_TopLeft_Send
-  Global System_Message_Announcement_Send.System_Message_Announcement_Send = *Pointer\System_Message_Announcement_Send 
-
-  Global System_Message_Status1_Send_2_All.System_Message_Status1_Send_2_All = *Pointer\System_Message_Status1_Send_2_All 
-  Global System_Message_Status2_Send_2_All.System_Message_Status2_Send_2_All = *Pointer\System_Message_Status2_Send_2_All 
-  Global System_Message_Status3_Send_2_All.System_Message_Status3_Send_2_All = *Pointer\System_Message_Status3_Send_2_All 
-  Global System_Message_BR1_Send_2_All.System_Message_BR1_Send_2_All = *Pointer\System_Message_BR1_Send_2_All
-  Global System_Message_BR2_Send_2_All.System_Message_BR2_Send_2_All = *Pointer\System_Message_BR2_Send_2_All
-  Global System_Message_BR3_Send_2_All.System_Message_BR3_Send_2_All = *Pointer\System_Message_BR3_Send_2_All
-  Global System_Message_TopLeft_Send_2_All.System_Message_TopLeft_Send_2_All = *Pointer\System_Message_TopLeft_Send_2_All
-  Global System_Message_Announcement_Send_2_All.System_Message_Announcement_Send_2_All = *Pointer\System_Message_Announcement_Send_2_All 
   Global CPE_Client_Set_Block_Permissions.CPE_Client_Set_Block_Permissions = *Pointer\CPE_Client_Set_Block_Permissions
   Global Map_Env_Appearance_Set.Map_Env_Appearance_Set = *Pointer\Map_Env_Appearance_Set
   Global CPE_Client_Send_Map_Appearence.CPE_Client_Send_Map_Appearence = *Pointer\CPE_Client_Send_Map_Appearence
@@ -364,9 +329,9 @@ Procedure Define_Prototypes(*Pointer.Plugin_Function)
   Global Hotkey_Remove.Hotkey_Remove = *Pointer\Hotkey_Remove
   Global Map_HackControl_Set.Map_HackControl_Set = *Pointer\Map_HackControl_Set
 EndProcedure
-; IDE Options = PureBasic 5.00 (Windows - x86)
-; CursorPosition = 364
-; FirstLine = 309
+; IDE Options = PureBasic 5.00 (Windows - x64)
+; CursorPosition = 149
+; FirstLine = 108
 ; Folding = -
 ; EnableXP
 ; DisableDebugger

@@ -115,21 +115,21 @@ Procedure Undo_Main()
     Undo_Main\Save_File = 0
     Undo_Save(Files_File_Get("Undo"))
   EndIf
+
+  File_Date = GetFileDate(Files_File_Get("Undo"), #PB_Date_Modified)
   
-  If Undo_Main\Timer_File_Check < Milliseconds()
-    Undo_Main\Timer_File_Check = Milliseconds() + 1000
-    File_Date = GetFileDate(Files_File_Get("Undo"), #PB_Date_Modified)
-    If Undo_Main\File_Date_Last <> File_Date
-      Undo_Load(Files_File_Get("Undo"))
-    EndIf
+  If Undo_Main\File_Date_Last <> File_Date
+    Undo_Load(Files_File_Get("Undo"))
   EndIf
   
   Undo_Clear()
   
 EndProcedure
-; IDE Options = PureBasic 4.51 (Windows - x86)
-; CursorPosition = 119
-; FirstLine = 81
+
+RegisterCore("Undo", 1000, #Null, #Null, @Undo_Main())
+; IDE Options = PureBasic 5.00 (Windows - x64)
+; CursorPosition = 125
+; FirstLine = 68
 ; Folding = --
 ; EnableXP
 ; DisableDebugger

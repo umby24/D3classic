@@ -278,12 +278,13 @@ ProcedureCDLL Event_Command(Argument.s, *Client.Network_Client, Command.s, Text_
 EndProcedure
 
 
-; IDE Options = PureBasic 5.00 (Windows - x86)
+; IDE Options = PureBasic 5.00 (Windows - x64)
 ; ExecutableFormat = Shared Dll
 ; CursorPosition = 264
+; FirstLine = 205
 ; Folding = --
 ; EnableThread
 ; EnableXP
 ; EnableOnError
 ; Executable = irc.x86.dll
-; Compiler = PureBasic 5.00 (Windows - x86)
+; Compiler = PureBasic 5.00 (Windows - x64)

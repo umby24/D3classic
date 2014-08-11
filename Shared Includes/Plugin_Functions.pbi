@@ -129,24 +129,6 @@ Structure Plugin_Function     ; Aufrufbare Serverfunktionen / Callable server-fu
   
   *Map_Env_Colors_Change
   
-  *System_Message_Status1_Send
-  *System_Message_Status2_Send
-  *System_Message_Status3_Send
-  *System_Message_BR1_Send
-  *System_Message_BR2_Send
-  *System_Message_BR3_Send
-  *System_Message_TopLeft_Send
-  *System_Message_Announcement_Send
-  
-  *System_Message_Status1_Send_2_All
-  *System_Message_Status2_Send_2_All
-  *System_Message_Status3_Send_2_All
-  *System_Message_BR1_Send_2_All
-  *System_Message_BR2_Send_2_All
-  *System_Message_BR3_Send_2_All
-  *System_Message_TopLeft_Send_2_All
-  *System_Message_Announcement_Send_2_All 
-  
   *CPE_Client_Set_Block_Permissions
   *Map_Env_Appearance_Set
   *CPE_Client_Send_Map_Appearence
@@ -157,9 +139,9 @@ Structure Plugin_Function     ; Aufrufbare Serverfunktionen / Callable server-fu
   *Map_HackControl_Set
   
 EndStructure
-; IDE Options = PureBasic 5.00 (Windows - x86)
-; CursorPosition = 157
-; FirstLine = 103
+; IDE Options = PureBasic 5.00 (Windows - x64)
+; CursorPosition = 129
+; FirstLine = 84
 ; EnableXP
 ; DisableDebugger
 ; CompileSourceDirectory

@@ -21,7 +21,7 @@ Global Block_Main.Block_Main
 ; #################################################################
 Global Dim Block.Block(255)
 
-; ########################################## Ladekram ############################################
+; ########################################## Constants ############################################
 
 ; ########################################## Declares ############################################
 
@@ -63,7 +63,7 @@ Procedure Block_Load(Filename.s)
 EndProcedure
 
 Procedure Block_Save(Filename.s)
-    File_ID = CreateFile(#PB_Any, Filename)
+  File_ID = CreateFile(#PB_Any, Filename)
     
   If IsFile(File_ID)
     
@@ -97,9 +97,11 @@ Procedure Block_Save(Filename.s)
         WriteStringN(File_ID, "CPE_Level = " + Str(Block(i)\CPE_Level))
         WriteStringN(File_ID, "CPE_Replace = " + Str(Block(i)\CPE_Replace))
       EndIf
+      
       If Block(i)\Replace_By_Load <> -1
         WriteStringN(File_ID, "Replace_By_Load = "+Str(Block(i)\Replace_By_Load))
       EndIf
+      
       WriteStringN(File_ID, "")
     Next
     
@@ -127,19 +129,18 @@ Procedure Block_Main()
     Block_Main\Save_File = 0
     Block_Save(Files_File_Get("Block"))
   EndIf
+
+  File_Date = GetFileDate(Files_File_Get("Block"), #PB_Date_Modified)
   
-  If Block_Main\Timer_File_Check < Milliseconds()
-    Block_Main\Timer_File_Check = Milliseconds() + 1000
-    File_Date = GetFileDate(Files_File_Get("Block"), #PB_Date_Modified)
-    
-    If Block_Main\File_Date_Last <> File_Date
-      Block_Load(Files_File_Get("Block"))
-    EndIf
+  If Block_Main\File_Date_Last <> File_Date
+    Block_Load(Files_File_Get("Block"))
   EndIf
 EndProcedure
+
+RegisterCore("Block", 1000, #Null, #Null, @Block_Main())
 ; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 133
-; FirstLine = 95
+; CursorPosition = 139
+; FirstLine = 80
 ; Folding = -
 ; EnableXP
 ; DisableDebugger

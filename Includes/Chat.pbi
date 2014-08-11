@@ -1,9 +1,5 @@
+;Done
 ; ########################################## Variablen ##########################################
-
-Structure Chat_Main
-  
-EndStructure
-Global Chat_Main.Chat_Main
 
 ; ########################################## Ladekram ############################################
 
@@ -23,26 +19,25 @@ Procedure Chat_Message_Network_Send_2_Map(Entity_ID, Message.s) ; Sends a messag
         Text.s = Message
         
         Text = ReplaceString(Text, "%%", "§")
+        
         For i = 0 To 9
           Text.s = ReplaceString(Text, "%"+Str(i), "&"+Str(i))
         Next
+        
         For i = 97 To 102
           Text.s = ReplaceString(Text, "%"+Chr(i), "&"+Chr(i))
         Next
         
         Text = ReplaceString(Text, "§", "%")
         
-        
         Text = ReplaceString(Text, "<br>", Chr(10))
         Text = ReplaceString(Text, Chr(10), Chr(10)+Entity_Displayname_Get(Entity_ID)+"&f: ")
         
         If Plugin_Event_Chat_Map(Entity(), Message.s)
-          
           Log_Add("Chat", Entity()\Name+": "+Message, 1, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
           
           Text.s = Entity_Displayname_Get(Entity_ID)+"&f: "+Text
           System_Message_Network_Send_2_All(Map_ID, Text)
-          
         EndIf
         
       Else
@@ -71,6 +66,7 @@ Procedure Chat_Message_Network_Send_2_All(Entity_ID, Message.s) ; Sends a messag
         For i = 0 To 9
           Text.s = ReplaceString(Text, "%"+Str(i), "&"+Str(i))
         Next
+        
         For i = 97 To 102
           Text.s = ReplaceString(Text, "%"+Chr(i), "&"+Chr(i))
         Next
@@ -120,12 +116,12 @@ Procedure Chat_Message_Network_Send(Entity_ID, Player_Name.s, Message.s) ; Sends
         For i = 0 To 9
           Text.s = ReplaceString(Text, "%"+Str(i), "&"+Str(i))
         Next
+        
         For i = 97 To 102
           Text.s = ReplaceString(Text, "%"+Chr(i), "&"+Chr(i))
         Next
         
         Text = ReplaceString(Text, "§", "%")
-        
         
         Text.s = ReplaceString(Text, "<br>", Chr(10))
         Text.s = Text
@@ -133,6 +129,7 @@ Procedure Chat_Message_Network_Send(Entity_ID, Player_Name.s, Message.s) ; Sends
         Text_1.s = ReplaceString(Text_1, Chr(10), Chr(10)+Lang_Get("", "Private_Message: From")+" "+Entity_Displayname_Get(Entity_ID)+"&f: "+Text_1)
         
         Found = 0
+        
         ForEach Network_Client()
           If Network_Client()\Player\Entity
             If LCase(Network_Client()\Player\Entity\Name) = LCase(Player_Name)
@@ -168,8 +165,6 @@ Procedure Chat_Message_Network_Send(Entity_ID, Player_Name.s, Message.s) ; Sends
   List_Restore(*Pointer_2, Network_Client())
 EndProcedure
 ; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 102
-; FirstLine = 78
 ; Folding = -
 ; EnableXP
 ; DisableDebugger

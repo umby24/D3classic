@@ -1,10 +1,10 @@
 ; ########################################## Dokumentation ##########################################
 ; 
-; Test für das Darstellen der Karten.
+; Test for presenting the map
 ; 
-; Probleme !!!!!!
-;  - Startdrawing auch in Map_Preview
-;  - Windowmanagement Fehlt
+; Problem !!!!!!
+;  - Start drawing in Map_Preview
+;  - Window management is missing
 ; 
 ; ########################################## Variablen ##########################################
 
@@ -164,9 +164,8 @@ Procedure View_3D_Main()
     EndIf
   EndIf
 EndProcedure
-; IDE Options = PureBasic 4.51 (Windows - x86)
+; IDE Options = PureBasic 5.00 (Windows - x64)
 ; CursorPosition = 43
-; FirstLine = 28
 ; Folding = -
 ; EnableXP
 ; DisableDebugger

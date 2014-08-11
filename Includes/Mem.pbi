@@ -258,31 +258,31 @@ Procedure Mem_Get_PagefileUsage()
 EndProcedure
 
 Procedure Mem_Main()
+  ;Watchdog_Watch("Main", "Before: Mem_Main()", 1)
   
-  If Mem_Main\Timer_Stats < Milliseconds()
-    Mem_Main\Timer_Stats = Milliseconds() + 10000
-    
-    ; ####### Chronik aktualisieren
-    FirstElement(Mem_Usage_Chronic())
-    If InsertElement(Mem_Usage_Chronic())
-      Mem_Usage_Chronic()\Mem = Mem_Main\Memory_Usage
-      Mem_Usage_Chronic()\Ram = Mem_Get_WorkingSetSize()
-      Mem_Usage_Chronic()\Page = Mem_Get_PagefileUsage()
-    EndIf
-    While ListSize(Mem_Usage_Chronic()) > 100
-      If LastElement(Mem_Usage_Chronic())
-        DeleteElement(Mem_Usage_Chronic())
-      EndIf
-    Wend
-    
-    
-    Mem_HTML_Stats()
-    
+  ; ####### Chronik aktualisieren
+  FirstElement(Mem_Usage_Chronic())
+  
+  If InsertElement(Mem_Usage_Chronic())
+    Mem_Usage_Chronic()\Mem = Mem_Main\Memory_Usage
+    Mem_Usage_Chronic()\Ram = Mem_Get_WorkingSetSize()
+    Mem_Usage_Chronic()\Page = Mem_Get_PagefileUsage()
   EndIf
+  
+  While ListSize(Mem_Usage_Chronic()) > 100
+    If LastElement(Mem_Usage_Chronic())
+      DeleteElement(Mem_Usage_Chronic())
+    EndIf
+  Wend
+  
+  
+  Mem_HTML_Stats()
 EndProcedure
-; IDE Options = PureBasic 4.51 (Windows - x86)
-; CursorPosition = 260
-; FirstLine = 233
+
+RegisterCore("Mem", 10000, #Null, #Null, @Mem_Main())
+; IDE Options = PureBasic 5.00 (Windows - x64)
+; CursorPosition = 258
+; FirstLine = 222
 ; Folding = --
 ; EnableXP
 ; DisableDebugger

@@ -1,8 +1,10 @@
+;Done
 ; ########################################## Variablen ##########################################
 
 Structure Client_Main
   Login_Thread_ID.i               ; ID of the login thread.
 EndStructure
+
 Global Client_Main.Client_Main
 
 ; ########################################## Ladekram ############################################
@@ -50,7 +52,7 @@ Procedure Client_Login(Client_ID, Name.s, MPPass.s, Version) ; A new player has 
     
     If Pre_Login_Correct = 1
       
-      ; ###### If not present in the list of players, add.
+      ; ###### If not present in the playerDB, add.
       If Player_List_Select(Network_Client()\Player\Login_Name, 0) = #False
         Player_List_Add(Network_Client()\Player\Login_Name)
       EndIf
@@ -68,6 +70,7 @@ Procedure Client_Login(Client_ID, Name.s, MPPass.s, Version) ; A new player has 
           Player_List()\Online = 1
           Player_List()\Counter_Login + 1
           Player_List()\IP = Network_Client()\IP
+          Network_Client()\GlobalChat = Player_List()\GlobalChat
           
           If Map_Select_ID(Player_Main\Spawn_Map_ID) = #True
             
@@ -89,6 +92,7 @@ Procedure Client_Login(Client_ID, Name.s, MPPass.s, Version) ; A new player has 
               System_Message_Network_Send(Client_ID, Player_Main\Message_Welcome)
               
               Entity()\Model = "default"
+              Map_Data()\Clients + 1
               
               Plugin_Event_Client_Login(Network_Client())
               
@@ -147,7 +151,6 @@ Procedure Client_Login(Client_ID, Name.s, MPPass.s, Version) ; A new player has 
               Player_List()\Save = 1
               Player_List_Main\Save_File = 1
               
-              
             Else
               Log_Add("Client", Lang_Get("", "Login failed: Spawnmap is full (IP=[Field_0], Name='[Field_1]')", Network_Client()\IP, Name), 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
               Network_Client_Kick(Client_ID, Lang_Get("", "Redscreen: Spawnmap is full"), 1)
@@ -173,11 +176,13 @@ Procedure Client_Logout(Client_ID, Message.s, Show_2_All) ; Player has logged ou
         Plugin_Event_Client_Logout(Network_Client())
         
         Log_Add("Client", Lang_Get("", "Player logged out (IP=[Field_0], Name='[Field_1]', Message='[Field_2]')", Network_Client()\IP, Network_Client()\Player\Login_Name, Message), 0, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
-        PushListPosition(Network_Client())
+        
+        
         If Network_Client()\Player\Entity
          loginName = Network_Client()\Player\NameID
          FreeID = loginName
          
+         PushListPosition(Network_Client())
          ForEach Network_Client()
            If Network_Client()\ExtPlayerList = #True
              Network_Client_Output_Write_Byte(Network_Client()\ID, 24)
@@ -185,6 +190,11 @@ Procedure Client_Logout(Client_ID, Message.s, Show_2_All) ; Player has logged ou
            EndIf
          Next
          PopListPosition(Network_Client())
+         
+         If Map_Select_ID(Network_Client()\Player\Map_ID)
+           Map_Data()\Clients - 1
+         EndIf
+         
           If Show_2_All And Network_Client()\Player\Logout_Hide = 0
             System_Message_Network_Send_2_All(-1, Lang_Get("", "Ingame: Player '[Field_0]<c>' logged out ([Field_1])", Entity_Displayname_Get(Network_Client()\Player\Entity\ID), Message))
           EndIf
@@ -218,6 +228,7 @@ Procedure Client_Login_Thread(*Dummy) ; In this thread, all logins are processed
           Else
             Rank = 0
           EndIf
+          
           If Map_Get_MOTD_Override(Network_Client()\Player\Entity\Map_ID)
             MOTD.s = Map_Get_MOTD_Override(Network_Client()\Player\Entity\Map_ID)
           Else
@@ -263,13 +274,7 @@ Procedure Client_Login_Thread(*Dummy) ; In this thread, all logins are processed
     
   ForEver
 EndProcedure
-
-Procedure Client_Main()
-  
-EndProcedure
 ; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 250
-; FirstLine = 216
 ; Folding = -
 ; EnableXP
 ; DisableDebugger

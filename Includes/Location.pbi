@@ -123,16 +123,17 @@ Procedure Location_Main()
     Location_Save(Files_File_Get("Location"))
   EndIf
   
-  If Location_Main\Timer_File_Check < Milliseconds()
-    Location_Main\Timer_File_Check = Milliseconds() + 1000
-    File_Date = GetFileDate(Files_File_Get("Location"), #PB_Date_Modified)
-    If Location_Main\File_Date_Last <> File_Date
-      Location_Load(Files_File_Get("Location"))
-    EndIf
+  File_Date = GetFileDate(Files_File_Get("Location"), #PB_Date_Modified)
+  
+  If Location_Main\File_Date_Last <> File_Date
+    Location_Load(Files_File_Get("Location"))
   EndIf
 EndProcedure
+
+RegisterCore("Location", 1000, #Null, #Null, @Location_Main())
 ; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 10
+; CursorPosition = 132
+; FirstLine = 73
 ; Folding = --
 ; EnableXP
 ; DisableDebugger

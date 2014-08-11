@@ -3,6 +3,7 @@
 Structure String_Main
   Regex_ID.i
 EndStructure
+
 Global String_Main.String_Main
 
 ; ########################################## Ladekram ############################################
@@ -28,6 +29,7 @@ EndProcedure
 Procedure.s String_Multiline(Input.s) ; Teilt einen String in mehrere Zeilen auf / Split a string into multiple lines
   Output_Message.s = ""
   Max_Length = 65
+  
   While Len(Input) > 0
     For i = 1 To Max_Length
       If Mid(Input, i, 1) = Chr(10)
@@ -68,14 +70,16 @@ Procedure.s String_Multiline(Input.s) ; Teilt einen String in mehrere Zeilen auf
       EndIf
     Next
   Wend
+  
   ProcedureReturn Output_Message
 EndProcedure
 
 Procedure String_Main()
   
 EndProcedure
-; IDE Options = PureBasic 5.00 (Windows - x86)
-; CursorPosition = 9
+; IDE Options = PureBasic 5.00 (Windows - x64)
+; CursorPosition = 72
+; FirstLine = 18
 ; Folding = -
 ; EnableXP
 ; DisableDebugger

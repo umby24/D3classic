@@ -1,25 +1,17 @@
+;Complete!
 ; ########################################## Variablen ##########################################
 
 Structure Files_Main
-  Save_File.b                     ; Pfad-Datei soll gespeichert werden
   Mutex_ID.i                      ; Mutex, um doppelte Zugriffe zu verhindern.
 EndStructure
 
 Global Files_Main.Files_Main
 
-Structure Files_File
-  Name.s
-  File.s
-EndStructure
+Global NewMap Files_File.s()
+;Global NewList Files_File.Files_File()
 
-Global NewList Files_File.Files_File()
-
-Structure Files_Folder
-  Name.s
-  Folder.s
-EndStructure
-
-Global NewList Files_Folder.Files_Folder()
+Global NewMap Files_Folder.s()
+;Global NewList Files_Folder.Files_Folder()
 
 ; ########################################## Declares ############################################
 
@@ -29,13 +21,12 @@ Declare Files_Save(Filename.s)
 Declare.s Files_File_Get(File.s)
 Declare.s Files_Folder_Get(Name.s)
 
-; ########################################## Ladekram ############################################
+; ########################################## Loading ############################################
 
 Files_Main\Mutex_ID = CreateMutex()
 
-AddElement(Files_File())
-Files_File()\Name = "Files"
-Files_File()\File = "Files.txt"
+AddMapElement(Files_File(), "Files")
+Files_File() = "Files.txt"
 
 Files_Load(Files_File_Get("Files"))
 
@@ -46,7 +37,7 @@ Procedure Files_Save(Filename.s)
   
   If IsFile(File_ID)
     
-    WriteStringN(File_ID, "; You have to restart if you change the file.")
+    WriteStringN(File_ID, "; You have to restart if you change this file.")
     WriteStringN(File_ID, "; ")
     WriteStringN(File_ID, "; How it works:")
     WriteStringN(File_ID, ";   [Folder]")
@@ -71,7 +62,7 @@ Procedure Files_Save(Filename.s)
     WriteStringN(File_ID, "[Folder]")
     
     ForEach Files_Folder()
-      WriteStringN(File_ID, Files_Folder()\Name+" = "+Files_Folder()\Folder)
+      WriteStringN(File_ID, MapKey(Files_Folder()) + " = " + Files_Folder())
     Next
     
     WriteStringN(File_ID, "")
@@ -79,8 +70,8 @@ Procedure Files_Save(Filename.s)
     WriteStringN(File_ID, "[Files]")
     
     ForEach Files_Folder()
-      If Files_File()\Name <> "Files"
-        WriteStringN(File_ID, Files_File()\Name+" = "+Files_File()\File)
+      If MapKey(Files_File()) <> "Files"
+        WriteStringN(File_ID, MapKey(Files_File()) + " = " + Files_File())
       EndIf
     Next
     
@@ -93,36 +84,65 @@ EndProcedure
 Procedure Files_Load(Filename.s)
   Opened = OpenPreferences(Filename.s)
   
-  ClearList(Files_Folder())
+  ClearMap(Files_Folder())
   
   PreferenceGroup("Folder")
   
+  ; Load folders
   If ExaminePreferenceKeys()
     While NextPreferenceKey()
-      AddElement(Files_Folder())
-      Files_Folder()\Name = PreferenceKeyName()
-      Files_Folder()\Folder = PreferenceKeyValue()
-      ;CreateDirectory(Files_Folder()\Folder) Ist nicht ganz korrekt, es muss unterordner beachten ([Main][Test1][Test2])
+      AddMapElement(Files_Folder(), PreferenceKeyName())
+      Files_Folder() = PreferenceKeyValue()
     Wend
   EndIf
   
-  ClearList(Files_File())
+  ClearMap(Files_File())
   
   PreferenceGroup("Files")
   
+  ; Load files (which will include folder mashups..
   If ExaminePreferenceKeys()
     While NextPreferenceKey()
-      AddElement(Files_File())
-      Files_File()\Name = PreferenceKeyName()
-      Files_File()\File = PreferenceKeyValue()
+      AddMapElement(Files_File(), PreferenceKeyName())
+      Files_File() = PreferenceKeyValue()
     Wend
   EndIf
-  
-  ;Files_Main\Save_File = 1
   
   If Opened
     ClosePreferences()
   EndIf
+  
+  ; Create Directories
+  Working.s = GetCurrentDirectory()
+  
+  ForEach Files_File()
+    Temp.s = Files_File()
+    Temp = ReplaceString(Temp, "[i]", "")
+    Temp = ReplaceString(Temp, "[date]", "")
+    Prepend.s = ""
+    
+    While Temp <> ""
+      First = FindString(Temp, "[")
+      Second = FindString(Temp, "]")
+      
+      If First And Second
+        Directory.s = Mid(Temp, First + 1, (Second - (First + 1)))
+        Realdir.s = Files_Folder_Get(Directory)
+        Realdir = ReplaceString(Realdir, "/", "\")
+        
+        If FileSize(Working + Prepend + Realdir) = -1
+          CreateDirectory(Working + Prepend + Realdir)
+        EndIf
+        
+        Prepend + Realdir
+        Temp = Mid(Temp, Second + 1, Len(Temp) - Second)
+      Else
+        Temp = ""
+      EndIf
+    Wend
+  Next
+  
+  ;Directories created :)
 EndProcedure
 
 Threaded Files_File_Get_Return_String.s = ""
@@ -131,21 +151,14 @@ Procedure.s Files_File_Get(Name.s)
   LockMutex(Files_Main\Mutex_ID)
   
   Files_File_Get_Return_String.s = ""
-  Found = 0
   
-  ForEach Files_File()
-    If Files_File()\Name = Name
-      Files_File_Get_Return_String.s = Files_File()\File
-      Found = 1
-      Break
-    EndIf
-  Next
-  
-  If Found = 0
+  If FindMapElement(Files_File(), Name) = 0
     Log_Add("Files", Lang_Get("", "Path to file not defined", Name), 10, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
   Else
+    Files_File_Get_Return_String = Files_File(Name)
+    
     ForEach Files_Folder()
-      Files_File_Get_Return_String = ReplaceString(Files_File_Get_Return_String, "["+Files_Folder()\Name+"]", Files_Folder()\Folder)
+      Files_File_Get_Return_String = ReplaceString(Files_File_Get_Return_String, "["+MapKey(Files_Folder())+"]", Files_Folder())
     Next
   EndIf
   
@@ -160,35 +173,19 @@ Procedure.s Files_Folder_Get(Name.s)
   LockMutex(Files_Main\Mutex_ID)
   
   Files_Folder_Get_Return_String = ""
-  Found = 0
-  
-  ForEach Files_Folder()
-    If Files_Folder()\Name = Name
-      Found = 1
-      Files_Folder_Get_Return_String = Files_Folder()\Folder
-      Break
-    EndIf
-  Next
-  
-  If Found = 0
+
+  If FindMapElement(Files_Folder(), Name) = 0
     Log_Add("Files", Lang_Get("", "Path to folder not defined", Name), 10, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
+  Else
+    Files_Folder_Get_Return_String = Files_Folder(Name)
   EndIf
   
   UnlockMutex(Files_Main\Mutex_ID)
   
   ProcedureReturn Files_Folder_Get_Return_String
 EndProcedure
-
-Procedure Files_Main()
-  If Files_Main\Save_File
-    Files_Main\Save_File = 0
-    Files_Save(Files_File_Get("Files"))
-  EndIf
-EndProcedure
 ; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 158
-; FirstLine = 144
-; Folding = --
+; Folding = w
 ; EnableXP
 ; Executable = ..\Minecraft-Server.x86.exe
 ; DisableDebugger

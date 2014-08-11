@@ -1,7 +1,7 @@
 
 ; ########################################## Konstanten ########################################
 
-#Plugin_Version = 508
+#Plugin_Version = 509
 
 ; ######################################### Prototypes ##########################################
 
@@ -191,7 +191,6 @@ Procedure Block_Count_Elements()
 EndProcedure
 
 Procedure Block_Get_Array(*Memory)
-  ;Size = 256 * SizeOf(Block)
   For i = 0 To 255
     *Pointer.Plugin_Result_Element = *Memory + i*SizeOf(Plugin_Result_Element)
     *Pointer\Pointer = @Block(i)
@@ -215,7 +214,7 @@ EndProcedure
 
 Procedure Teleporter_Count_Elements(*Map_Data.Map_Data)
   If *Map_Data
-    ProcedureReturn ListSize(*Map_Data\Teleporter())
+    ProcedureReturn MapSize(*Map_Data\Teleporter())
   EndIf
   
   ProcedureReturn -1
@@ -377,23 +376,6 @@ Plugin_Function\CPE_Set_Weather = @CPE_Set_Weather()
 
 Plugin_Function\Map_Env_Colors_Change = @Map_Env_Colors_Change()
 
-Plugin_Function\System_Message_Status1_Send = @System_Message_Status1_Send()
-Plugin_Function\System_Message_Status2_Send = @System_Message_Status2_Send()
-Plugin_Function\System_Message_Status3_Send = @System_Message_Status3_Send()
-Plugin_Function\System_Message_BR1_Send = @System_Message_BR1_Send()
-Plugin_Function\System_Message_BR2_Send = @System_Message_BR2_Send()
-Plugin_Function\System_Message_BR3_Send = @System_Message_BR3_Send()
-Plugin_Function\System_Message_TopLeft_Send = @System_Message_TopLeft_Send()
-Plugin_Function\System_Message_Announcement_Send = @System_Message_Announcement_Send()
-
-Plugin_Function\System_Message_Status1_Send_2_All = @System_Message_Status1_Send_2_All()
-Plugin_Function\System_Message_Status2_Send_2_All = @System_Message_Status2_Send_2_All()
-Plugin_Function\System_Message_Status3_Send_2_All = @System_Message_Status3_Send_2_All()
-Plugin_Function\System_Message_BR1_Send_2_All = @System_Message_BR1_Send_2_All()
-Plugin_Function\System_Message_BR2_Send_2_All = @System_Message_BR2_Send_2_All()
-Plugin_Function\System_Message_BR3_Send_2_All = @System_Message_BR3_Send_2_All()
-Plugin_Function\System_Message_TopLeft_Send_2_All = @System_Message_TopLeft_Send_2_All()
-Plugin_Function\System_Message_Announcement_Send_2_All = @System_Message_Announcement_Send_2_All()
 Plugin_Function\CPE_Client_Set_Block_Permissions = @CPE_Client_Set_Block_Permissions()
 Plugin_Function\Map_Env_Appearance_Set = @Map_Env_Appearance_Set()
 Plugin_Function\CPE_Client_Send_Map_Appearence = @CPE_Client_Send_Map_Appearence()
@@ -1184,9 +1166,9 @@ Procedure Plugin_Thread(*Dummy)
     ForEver
 EndProcedure
 ; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 65
-; FirstLine = 61
-; Folding = -----------
+; CursorPosition = 514
+; FirstLine = 504
+; Folding = ----------
 ; EnableXP
 ; DisableDebugger
 ; CompileSourceDirectory

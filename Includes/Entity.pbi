@@ -176,7 +176,8 @@ Procedure Entity_Resend(ID)
 EndProcedure
 
 Procedure Entity_Message_2_Clients(ID, Message.s) ; Sendet eine Nachricht zu den Mutterklienten
-  List_Store(*Pointer, Network_Client())
+List_Store(*Pointer, Network_Client())
+  
   ForEach Network_Client()
     If Network_Client()\Player\Entity
       If Network_Client()\Player\Entity\ID = ID
@@ -184,6 +185,7 @@ Procedure Entity_Message_2_Clients(ID, Message.s) ; Sendet eine Nachricht zu den
       EndIf
     EndIf
   Next
+  
   List_Restore(*Pointer, Network_Client())
 EndProcedure
 
@@ -310,7 +312,14 @@ Procedure Entity_Position_Set(ID, Map_ID, X.f, Y.f, Z.f, Rotation.f, Look.f, Pri
               System_Message_Network_Send_2_All(Entity()\Map_ID, Lang_Get("", "Ingame: Entity '[Field_0]' changes to map '[Field_1]'", Entity_Displayname_Get(ID), Map_Data()\Name))
               System_Message_Network_Send_2_All(Map_ID, Lang_Get("", "Ingame: Entity '[Field_0]' joins map '[Field_1]'", Entity_Displayname_Get(ID), Map_Data()\Name))
               
+              Map_Data()\Clients + 1
+              
               Old_Map_ID = Entity()\Map_ID
+              
+              PushListPosition(Map_Data())
+              Map_Select_ID(Old_Map_ID)
+              Map_Data()\Clients - 1
+              PopListPosition(Map_Data())
               
               Entity()\Map_ID = Map_ID
               Entity()\X = X
@@ -396,16 +405,17 @@ Procedure Entity_Send() ; Maintained moving, creating and deleting entities of t
   ForEach Network_Client()
     If Network_Client()\Logged_In
       ; ############### Entities löschen / Deleting Entities
-      ForEach Network_Client()\Player\Entities()
-        ID = Network_Client()\Player\Entities()\ID
+      ForEach Network_Client()\Player\Entities() ; For Every entity the player can see (Entities() is a list)
+        ID = Network_Client()\Player\Entities()\ID ; Get their ID, and their on-client ID.
         ID_Client = Network_Client()\Player\Entities()\ID_Client
-        If Entity_Select_ID(ID, 0)
+        
+        If Entity_Select_ID(ID, 0) ; Selects this entity in the global entities list
           Delete = 0
           ; ######## Wenn das Entity nicht auf der selben Karte ist / If the entity is not on the same map.
           If Entity()\Map_ID <> Network_Client()\Player\Map_ID
-            Delete = 1
+            Delete = 1 ;Delete it from our client
           EndIf
-          ; ######## Das Entitie von sich selbst löschen / Delete yourself
+          ; ######## Das Entitie von sich selbst löschen / Delete yourself, if you're spawned on your own client.
           If Network_Client()\Player\Entity
             If Network_Client()\Player\Entity\ID = Entity()\ID
               Delete = 1
@@ -414,26 +424,27 @@ Procedure Entity_Send() ; Maintained moving, creating and deleting entities of t
           ; ######## Wenn das Entity neu gesendet werden soll / If the entity is to be resent
           If Entity()\Resend
             Entity()\Resend = 0
-            Delete = 1
+            Delete = 1 ;Delete it, and resend it.
           EndIf
-          If Delete
+          
+          If Delete ;If in any previous step, we decided to despawn this entity, then send it to the client.
             Network_Out_Entity_Delete(Network_Client()\ID, ID_Client)
-            DeleteElement(Network_Client()\Player\Entities())
+            DeleteElement(Network_Client()\Player\Entities()) ; And remove the entity from our visible entities list.
           EndIf
-        Else ; ##### Wenn Entity nicht mehr existiert / If the entity no longer exists
-          Network_Out_Entity_Delete(Network_Client()\ID, ID_Client)
+        Else ; ##### Wenn Entity nicht mehr existiert / If the entity no longer exists in the global list
+          Network_Out_Entity_Delete(Network_Client()\ID, ID_Client) ; Delete them from the client's list.
           DeleteElement(Network_Client()\Player\Entities())
         EndIf
       Next
       
       ; ############### Entities erstellen / Creating Entities
-      ForEach Entity()
-        If Entity()\Map_ID = Network_Client()\Player\Map_ID
+      ForEach Entity() ;Now, looping through the global entities list..
+        If Entity()\Map_ID = Network_Client()\Player\Map_ID ; If they're on the same map as us
           ; ####### Wenn entity noch nicht vorhanden / If Entity does not exist
           Create = 1
-          ForEach Network_Client()\Player\Entities()
+          ForEach Network_Client()\Player\Entities() ;Search our entire list to see if we have it already
             If Network_Client()\Player\Entities()\ID = Entity()\ID
-              Create = 0
+              Create = 0 ; If so, Do not spawn the entity twice.
               Break
             EndIf
           Next
@@ -443,12 +454,13 @@ Procedure Entity_Send() ; Maintained moving, creating and deleting entities of t
               Create = 0
             EndIf
           EndIf
-          If Create
-            AddElement(Network_Client()\Player\Entities())
+          
+          If Create ; If we decided to spawn this entity on the client..
+            AddElement(Network_Client()\Player\Entities()) ; Add it to our entities list
             Network_Client()\Player\Entities()\ID = Entity()\ID
             Network_Client()\Player\Entities()\ID_Client = Entity()\ID_Client
             Network_Out_Entity_Add(Network_Client()\ID, Entity()\ID_Client, Entity_Displayname_Get(Entity()\ID), Entity()\X, Entity()\Y, Entity()\Z, Entity()\Rotation, Entity()\Look)
-            
+            ; and spawn it on the client.
             CPE_Handle_Entity()      
           EndIf
         EndIf
@@ -458,24 +470,27 @@ Procedure Entity_Send() ; Maintained moving, creating and deleting entities of t
   
   ; ################ Entities bewegen / Entities move
   
-  ForEach Entity()
-    If Entity()\Send_Pos
-      Entity()\Send_Pos = 0
-      ForEach Network_Client()
-        If Network_Client()\Logged_In
-          ForEach Network_Client()\Player\Entities()
+  ForEach Entity() ; Loop through the entire global entities list *again*
+    If Entity()\Send_Pos ; If they need their position sent
+      Entity()\Send_Pos = 0 ; Set it to false so it doesn't get sent twice..
+      ForEach Network_Client() ; For every client..
+        If Network_Client()\Logged_In ; That is logged in
+          ForEach Network_Client()\Player\Entities() ; And can see this entity
             If Network_Client()\Player\Entities()\ID = Entity()\ID
               Network_Out_Entity_Position(Network_Client()\ID, Entity()\ID_Client, Entity()\X, Entity()\Y, Entity()\Z, Entity()\Rotation, Entity()\Look)
+              ; Update its location.
               Break
             EndIf
           Next
         EndIf
       Next
     EndIf
-    If Entity()\Send_Pos_Own
-      Entity()\Send_Pos_Own = 0
-      ForEach Network_Client()
-        If Network_Client()\Logged_In And Network_Client()\Player\Entity = Entity()
+    
+    If Entity()\Send_Pos_Own ; If this entity needs to be sent its own position
+      Entity()\Send_Pos_Own = 0 ; Don't do it twice..
+      
+      ForEach Network_Client() ; For every client..
+        If Network_Client()\Logged_In And Network_Client()\Player\Entity = Entity() ; If the clients entity is this entity, send them their update.
           Network_Out_Entity_Position(Network_Client()\ID, 255, Entity()\X, Entity()\Y, Entity()\Z, Entity()\Rotation, Entity()\Look)
         EndIf
       Next
@@ -485,22 +500,18 @@ Procedure Entity_Send() ; Maintained moving, creating and deleting entities of t
 EndProcedure
 
 Procedure Entity_Main()
-  If Entity_Main\Timer_Check_Pos < Milliseconds()
-    Entity_Main\Timer_Check_Pos = Milliseconds() + 100
-    ForEach Entity()
-      Entity_Position_Check(Entity()\ID)
-    Next
-  EndIf
-  
-  If Entity_Main\Timer_Send < Milliseconds()
-    Entity_Main\Timer_Send = Milliseconds() + 100
-    Entity_Send()
-  EndIf
+  ForEach Entity()
+    Entity_Position_Check(Entity()\ID)
+  Next
+
+  Entity_Send()
 EndProcedure
+
+RegisterCore("Entity", 100, #Null, #Null, @Entity_Main())
 ; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 393
-; FirstLine = 378
-; Folding = ---
+; CursorPosition = 188
+; FirstLine = 176
+; Folding = --0
 ; EnableXP
 ; DisableDebugger
 ; CompileSourceDirectory

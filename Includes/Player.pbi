@@ -4,20 +4,20 @@ Structure Player_Main
   List_Thread_ID.i            ; ID des List-Threads
   Save_File.b                 ; Zeigt an, ob gespeichert werden soll
   File_Date_Last.l            ; Datum letzter Änderung, bei Änderung speichern
-  Timer_File_Check.l          ; Timer für das überprüfen der Dateigröße
   Timer_Ontime_Counter.l      ; Timer für den Ontime_Counter
   Message_Welcome.s           ; Nachricht welche dem eingeloggten Benutzer erscheint.
   Players_Max.u               ; Maximale Anzahl spieler
   Name_Verification.b         ; Namensüberprüfung aktiv
   Kill_Mode.a                 ; Sterbe-art (0=Map-Spawn, 1=Global Kill-Spawn, 2=Kick, 3=Ban)
-  Kill_Spawn_Map_ID.l         ; Spawnpoint beim Sterben
-  Kill_Spawn_X.f              ; Spawnpoint beim Sterben
-  Kill_Spawn_Y.f              ; Spawnpoint beim Sterben
-  Kill_Spawn_Z.f              ; Spawnpoint beim Sterben
-  Kill_Spawn_Rot.f            ; Spawnpoint beim Sterben
-  Kill_Spawn_Look.f           ; Spawnpoint beim Sterben
-  Spawn_Map_ID.l              ; Spawnmap beim Betreten des Servers
+  Kill_Spawn_Map_ID.l         ; Spawn when you die
+  Kill_Spawn_X.f              ; Spawn when you die
+  Kill_Spawn_Y.f              ; Spawn when you die
+  Kill_Spawn_Z.f              ; Spawn when you die
+  Kill_Spawn_Rot.f            ; Spawn when you die
+  Kill_Spawn_Look.f           ; Spawn when you die
+  Spawn_Map_ID.l              ; Map you spawn in when joining the server
 EndStructure
+
 Global Player_Main.Player_Main
 
 ; ########################################## Ladekram ############################################
@@ -28,6 +28,7 @@ Global Player_Main.Player_Main
 
 Procedure Player_Save(Filename.s) ; Speichert die Einstellungen
   File_ID = CreateFile(#PB_Any, Filename)
+  
   If IsFile(File_ID)
     
     WriteStringN(File_ID, "; Kill_Modes: 0=Map-Spawn, 1=Global Kill-Spawn, 2=Kick, 3=Ban")
@@ -303,6 +304,7 @@ Procedure Player_Kick(Player_Number, Reason.s, Count, Log, Show) ; Kickt alle Kl
         EndIf
       EndIf
     Next
+    
     If Found
       Player_List()\Counter_Kick + Count
       Player_List()\Message_Kick = Reason
@@ -322,6 +324,32 @@ Procedure Player_Kick(Player_Number, Reason.s, Count, Log, Show) ; Kickt alle Kl
   
   List_Restore(*Pointer_Network, Network_Client())
   List_Restore(*Pointer_Player, Player_List())
+EndProcedure
+
+Procedure Player_Global_Set(Player_Number, value)
+  List_Store(*Pointer, Player_List())
+  
+  If Player_List_Select_Number(Player_Number)
+    Player_List()\GlobalChat = value
+    Player_List_Main\Save_File = 1
+  EndIf
+  
+  List_Restore(*Pointer, Player_List())
+  
+  ProcedureReturn Result
+EndProcedure
+
+Procedure Player_Global_Get(Player_Number)
+  List_Store(*Pointer, Player_List())
+  Result = 1
+  
+  If Player_List_Select_Number(Player_Number)
+    Result = Player_List()\GlobalChat
+  EndIf
+  
+  List_Restore(*Pointer, Player_List())
+  
+  ProcedureReturn Result
 EndProcedure
 
 Procedure Player_Ban(Player_Number, Reason.s) ; Bannt den Spieler und Kickt alle Klienten
@@ -522,12 +550,10 @@ Procedure Player_Ontime_Counter_Add(Seconds.d) ; Erhöht den Sekunden Zähler alle
 EndProcedure
 
 Procedure Player_Main()
-  If Player_Main\Timer_File_Check < Milliseconds()
-    Player_Main\Timer_File_Check = Milliseconds() + 1000
-    File_Date = GetFileDate(Files_File_Get("Player"), #PB_Date_Modified)
-    If Player_Main\File_Date_Last <> File_Date
-      Player_Load(Files_File_Get("Player"))
-    EndIf
+  File_Date = GetFileDate(Files_File_Get("Player"), #PB_Date_Modified)
+  
+  If Player_Main\File_Date_Last <> File_Date
+    Player_Load(Files_File_Get("Player"))
   EndIf
   
   If Player_Main\Timer_Ontime_Counter < Milliseconds()
@@ -537,10 +563,12 @@ Procedure Player_Main()
   EndIf
   
 EndProcedure
-; IDE Options = PureBasic 4.51 (Windows - x86)
-; CursorPosition = 534
-; FirstLine = 491
-; Folding = ----
+
+RegisterCore("Player", 1000, #Null, #Null, @Player_Main())
+; IDE Options = PureBasic 5.00 (Windows - x64)
+; CursorPosition = 333
+; FirstLine = 316
+; Folding = -----
 ; EnableXP
 ; DisableDebugger
 ; EnableCompileCount = 0

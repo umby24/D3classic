@@ -1,3 +1,4 @@
+;Done
 ; ########################################## Variablen ##########################################
 
 #Log_Size_Max = 1000 ; Size in entries (Internal)
@@ -7,7 +8,9 @@ Structure Log_Main
   Timer_Do.l              ; Timer für das Ausführen von speziellen Aufgaben
   Save_File.b             ; Zeigt an, ob gespeichert werden soll
   Filename.s              ; Dateiname
+  Gui.b
 EndStructure
+
 Global Log_Main.Log_Main
 
 Structure Log_Message
@@ -19,25 +22,29 @@ Structure Log_Message
   Type.b        ; Typ der Nachricht (0=Hinweis 1=Chat 5=Warnung 10=Fehler)
   Time.l        ; Zu welcher Zeit der Eintrag erstellt wurde
 EndStructure
+
 Global NewList Log_Message.Log_Message()
 
 ; ########################################## Declares ############################################
 
 Declare Log_File_Size_Check()
-
+Declare Log_Load()
 ; ########################################## Ladekram ############################################
 
+Log_Load()
 Log_File_Size_Check()
 
 ; ########################################## Proceduren ##########################################
 
-Procedure Log_File_Size_Check() ; Prüft die Dateigröße und ändert die Datei wenn zu größ
+Procedure Log_File_Size_Check() ; Checks the date and size of the log, and rotates if nessicary.
   If FileSize(Log_Main\Filename) > #Log_File_Size_Max Or Log_Main\Filename = ""
     Max_Date = 2147483647
     Number = 0
+    
     For i = 0 To 5
       Temp_Name.s = ReplaceString(Files_File_Get("Log"), "[i]", Str(i))
       File_Date = GetFileDate(Temp_Name, #PB_Date_Modified)
+      
       If Max_Date > File_Date
         Max_Date = File_Date
         Number = i
@@ -51,7 +58,7 @@ Procedure Log_File_Size_Check() ; Prüft die Dateigröße und ändert die Datei wenn
   EndIf
 EndProcedure
 
-Procedure Log_File_Write(Filename.s) ; Schreibt das Letzte Element in die Log-Date
+Procedure Log_File_Write(Filename.s) ; Writes the last element in the log (by date)
   
   Log_File_Size_Check()
   
@@ -62,14 +69,12 @@ Procedure Log_File_Write(Filename.s) ; Schreibt das Letzte Element in die Log-Da
     FileSeek(File_ID, Lof(File_ID))
     
     If LastElement(Log_Message())
-      WriteString(File_ID, LSet(Str(Log_Message()\Type), 2)+" | ")
-      WriteString(File_ID, LSet("t = "+Str(Log_Message()\Time), 15)+" | ")
+      WriteString(File_ID, LSet(Str(Hour(Log_Message()\Time)) + ":" + Str(Minute(Log_Message()\Time)) + ":" + Str(Second(Log_Message()\Time)) + "> ", 11)) 
+      ;WriteString(File_ID, LSet(Str(Log_Message()\Type), 2)+" | ")
       WriteString(File_ID, LSet(GetFilePart(Log_Message()\PB_File), 15)+" | ")
       WriteString(File_ID, LSet(Str(Log_Message()\PB_line), 4)+" | ")
       WriteString(File_ID, LSet(Log_Message()\Module, 15)+": ")
       WriteStringN(File_ID, Log_Message()\Message)
-      
-      ;WriteStringN(File_ID, "Module = "+Log_Message()\Module)
       
     EndIf
     
@@ -77,8 +82,17 @@ Procedure Log_File_Write(Filename.s) ; Schreibt das Letzte Element in die Log-Da
   EndIf
 EndProcedure
 
-Procedure Log_Add(Module.s, Message.s, Type, PB_File.s, PB_Line, PB_Procedure.s) ; Speichert einen Log-Eintrag
+Procedure Log_Load()
+  If OpenPreferences(Files_File_Get("LogSet"))
+    Log_Main\Gui = ReadPreferenceLong("GUI_Output", 0)
+    ClosePreferences()
+  EndIf
+  
+EndProcedure
+
+Procedure Log_Add(Module.s, Message.s, Type, PB_File.s, PB_Line, PB_Procedure.s) ; Saves a log entry
   LastElement(Log_Message())
+  
   If AddElement(Log_Message())
     Log_Message()\Module = Module
     Log_Message()\Message = Message
@@ -97,17 +111,20 @@ Procedure Log_Add(Module.s, Message.s, Type, PB_File.s, PB_Line, PB_Procedure.s)
     Wend
     
     Message = ReplaceString(Message, Chr(7), " ")
-    PrintN(LSet(Str(Type), 2)+"|"+LSet(GetFilePart(PB_File), 15)+"|"+LSet(Str(PB_Line), 4)+"| "+Module+": "+Trim(Message))
+    
+    If Log_Main\Gui = 0
+      PrintN(LSet(GetFilePart(PB_File), 15)+"| "+Module+": "+Trim(Message))
+    Else
+      PrintN(GetFilePart(PB_File) + "|" + Str(PB_Line) + "|" + Module + "|" + Message)
+    EndIf
+    
   EndIf
   
 EndProcedure
-
-Procedure Log_Main()
-  
-EndProcedure
 ; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 14
-; Folding = --
+; CursorPosition = 30
+; FirstLine = 13
+; Folding = -
 ; EnableXP
 ; DisableDebugger
 ; CompileSourceDirectory

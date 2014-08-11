@@ -179,9 +179,11 @@ Procedure Rank_Main()
     EndIf
   EndIf
 EndProcedure
-; IDE Options = PureBasic 4.51 (Windows - x86)
-; CursorPosition = 174
-; FirstLine = 133
+
+RegisterCore("Rank", 1000, #Null, #Null, @Rank_Main())
+; IDE Options = PureBasic 5.00 (Windows - x64)
+; CursorPosition = 182
+; FirstLine = 123
 ; Folding = --
 ; EnableXP
 ; DisableDebugger

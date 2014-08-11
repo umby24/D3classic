@@ -29,7 +29,7 @@ Procedure Player_List_Database_Create(Filename.s) ; Erstellt eine Datenbank und 
     
     Temp_Database_ID = OpenDatabase(#PB_Any, Filename.s, "", "", #PB_Database_SQLite)
     If Temp_Database_ID
-      DatabaseUpdate(Temp_Database_ID, "CREATE TABLE Player_List (Number INTEGER PRIMARY KEY, Name TEXT UNIQUE, Rank INTEGER, Counter_Login INTEGER, Counter_Kick INTEGER, Ontime_Counter FLOAT, IP TEXT, Stopped BOOL, Banned BOOL, Time_Muted INTEGER, Message_Ban TEXT, Message_Kick TEXT, Message_Mute TEXT, Message_Rank TEXT, Message_Stop TEXT, Inventory BLOB);")
+      DatabaseUpdate(Temp_Database_ID, "CREATE TABLE Player_List (Number INTEGER PRIMARY KEY, Name TEXT UNIQUE, Rank INTEGER, Counter_Login INTEGER, Counter_Kick INTEGER, Ontime_Counter FLOAT, IP TEXT, Stopped BOOL, Banned BOOL, Time_Muted INTEGER, Message_Ban TEXT, Message_Kick TEXT, Message_Mute TEXT, Message_Rank TEXT, Message_Stop TEXT, Inventory BLOB, Global INTEGER);")
       
       Log_Add("Player_List", Lang_Get("", "Database created", Filename.s), 0, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
     EndIf
@@ -46,6 +46,7 @@ Procedure Player_List_Database_Open(Filename.s) ; Öffnet eine Datenbank, es kann
   If Player_List_Main\Database_ID = 0
     Player_List_Main\Database_ID = OpenDatabase(#PB_Any, Filename.s, "", "", #PB_Database_SQLite)
     If Player_List_Main\Database_ID
+      
       Log_Add("Player_List", Lang_Get("", "Database opened", Filename.s), 0, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
       ProcedureReturn 1
     Else
@@ -133,6 +134,12 @@ Procedure Player_List_Load(Filename.s) ; Lädt die Liste mit Spielern aus Datenba
     
     If DatabaseQuery(Player_List_Main\Database_ID, "SELECT * FROM Player_List") ; Ermittelt alle Einträge
       
+      PrintN(Str(DatabaseColumns(Player_List_Main\Database_ID)))
+      If DatabaseColumns(Player_List_Main\Database_ID) = 16
+        Log_Add("Player_List", "Updated old Database", 0, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
+        DatabaseUpdate(Player_List_Main\Database_ID, "ALTER TABLE Player_List ADD COLUMN Global Integer")
+      EndIf
+      
       ClearList(Player_List())
       
       While NextDatabaseRow(Player_List_Main\Database_ID)  ; alle Einträge durchlaufen
@@ -153,6 +160,12 @@ Procedure Player_List_Load(Filename.s) ; Lädt die Liste mit Spielern aus Datenba
           Player_List()\Message_Rank = GetDatabaseString(Player_List_Main\Database_ID, 13)
           Player_List()\Message_Stop = GetDatabaseString(Player_List_Main\Database_ID, 14)
           GetDatabaseBlob(Player_List_Main\Database_ID, 15, @Player_List()\Inventory, 2*256)
+          Player_List()\GlobalChat = GetDatabaseLong(Player_List_Main\Database_ID, 16)
+          
+          If Player_List()\GlobalChat <> 0 And Player_List()\GlobalChat <> 1
+            Player_List()\GlobalChat = 1
+          EndIf
+          
         EndIf
       Wend
       
@@ -181,7 +194,7 @@ Procedure Player_List_Save(Filename.s) ; Speichert/Überschreibt die Liste mit (G
         Player_List()\Save = 0
         
         SetDatabaseBlob(Player_List_Main\Database_ID, 0, @Player_List()\Inventory, 2*256)
-        If DatabaseUpdate(Player_List_Main\Database_ID, "REPLACE INTO Player_List (Number, Name, Rank, Counter_Login, Counter_Kick, Ontime_Counter, IP, Stopped, Banned, Time_Muted, Message_Ban, Message_Kick, Message_Mute, Message_Rank, Message_Stop, Inventory) VALUES ('"+Str(Player_List()\Number)+"', '"+Player_List()\Name+"', '"+Str(Player_List()\Rank)+"', '"+Str(Player_List()\Counter_Login)+"', '"+Str(Player_List()\Counter_Kick)+"', '"+StrF(Player_List()\Ontime_Counter)+"', '"+Player_List()\IP+"', '"+Str(Player_List()\Stopped)+"', '"+Str(Player_List()\Banned)+"', '"+Str(Player_List()\Time_Muted)+"', "+Chr(34)+ReplaceString(Player_List()\Message_Ban, Chr(34), "'")+Chr(34)+", "+Chr(34)+ReplaceString(Player_List()\Message_Kick, Chr(34), "'")+Chr(34)+", "+Chr(34)+ReplaceString(Player_List()\Message_Mute, Chr(34), "'")+Chr(34)+", "+Chr(34)+ReplaceString(Player_List()\Message_Rank, Chr(34), "'")+Chr(34)+", "+Chr(34)+ReplaceString(Player_List()\Message_Stop, Chr(34), "'")+Chr(34)+", ?)") = 0
+        If DatabaseUpdate(Player_List_Main\Database_ID, "REPLACE INTO Player_List (Number, Name, Rank, Counter_Login, Counter_Kick, Ontime_Counter, IP, Stopped, Banned, Time_Muted, Message_Ban, Message_Kick, Message_Mute, Message_Rank, Message_Stop, Inventory, Global) VALUES ('"+Str(Player_List()\Number)+"', '"+Player_List()\Name+"', '"+Str(Player_List()\Rank)+"', '"+Str(Player_List()\Counter_Login)+"', '"+Str(Player_List()\Counter_Kick)+"', '"+StrF(Player_List()\Ontime_Counter)+"', '"+Player_List()\IP+"', '"+Str(Player_List()\Stopped)+"', '"+Str(Player_List()\Banned)+"', '"+Str(Player_List()\Time_Muted)+"', "+Chr(34)+ReplaceString(Player_List()\Message_Ban, Chr(34), "'")+Chr(34)+", "+Chr(34)+ReplaceString(Player_List()\Message_Kick, Chr(34), "'")+Chr(34)+", "+Chr(34)+ReplaceString(Player_List()\Message_Mute, Chr(34), "'")+Chr(34)+", "+Chr(34)+ReplaceString(Player_List()\Message_Rank, Chr(34), "'")+Chr(34)+", "+Chr(34)+ReplaceString(Player_List()\Message_Stop, Chr(34), "'")+Chr(34)+", ?, '" + Str(Player_List()\GlobalChat) + "')") = 0
           Log_Add("Player_List", Lang_Get("", "Database error: [Field_0]", DatabaseError()), 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
         EndIf
       EndIf
@@ -334,22 +347,22 @@ Procedure Player_List_Add(Name.s) ; Fügt ein Player zur Liste hinzu, wenn noch n
     Player_List()\Name = Name
     Player_List()\Rank = 0
     Player_List()\Save = 1
+    Player_List()\GlobalChat = 1
     Player_List_Main\Save_File = 1
   EndIf
 EndProcedure
 
 Procedure Player_List_Main()
-  If Player_List_Main\Timer_File_Save < Milliseconds() And Player_List_Main\Save_File
-    Player_List_Main\Timer_File_Save = Milliseconds() + 30000
+  If Player_List_Main\Save_File
     Player_List_Main\Save_File = 0
-    
     Player_List_Save(Files_File_Get("Playerlist"))
   EndIf
 EndProcedure
 
-; IDE Options = PureBasic 4.51 (Windows - x86)
-; CursorPosition = 342
-; FirstLine = 301
+RegisterCore("Player_List", 120000, #Null, #Null, @Player_List_Main())
+; IDE Options = PureBasic 5.00 (Windows - x64)
+; CursorPosition = 361
+; FirstLine = 306
 ; Folding = ---
 ; EnableXP
 ; DisableDebugger

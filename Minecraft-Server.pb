@@ -1,9 +1,12 @@
 UsePNGImageEncoder()
 UseSQLiteDatabase()
 
-; ########################################## Dokumentation ######################################
+; ########################################## Documentation ######################################
 ;
 ; Todo:
+; - Name shortcuts (/tp umb rather than /tp umby24)
+; - Console Input
+
 ; - Gui (eventuell über html)
 ; - Logdatei/debugmessages --> gui
 ; - Textausgabe (zum Clienten) überprüfen auf ungültige zeichen
@@ -105,7 +108,7 @@ UseSQLiteDatabase()
 
 
 ; Bugs:
-
+; Map unloading system occationally causes a server crash.
 
 ; Gelöste Bugs:
 ; - Fehler im Sende-Ringbuffer
@@ -124,20 +127,21 @@ UseSQLiteDatabase()
 
 Structure Main
   Version.l           ; Version 1000 = V.1.000
-  Mutex.i             ; Hauptmutex
-  Running_Time.l      ; Zeitpunkt (Date()), seit dem der Server läuft
+  Mutex.i             ; Main mutex
+  Running_Time.l      ; Time since the server started (using Date())
 EndStructure
+
 Global Main.Main
 
 XIncludeFile "Shared Includes/Main_Structures.pbi"
 Global NewList Player_List.Player_List()
 Global NewList Map_Data.Map_Data()
 Global NewList Entity.Entity()
-Global FreeID.w = 0
+Global FreeID.w = 0 ; For CPE stuff.
 Global NextID.w = 0
 ; ########################################## Ladekram / Loading ############################################
 
-Main\Version = 1013 ;#PB_Editor_CompileCount*0.4 + #PB_Editor_BuildCount*4.9
+Main\Version = 1014 ;#PB_Editor_CompileCount*0.4 + #PB_Editor_BuildCount*4.9
 
 Main\Running_Time = Date()
 
@@ -161,8 +165,8 @@ Declare Network_Out_Entity_Position(Client_ID, ID_Client, X.f, Y.f, Z.f, Rotatio
 Declare Network_Out_Block_Set(Client_ID, X, Y, Z, Type.a)
 Declare Network_Out_Block_Set_2_Map(Map_ID, X, Y, Z, Type.a)
 
-Declare System_Message_Network_Send(Client_ID, Message.s)
-Declare System_Message_Network_Send_2_All(Map_ID, Message.s)
+Declare System_Message_Network_Send(Client_ID, Message.s,  Type=0)
+Declare System_Message_Network_Send_2_All(Map_ID, Message.s, Type=0)
 Declare System_Login_Screen(Client_ID, Message_0.s, Message_1.s, Op_Mode)
 Declare System_Red_Screen(Client_ID, Message.s)
 
@@ -248,8 +252,6 @@ Declare Command_Do(Client_ID, Input.s)
 
 Declare Answer_Do()
 
-;Declare Heartbeat_Salt_Get()
-
 Declare Plugin_Event_Block_Physics(Destination.s, *Map_Data.Map_Data, X, Y, Z)
 Declare Plugin_Event_Block_Create(Destination.s, *Map_Data.Map_Data, X, Y, Z, Old_Block.a, *Client.Network_Client)
 Declare Plugin_Event_Block_Delete(Destination.s, *Map_Data.Map_Data, X, Y, Z, Old_Block.a, *Client.Network_Client)
@@ -280,8 +282,6 @@ Declare Undo_Do_Time(Map_ID, Time)
 Declare Undo_Do_Player(Map_ID, Player_Number, Time)
 Declare Undo_Clear_Map(Map_ID)
 
-;Declare Protect_Destruct_Start()
-
 Declare CPE_Send_ExtInfo(Client_ID, Name.s, MPPass.s, Version)
 Declare CPE_Send_Extensions(Client_ID)
 Declare CPE_HoldThis(Client_ID, Block, CanChange)
@@ -299,24 +299,6 @@ Declare CPE_Handle_Entity()
 Declare CPE_Set_Weather(Client_ID, Weather.b)
 Declare CPE_Aftermap_Actions(Client_ID, *MapData)
 Declare Map_Env_Colors_Change(*Map_Data.Map_Data, Red, Green, Blue, Type)
-
-Declare System_Message_Status1_Send(Client_ID, Message.s)
-Declare System_Message_Status2_Send(Client_ID, Message.s)
-Declare System_Message_Status3_Send(Client_ID, Message.s)
-Declare System_Message_BR1_Send(Client_ID, Message.s)
-Declare System_Message_BR2_Send(Client_ID, Message.s)
-Declare System_Message_BR3_Send(Client_ID, Message.s)
-Declare System_Message_TopLeft_Send(Client_ID, Message.s)
-Declare System_Message_Announcement_Send(Client_ID, Message.s)
-
-Declare System_Message_Status1_Send_2_All(Map_ID, Message.s)
-Declare System_Message_Status2_Send_2_All(Map_ID, Message.s)
-Declare System_Message_Status3_Send_2_All(Map_ID, Message.s)
-Declare System_Message_BR1_Send_2_All(Map_ID, Message.s)
-Declare System_Message_BR2_Send_2_All(Map_ID, Message.s)
-Declare System_Message_BR3_Send_2_All(Map_ID, Message.s)
-Declare System_Message_TopLeft_Send_2_All(Map_ID, Message.s)
-Declare System_Message_Announcement_Send_2_All(Map_ID, Message.s)
 
 Declare CPE_Client_Set_Block_Permissions(Client_ID, Block_ID, CanPlace, CanDelete)
 Declare CPE_Client_Send_Map_Appearence(Client_ID, URL.s, Side_Block, Edge_Block, Side_Level.w)
@@ -340,14 +322,14 @@ Macro List_Restore(Pointer, Listname)
     ChangeCurrentElement(Listname, Pointer)
   EndIf
 EndMacro
-
+    
 Macro Milliseconds()
   (ElapsedMilliseconds() & 2147483647)
 EndMacro
 
 ; ########################################## Includes ############################################
 
-
+XIncludeFile "Includes/Events.pbi"
 XIncludeFile "Includes/Files.pbi"
 XIncludeFile "Includes/Math.pbi"
 XIncludeFile "Includes/Mem.pbi"
@@ -373,14 +355,12 @@ XIncludeFile "Includes/Client.pbi"
 XIncludeFile "Includes/Chat.pbi"
 XIncludeFile "Includes/Build_Mode.pbi"
 XIncludeFile "Includes/Plugin.pbi"
-XIncludeFile "Includes/Trace.pbi"
 XIncludeFile "Includes/Command.pbi"
 XIncludeFile "Includes/Answer.pbi"
 XIncludeFile "Includes/TMessage.pbi"
 XIncludeFile "Includes/Font.pbi"
 XIncludeFile "Includes/Undo.pbi"
-;XIncludeFile "Includes/Protect.pbi"
-XIncludeFile "Includes/View_3D.pbi"
+;XIncludeFile "Includes/View_3D.pbi"
 XIncludeFile "Includes/Network_Functions.pbi"
 XIncludeFile "Includes/Entity.pbi"
 XIncludeFile "Includes/Hotkey.pbi"
@@ -390,9 +370,7 @@ XIncludeFile "Includes/CPE.pbi"
 
 ; ########################################## Initkram / Init ##########################################
 
-CompilerIf #PB_Compiler_OS = #PB_OS_Windows
-  OpenConsole()
-CompilerEndIf
+OpenConsole()
 
 Main\Mutex = CreateMutex()
 
@@ -405,7 +383,7 @@ GZip_Init()
 
 Player_Load(Files_File_Get("Player"))
 Player_List_Load(Files_File_Get("Playerlist"))
-Player_List_Load_Old("Data/Playerlist.txt") ; Lädt die alte Spielerliste!
+Player_List_Load_Old("Data/Playerlist.txt") ; Load old playerlist
 Block_Load(Files_File_Get("Block"))
 Command_Load(Files_File_Get("Command"))
 Answer_Load(Files_File_Get("Answer"))
@@ -435,107 +413,7 @@ Repeat
   
   Watchdog_Watch("Main", "Begin Mainslope", 0)
   
-  Watchdog_Watch("Main", "Before: Files_Main()", 1)
-  Files_Main()
-  
-  Watchdog_Watch("Main", "Before: Mem_Main()", 1)
-  Mem_Main()
-  
-  Watchdog_Watch("Main", "Before: Network_Events()", 1)
-  Network_Events()
-  
-  Watchdog_Watch("Main", "Before: Network_Input_Do()", 1)
-  Network_Input_Do()
-  
-  Watchdog_Watch("Main", "Before: Network_Output_Do()", 1)
-  Network_Output_Do()
-  
-  Watchdog_Watch("Main", "Before: Network_Output_Send()", 1)
-  Network_Output_Send()
-  
-  Watchdog_Watch("Main", "Before: Network_Main()", 1)
-  Network_Main()
-  
-  Watchdog_Watch("Main", "Before: System_Main()", 1)
-  System_Main()
-  
-  Watchdog_Watch("Main", "Before: Location_Main()", 1)
-  Location_Main()
-  
-  Watchdog_Watch("Main", "Before: Teleporter_Main()", 1)
-  Teleporter_Main()
-  
-  Watchdog_Watch("Main", "Before: Log_Main()", 1)
-  Log_Main()
-  
-  Watchdog_Watch("Main", "Before: Player_List_Main()", 1)
-  Player_List_Main()
-  
-  Watchdog_Watch("Main", "Before: Player_Main()", 1)
-  Player_Main()
-  
-  Watchdog_Watch("Main", "Before: Client_Main()", 1)
-  Client_Main()
-  
-  Watchdog_Watch("Main", "Before: Language_Main()", 1)
-  Language_Main()
-  
-  Watchdog_Watch("Main", "Before: Block_Main()", 1)
-  Block_Main()
-  
-  Watchdog_Watch("Main", "Before: Map_Main()", 1)
-  Map_Main()
-  
-  Watchdog_Watch("Main", "Before: Build_Main()", 1)
-  Build_Main()
-  
-  Watchdog_Watch("Main", "Before: Physic_Main()", 1)
-  Physic_Main()
-  
-  ;Watchdog_Watch("Main", "Before: Heartbeat_Main()", 1)
-  ;Heartbeat_Main()
-  
-  Watchdog_Watch("Main", "Before: Build_Mode_Main()", 1)
-  Build_Mode_Main()
-  
-  Watchdog_Watch("Main", "Before: Command_Main()", 1)
-  Command_Main()
-  
-  Watchdog_Watch("Main", "Before: Answer_Main()", 1)
-  Answer_Main()
-  
-  Watchdog_Watch("Main", "Before: Rank_Main()", 1)
-  Rank_Main()
-  
-  Watchdog_Watch("Main", "Before: TMessage_Main()", 1)
-  TMessage_Main()
-  
-  Watchdog_Watch("Main", "Before: String_Main()", 1)
-  String_Main()
-  
-  Watchdog_Watch("Main", "Before: Font_Main()", 1)
-  Font_Main()
-  
-  Watchdog_Watch("Main", "Before: Undo_Main()", 1)
-  Undo_Main()
-  
-  ;Watchdog_Watch("Main", "Before: Protect_Main()", 1)
-  ;Protect_Main()
-  
-  Watchdog_Watch("Main", "Before: View_3D_Main()", 1)
-  View_3D_Main()
-  
-  ;Watchdog_Watch("Main", "Before: Plugin_Main()", 1)    -- Now handled in threads!
-  ;Plugin_Main()
-  
-  Watchdog_Watch("Main", "Before: Entity_Main()", 1)
-  Entity_Main()
-  
-  Watchdog_Watch("Main", "Before: Trace_Main()", 1)
-  Trace_Main()
-  
-  Watchdog_Watch("Main", "Before: Hotkey_Main()", 1)
-  Hotkey_Main()
+  CoreLoop()
   
   UnlockMutex(Main\Mutex)
   
@@ -548,8 +426,7 @@ ForEver
 ; ########################################## Ende / End ##########################################
 ; IDE Options = PureBasic 5.00 (Windows - x64)
 ; ExecutableFormat = Console
-; CursorPosition = 139
-; FirstLine = 123
+; CursorPosition = 6
 ; Folding = -
 ; EnableThread
 ; EnableXP

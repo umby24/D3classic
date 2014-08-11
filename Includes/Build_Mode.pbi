@@ -1,3 +1,4 @@
+; Done
 ; ########################################## Variablen ##########################################
 
 #Build_Mode_Blocks_To_Resend_Size_Max = 1000
@@ -16,7 +17,7 @@ Structure Build_Mode
   Plugin.s                ; Plugin function
 EndStructure
 
-Global NewList Build_Mode.Build_Mode()
+Global NewMap Buildmap.Build_Mode()
 
 Structure Build_Mode_Blocks_To_Resend ; Block to be resent after changing buildmodes.
   Client_ID.i
@@ -37,14 +38,14 @@ Global NewList Build_Mode_Blocks_To_Resend.Build_Mode_Blocks_To_Resend()
 Procedure Build_Mode_Load(Filename.s)
   If OpenPreferences(Filename)
     
-    ClearList(Build_Mode())
+    ClearMap(Buildmap())
     
     If ExaminePreferenceGroups()
       While NextPreferenceGroup()
-        AddElement(Build_Mode())
-        Build_Mode()\ID = PreferenceGroupName()
-        Build_Mode()\Name = ReadPreferenceString("Name", "-")
-        Build_Mode()\Plugin = ReadPreferenceString("Plugin", "Lua:"+ReadPreferenceString("Lua_Function", ""))
+        AddMapElement(Buildmap(), PreferenceGroupName(), #PB_Map_ElementCheck)
+        Buildmap(PreferenceGroupName())\ID = PreferenceGroupName()
+        Buildmap()\Name = ReadPreferenceString("Name", "-")
+        Buildmap()\Plugin = ReadPreferenceString("Plugin", "Lua:"+ReadPreferenceString("Lua_Function", ""))
       Wend
     EndIf
     
@@ -60,14 +61,14 @@ Procedure Build_Mode_Load(Filename.s)
 EndProcedure
 
 Procedure Build_Mode_Save(Filename.s)
-    File_ID = CreateFile(#PB_Any, Filename)
+  File_ID = CreateFile(#PB_Any, Filename)
     
   If IsFile(File_ID)
     
-    ForEach Build_Mode()
-      WriteStringN(File_ID, "["+Build_Mode()\ID+"]")
-      WriteStringN(File_ID, "Name = "+Build_Mode()\Name)
-      WriteStringN(File_ID, "Plugin = "+Build_Mode()\Plugin)
+    ForEach Buildmap()
+      WriteStringN(File_ID, "["+Buildmap()\ID+"]")
+      WriteStringN(File_ID, "Name = "+Buildmap()\Name)
+      WriteStringN(File_ID, "Plugin = "+Buildmap()\Plugin)
       WriteStringN(File_ID, "")
     Next
     
@@ -92,19 +93,10 @@ Procedure Build_Mode_Distribute(Client_ID, Map_ID, X, Y, Z, Mode, Block_Type.a)
       If Block_Type = 1 And Network_Client()\Player\Entity\Build_Material <> -1
         Block_Type = Network_Client()\Player\Entity\Build_Material
       EndIf
-
       
-      Found = 0
-      ForEach Build_Mode()
-        If Build_Mode()\ID = Build_Mode
-          Found = 1
-          Break
-        EndIf
-      Next
-      
-      If Found = 1
+      If FindMapElement(Buildmap(), Build_Mode)
         
-        If Build_Mode()\Plugin = ""
+        If Buildmap()\Plugin = ""
           Map_Block_Change_Client(Network_Client(), Map_Get_Pointer(Map_ID), X, Y, Z, Mode, Block_Type)
         Else
           FirstElement(Build_Mode_Blocks_To_Resend())
@@ -114,7 +106,7 @@ Procedure Build_Mode_Distribute(Client_ID, Map_ID, X, Y, Z, Mode, Block_Type.a)
           Build_Mode_Blocks_To_Resend()\X = X
           Build_Mode_Blocks_To_Resend()\Y = Y
           Build_Mode_Blocks_To_Resend()\Z = Z
-          Plugin_Event_Build_Mode(Build_Mode()\Plugin, Network_Client(), Map_Get_Pointer(Map_ID), X, Y, Z, Mode, Block_Type)
+          Plugin_Event_Build_Mode(Buildmap()\Plugin, Network_Client(), Map_Get_Pointer(Map_ID), X, Y, Z, Mode, Block_Type)
         EndIf
         
       Else
@@ -161,6 +153,7 @@ Procedure.s Build_Mode_Get(Client_ID)
       ProcedureReturn Network_Client()\Player\Entity\Build_Mode
     EndIf
   EndIf
+  
   ProcedureReturn ""
 EndProcedure
 
@@ -178,6 +171,7 @@ Procedure Build_Mode_State_Get(Client_ID)
       ProcedureReturn Network_Client()\Player\Entity\Build_State
     EndIf
   EndIf
+  
   ProcedureReturn -1
 EndProcedure
 
@@ -197,6 +191,7 @@ Procedure Build_Mode_Coordinate_Get_X(Client_ID, Index)
       ProcedureReturn Network_Client()\Player\Entity\Build_Variable[Index]\X
     EndIf
   EndIf
+  
   ProcedureReturn -1
 EndProcedure
 
@@ -206,6 +201,7 @@ Procedure Build_Mode_Coordinate_Get_Y(Client_ID, Index)
       ProcedureReturn Network_Client()\Player\Entity\Build_Variable[Index]\Y
     EndIf
   EndIf
+  
   ProcedureReturn -1
 EndProcedure
 
@@ -215,6 +211,7 @@ Procedure Build_Mode_Coordinate_Get_Z(Client_ID, Index)
       ProcedureReturn Network_Client()\Player\Entity\Build_Variable[Index]\Z
     EndIf
   EndIf
+  
   ProcedureReturn -1
 EndProcedure
 
@@ -232,6 +229,7 @@ Procedure Build_Mode_Long_Get(Client_ID, Index)
       ProcedureReturn Network_Client()\Player\Entity\Build_Variable[Index]\Long
     EndIf
   EndIf
+  
   ProcedureReturn -1
 EndProcedure
 
@@ -249,6 +247,7 @@ Procedure.f Build_Mode_Float_Get(Client_ID, Index)
       ProcedureReturn Network_Client()\Player\Entity\Build_Variable[Index]\Float
     EndIf
   EndIf
+  
   ProcedureReturn 0
 EndProcedure
 
@@ -266,6 +265,7 @@ Procedure.s Build_Mode_String_Get(Client_ID, Index)
       ProcedureReturn Network_Client()\Player\Entity\Build_Variable[Index]\String
     EndIf
   EndIf
+  
   ProcedureReturn ""
 EndProcedure
 
@@ -277,12 +277,10 @@ Procedure Build_Mode_Main()
     Build_Mode_Save(Files_File_Get("Build_Mode"))
   EndIf
   
-  If Build_Mode_Main\Timer_File_Check < Milliseconds()
-    Build_Mode_Main\Timer_File_Check = Milliseconds() + 1000
-    File_Date = GetFileDate(Files_File_Get("Build_Mode"), #PB_Date_Modified)
-    If Build_Mode_Main\File_Date_Last <> File_Date
-      Build_Mode_Load(Files_File_Get("Build_Mode"))
-    EndIf
+  File_Date = GetFileDate(Files_File_Get("Build_Mode"), #PB_Date_Modified)
+  
+  If Build_Mode_Main\File_Date_Last <> File_Date
+    Build_Mode_Load(Files_File_Get("Build_Mode"))
   EndIf
   
   While ListSize(Build_Mode_Blocks_To_Resend()) > #Build_Mode_Blocks_To_Resend_Size_Max
@@ -291,9 +289,9 @@ Procedure Build_Mode_Main()
     EndIf
   Wend
 EndProcedure
+
+RegisterCore("BuildMode", 1000, #Null, #Null, @Build_Mode_Main())
 ; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 151
-; FirstLine = 251
 ; Folding = ----
 ; EnableXP
 ; DisableDebugger

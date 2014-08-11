@@ -1,3 +1,4 @@
+;Done
 ; ########################################## Variablen ##########################################
 
 #Map_Filename_Data = "Data-Layer.gz"
@@ -20,9 +21,9 @@ Structure Map_Main
   Temp_ID.i                   ; Temporäre ID für Threadübergabe
   Temp_Overview_Filename.s    ; Temporärer Dateiname für Threadübergabe
   File_Date_Last.l            ; Datum letzter Änderung, bei Änderung speichern
-  Timer_File_Check.l          ; Timer für das überprüfen der Dateigröße
   Timer_Stats.l               ; Timer für die HTML-Statistiken
 EndStructure
+
 Global Map_Main.Map_Main
 
 Structure Map_Settings
@@ -30,6 +31,7 @@ Structure Map_Settings
   Timer_File_Check.l          ; Timer für das überprüfen der Dateigröße
   Max_Changes_Per_s.l         ; Maximale Blockänderungen pro Sekunde
 EndStructure
+
 Global Map_Settings.Map_Settings
 
 Structure Map_Block         ; Blocks, aus welchen die Karte besteht
@@ -54,6 +56,7 @@ Structure Map_Action_List
   Z.u
   Argument_String.s         ; Zum Beispiel bei Mapfill
 EndStructure
+
 Global NewList Map_Action_List.Map_Action_List() ; Liste mit Karten von denen Aktionen ausgeführt werden sollen
 
 ; ########################################## Ladekram ############################################
@@ -64,7 +67,8 @@ Declare Map_Block_Do_Add(*Map_Data.Map_Data, X.l, Y.l, Z.l)
 Declare Map_Block_Changed_Add(*Map_Data.Map_Data, X, Y, Z, Priority.a, Old_Material.w)
 Declare Map_Block_Get_Type(*Map_Data.Map_Data, X.l, Y.l, Z.l)
 Declare Map_Block_Get_Rank(*Map_Data.Map_Data, X.l, Y.l, Z.l)
-
+Declare Map_Reload(Map_ID)
+Declare Map_Unload(Map_ID)
 ; ########################################## Proceduren ##########################################
 
 Procedure Map_HTML_Stats()
@@ -78,12 +82,6 @@ Procedure Map_HTML_Stats()
     WriteStringN(File_ID, "    <title>Minecraft-Server Map</title>")
     WriteStringN(File_ID, "  </head>")
     WriteStringN(File_ID, "  <body>")
-    
-    ;WriteStringN(File_ID, "      <b><u>Overview:</u></b><br>")
-    ;WriteStringN(File_ID, "      Size of Map_Block_Do: "+Str(ListSize(Map_Block_Do()))+".<br>")
-    ;WriteStringN(File_ID, "      Size of Map_Block_Changed: "+Str(ListSize(Map_Block_Changed()))+".<br>")
-    ;WriteStringN(File_ID, "      <br>")
-    ;WriteStringN(File_ID, "      <br>")
     
     WriteStringN(File_ID, "      <b><u>Maps:</u></b><br>")
     WriteStringN(File_ID, "      <br>")
@@ -102,6 +100,7 @@ Procedure Map_HTML_Stats()
     WriteStringN(File_ID, "          <th><b>Physics</b></th>")
     WriteStringN(File_ID, "          <th><b>Blockchange</b></th>")
     WriteStringN(File_ID, "        </tr>")
+    
     ForEach Map_Data()
       WriteStringN(File_ID, "        <tr>")
       WriteStringN(File_ID, "          <td>"+Str(Map_Data()\ID)+"</td>")
@@ -111,21 +110,30 @@ Procedure Map_HTML_Stats()
       WriteStringN(File_ID, "          <td>"+Str(Map_Data()\Save_Intervall)+"min</td>")
       WriteStringN(File_ID, "          <td>"+Str(Map_Data()\Rank_Build)+","+Str(Map_Data()\Rank_Join)+","+Str(Map_Data()\Rank_Show)+"</td>")
       WriteStringN(File_ID, "          <td>"+Str(Map_Data()\Size_X)+","+Str(Map_Data()\Size_Y)+","+Str(Map_Data()\Size_Z)+"</td>")
-      WriteStringN(File_ID, "          <td>"+StrF((MemorySize(Map_Data()\Data)+MemorySize(Map_Data()\Blockchange_Data)+MemorySize(Map_Data()\Physic_Data))/1000000, 3) + "MB</td>")
+      
+      If Map_Data()\Loaded = 1
+        WriteStringN(File_ID, "          <td>"+StrF((MemorySize(Map_Data()\Data)+MemorySize(Map_Data()\Blockchange_Data)+MemorySize(Map_Data()\Physic_Data))/1000000, 3) + "MB</td>")
+      Else
+        WriteStringN(File_ID, "          <td> 0 MB (Unloaded)</td>")
+      EndIf
+      
       Counter = ListSize(Map_Data()\Map_Block_Do())
       WriteStringN(File_ID, "          <td>"+Str(Counter)+"</td>")
       Counter = ListSize(Map_Data()\Map_Block_Changed())
       WriteStringN(File_ID, "          <td>"+Str(Counter)+"</td>")
+      
       If Map_Data()\Physic_Stopped
         WriteStringN(File_ID, "          <td><font color="+Chr(34)+"#FF0000"+Chr(34)+">Stopped</font></td>")
       Else
         WriteStringN(File_ID, "          <td><font color="+Chr(34)+"#00FF00"+Chr(34)+">Started</font></td>")
       EndIf
+      
       If Map_Data()\Blockchange_Stopped
         WriteStringN(File_ID, "          <td><font color="+Chr(34)+"#FF0000"+Chr(34)+">Stopped</font></td>")
       Else
         WriteStringN(File_ID, "          <td><font color="+Chr(34)+"#00FF00"+Chr(34)+">Started</font></td>")
       EndIf
+      
       WriteStringN(File_ID, "        </tr>")
     Next
     WriteString(File_ID,  "      </table>")
@@ -155,7 +163,7 @@ Procedure Map_Select_ID(Map_ID, Log=1)
   EndIf
   
   If Log
-    ;Log_Add("Map", Lang_Get("", "Konnte Element '[Field_0]' (ID) in 'Map_Data()' nicht finden.", Str(ID)), 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
+    Log_Add("Map", Lang_Get("", "Konnte Element '[Field_0]' (ID) in 'Map_Data()' nicht finden.", Str(ID)), 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
   EndIf
   
   ProcedureReturn #False
@@ -221,14 +229,17 @@ EndMacro
 
 Procedure Map_Get_ID()
   Map_ID = 0
+  
   Repeat
     Found = 0
+    
     ForEach Map_Data()
       If Map_ID = Map_Data()\ID
         Found = 1
         Break
       EndIf
     Next
+    
     If Found = 0
       ProcedureReturn Map_ID
     Else
@@ -258,22 +269,20 @@ Procedure.s Map_Get_MOTD_Override(Map_ID)
 EndProcedure
 
 Procedure Map_List_Save(Filename.s)
+  If CreatePreferences(Filename)
   
-  File_ID = CreateFile(#PB_Any, Filename)
-  If IsFile(File_ID)
-    
     ForEach Map_Data()
-      WriteStringN(File_ID, "["+Str(Map_Data()\ID)+"]")
-      WriteStringN(File_ID, "Name = "+Map_Data()\Name)
-      WriteStringN(File_ID, "Directory = "+Map_Data()\Directory)
-      WriteStringN(File_ID, "Delete = 0")
-      WriteStringN(File_ID, "Reload = 0")
+      PreferenceGroup(Str(Map_Data()\ID))
+      WritePreferenceString("Name", Map_Data()\Name)
+      WritePreferenceString("Directory", Map_Data()\Directory)
+      WritePreferenceInteger("Delete", 0)
+      WritePreferenceInteger("Reload", 0)
     Next
+    
+    ClosePreferences()
     
     Map_Main\File_Date_Last = GetFileDate(Filename, #PB_Date_Modified)
     Log_Add("Map_List", Lang_Get("", "File saved", Filename), 0, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
-    
-    CloseFile(File_ID)
   EndIf
 EndProcedure
 
@@ -292,7 +301,6 @@ Procedure Map_List_Load(Filename.s)
         Else
           
           If Map_Select_ID(Map_ID) = #False
-            ;Map_Add(Map_ID, 128, 128, 64, Lang_Get("", "New Map [Field_0]", Str(Map_ID)))
             Map_Add(Map_ID, 64, 64, 64, Map_Name)
             Map_Reload = 1
           EndIf
@@ -357,7 +365,6 @@ Procedure Map_Add(Map_ID, X, Y, Z, Name.s)
   If Name <> ""
     If Map_Select_ID(Map_ID) = #False
       If AddElement(Map_Data())
-        ;Result = AllocateMemory(Map_Get_Size(X, Y, Z, #Map_Block_Element_Size))
         Result = Mem_Allocate(Map_Get_Size(X, Y, Z, #Map_Block_Element_Size), #PB_Compiler_File, #PB_Compiler_Line, "Map_ID = "+Str(Map_ID))
         If Result
           Result_2 = Mem_Allocate(1+Map_Get_Size(X, Y, Z, 1)/8, #PB_Compiler_File, #PB_Compiler_Line, "Map_ID(Physics) = "+Str(Map_ID))
@@ -380,6 +387,11 @@ Procedure Map_Add(Map_ID, X, Y, Z, Name.s)
               Map_Data()\Spawn_X = X/2
               Map_Data()\Spawn_Y = Y/2
               Map_Data()\Spawn_Z = Z/1.5
+              Map_Data()\Loaded = 1
+              Map_Data()\Loading = 0
+              Map_Data()\Clients = 0
+              Map_Data()\LastClient = Milliseconds()
+              
               For i = 1 To 255
                 Map_Data()\Block_Counter [i] = 0
               Next
@@ -409,7 +421,6 @@ EndProcedure
 
 Procedure Map_Delete(Map_ID)
   If Map_Select_ID(Map_ID) And Map_ID <> 0
-    ;FreeMemory(Map_Data()\Data)
     Mem_Free(Map_Data()\Data)
     Mem_Free(Map_Data()\Physic_Data)
     Mem_Free(Map_Data()\Blockchange_Data)
@@ -427,10 +438,12 @@ Procedure Map_Resize(Map_ID, X, Y, Z) ; Ändert die Größe der Karte
   Procedureresult = 0
   
   If Map_Select_ID(Map_ID)
+    If Map_Data()\Loaded = 0
+      Map_Reload(Map_ID)
+    EndIf
     
     If X >= 16  And Y >= 16  And Z >= 16 And X <= 32767 And Y <= 32767 And Z <= 32767
       
-      ;New_Memory = AllocateMemory(Map_Get_Size(X, Y, Z, #Map_Block_Element_Size))
       New_Memory = Mem_Allocate(Map_Get_Size(X, Y, Z, #Map_Block_Element_Size), #PB_Compiler_File, #PB_Compiler_Line, "Map_ID = "+Str(Map_ID))
       
       If New_Memory
@@ -482,6 +495,7 @@ Procedure Map_Resize(Map_ID, X, Y, Z) ; Ändert die Größe der Karte
                 DeleteElement(Map_Data()\Map_Block_Do())
               EndIf
             Next
+            
             ForEach Map_Data()\Map_Block_Changed()
               If Map_Data()\Map_Block_Changed()\X < Copy_Area_X And Map_Data()\Map_Block_Changed()\Y < Copy_Area_Y And Map_Data()\Map_Block_Changed()\Z < Copy_Area_Z
                 Bool_Offset = Map_Get_Offset(Map_Data()\Map_Block_Changed()\X, Map_Data()\Map_Block_Changed()\Y, Map_Data()\Map_Block_Changed()\Z, X, Y, 1)
@@ -497,6 +511,7 @@ Procedure Map_Resize(Map_ID, X, Y, Z) ; Ändert die Größe der Karte
             If Map_Data()\Spawn_X > X-1
               Map_Data()\Spawn_X = X-1
             EndIf
+            
             If Map_Data()\Spawn_Y > Y-1
               Map_Data()\Spawn_Y = Y-1
             EndIf
@@ -562,6 +577,7 @@ Procedure Map_Fill(Map_ID, Function_Name.s, Argument_String.s) ; Füllt die Karte
     For i = 1 To 255
       Map_Data()\Block_Counter [i] = 0
     Next
+    
     Map_Data()\Block_Counter [0] = X*Y*Z
     
     For ix = 0 To X - 1
@@ -577,17 +593,10 @@ Procedure Map_Fill(Map_ID, Function_Name.s, Argument_String.s) ; Füllt die Karte
     Map_Data()\Unique_ID = Map_Get_Unique_ID()
     
     ClearList(Map_Data()\Rank())
-    ClearList(Map_Data()\Teleporter())
+    ClearMap(Map_Data()\Teleporter())
     
     Undo_Clear_Map(Map_Data()\ID)
-    
-    ;Lua_Do_Function(Function_Name+"("+Str(Map_ID)+","+Str(Map_Data()\Size_X)+","+Str(Map_Data()\Size_Y)+","+Str(Map_Data()\Size_Z)+",'"+Argument_String+"')")
-    
     Plugin_Event_Map_Fill("*:"+Function_Name, Map_Data(), Argument_String.s)
-    
-    ;Lua_Do_Function_Map_Fill(Function_Name, Map_ID, Map_Data()\Size_X, Map_Data()\Size_Y, Map_Data()\Size_Z, Argument_String)
-    
-    
     Procedureresult = 1
     
     Map_Resend(Map_ID)
@@ -747,7 +756,6 @@ Procedure Map_Save(*Map_Data_Element.Map_Data, Directory.s) ; Komprimiert und Sp
 EndProcedure
 
 Procedure Map_Load(Map_ID, Directory.s) ; Dekomprimiert und lädt die Informationen in die aktuelle Karte / Decompresses and loads the information into the current map
-  
   *Pointer.Map_Block
   
   ProcedureResult = 0
@@ -811,7 +819,6 @@ Procedure Map_Load(Map_ID, Directory.s) ; Dekomprimiert und lädt die Information
         Map_Data()\JumpHeight = ReadPreferenceInteger("Jumpeheight", -1)
         
         If GZip_Decompress_From_File(Filename_Data, Map_Data()\Data, Map_Size*#Map_Block_Element_Size) = Map_Size*#Map_Block_Element_Size
-          
           Undo_Clear_Map(Map_Data()\ID)
           
           For i = 0 To 255
@@ -826,6 +833,7 @@ Procedure Map_Load(Map_ID, Directory.s) ; Dekomprimiert und lädt die Information
                   *Pointer\Type = Block(*Pointer\Type)\Replace_By_Load
                 EndIf
                 Map_Data()\Block_Counter [*Pointer\Type] + 1
+                
                 If Block(*Pointer\Type)\Do_By_Load
                   Map_Block_Do_Add(Map_Data(), ix, iy, iz)
                 EndIf
@@ -846,7 +854,6 @@ Procedure Map_Load(Map_ID, Directory.s) ; Dekomprimiert und lädt die Information
     EndIf
     
     ClearList(Map_Data()\Rank())
-    
     If OpenPreferences(Filename_Rank)
       If ExaminePreferenceGroups()
         While NextPreferenceGroup()
@@ -864,13 +871,12 @@ Procedure Map_Load(Map_ID, Directory.s) ; Dekomprimiert und lädt die Information
     Else
       Log_Add("Map", Lang_Get("", "File not loaded", Filename_Rank), 10, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
     EndIf
-    
-    ClearList(Map_Data()\Teleporter())
+    ClearMap(Map_Data()\Teleporter())
     
     If OpenPreferences(Filename_Teleporter)
       If ExaminePreferenceGroups()
         While NextPreferenceGroup()
-          AddElement(Map_Data()\Teleporter())
+          AddMapElement(Map_Data()\Teleporter(), LCase(PreferenceGroupName()))
           Map_Data()\Teleporter()\ID = PreferenceGroupName()
           Map_Data()\Teleporter()\X_0 = ReadPreferenceLong("X_0", 0)
           Map_Data()\Teleporter()\Y_0 = ReadPreferenceLong("Y_0", 0)
@@ -900,6 +906,95 @@ Procedure Map_Load(Map_ID, Directory.s) ; Dekomprimiert und lädt die Information
   ProcedureReturn ProcedureResult
 EndProcedure
 
+Procedure Map_Reload(Map_ID)
+  If Not Map_Select_ID(Map_ID)
+    ProcedureReturn
+  EndIf
+  
+  *Map_Data.Map_Data = Map_Data()
+  
+  If *Map_Data\Loaded = 1
+    ProcedureReturn
+  EndIf
+  *Map_Data\Loading = 1
+  
+  Map_Size = *Map_Data\Size_X * *Map_Data\Size_Y * *Map_Data\Size_Z
+  
+  *Map_Data\Data = Mem_Allocate(Map_Size * 4, #PB_Compiler_File, #PB_Compiler_Line, "Map_ID = " + Str(*Map_Data\ID))
+  *Map_Data\Physic_Data = Mem_Allocate(1+Map_Size/8, #PB_Compiler_File, #PB_Compiler_Line, "Map_ID(Physics) = "+Str(*Map_Data\ID))
+  *Map_Data\Blockchange_Data = Mem_Allocate(1+Map_Size/8, #PB_Compiler_File, #PB_Compiler_Line, "Map_ID(Blockchange) = "+Str(*Map_Data\ID))
+  
+  If Directory.s = ""
+    Directory.s = *Map_Data\Directory
+  EndIf
+  
+  Filename_Data.s = Directory+#Map_Filename_Data
+  *Pointer.Map_Block
+  
+  If GZip_Decompress_From_File(Filename_Data, *Map_Data\Data, Map_Size*#Map_Block_Element_Size) = Map_Size*#Map_Block_Element_Size
+          
+    Undo_Clear_Map(*Map_Data\ID)
+    
+    For i = 0 To 255
+      *Map_Data\Block_Counter [i] = 0
+    Next
+    
+    For iz = 0 To *Map_Data\Size_Z-1
+      For iy = 0 To *Map_Data\Size_Y-1
+        For ix = 0 To *Map_Data\Size_X-1
+          *Pointer = *Map_Data\Data + Map_Get_Offset(ix, iy, iz, *Map_Data\Size_X, *Map_Data\Size_Y, #Map_Block_Element_Size)
+          
+          If Block(*Pointer\Type)\Replace_By_Load >= 0
+            *Pointer\Type = Block(*Pointer\Type)\Replace_By_Load
+          EndIf
+          
+          *Map_Data\Block_Counter [*Pointer\Type] + 1
+          
+          If Block(*Pointer\Type)\Do_By_Load
+            Map_Block_Do_Add(*Map_Data, ix, iy, iz)
+          EndIf
+          
+        Next
+      Next
+    Next
+    
+    *Map_Data\Loaded = 1
+    *Map_Data\Physic_Stopped = 0
+    *Map_Data\Blockchange_Stopped = 0
+    *Map_Data\Loading = 0
+    Log_Add("Map", "Map Reloaded (" + *Map_Data\Name + ")", 0, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
+  Else
+    Log_Add("Map", Lang_Get("", "Map not loaded: Filesize is wrong", Filename_Data), 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
+  EndIf
+  
+EndProcedure
+
+Procedure Map_Unload(Map_ID)
+  Log_Add("Map", "Unloading...", 0, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
+  
+  If Not Map_Select_ID(Map_ID)
+    ProcedureReturn
+  EndIf
+  
+  *Map_Data.Map_Data = Map_Data()
+  
+  If *Map_Data\Loaded = 0
+    ProcedureReturn
+  EndIf
+  
+  Map_Save(*Map_Data, *Map_Data\Directory)
+  
+  *Map_Data\Physic_Stopped = 1
+  *Map_Data\Blockchange_Stopped = 1
+  
+  FreeMemory(*Map_Data\Data)
+  FreeMemory(*Map_Data\Blockchange_Data)
+  FreeMemory(*Map_Data\Physic_Data)
+  
+  *Map_Data\Loaded = 0
+  Log_Add("Map", "Map Unloaded (" + *Map_Data\Name + ")", 0, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
+EndProcedure
+
 Procedure Map_Send(Client_ID, Map_ID)        ; Komprimiert und sendet die Karte an Client / Compresses and sends the map to the client
   ProcedureResult = 0
   
@@ -907,7 +1002,11 @@ Procedure Map_Send(Client_ID, Map_ID)        ; Komprimiert und sendet die Karte 
     
     If Map_Select_ID(Map_ID)
       *Map_Data.Map_Data = Map_Data()
-
+      
+      If *Map_Data\Loaded = 0
+        Map_Reload(Map_ID)
+      EndIf
+      
       ; Anzahl Blöcke
       Map_Size_X = *Map_Data\Size_X
       Map_Size_Y = *Map_Data\Size_Y
@@ -1008,113 +1107,6 @@ Procedure Map_Send(Client_ID, Map_ID)        ; Komprimiert und sendet die Karte 
   
   ProcedureReturn ProcedureResult
 EndProcedure
-
-; Procedure Map_Send(Client_ID, Map_ID)        ; Komprimiert und sendet die Karte an Client / Compresses and sends the map to the client
-;   ProcedureResult = 0
-;   
-;   If Network_Client_Select(Client_ID)
-;     
-;     If Map_Select_ID(Map_ID)
-;       *Map_Data.Map_Data = Map_Data()
-; 
-;       ; Anzahl Blöcke
-;       Map_Size_X = *Map_Data\Size_X
-;       Map_Size_Y = *Map_Data\Size_Y
-;       Map_Size_Z = *Map_Data\Size_Z
-;       Map_Size = Map_Size_X * Map_Size_Y * Map_Size_Z
-;       
-;       ;*Temp_Buffer = AllocateMemory(Map_Size+10)
-;       *Temp_Buffer = Mem_Allocate(Map_Size+10, #PB_Compiler_File, #PB_Compiler_Line, "Temp")
-;       
-;       If *Temp_Buffer
-;         
-;         Temp_Buffer_Offset = 0
-;         
-;         PokeB(*Temp_Buffer+Temp_Buffer_Offset, Map_Size/16777216) : Temp_Buffer_Offset + 1
-;         PokeB(*Temp_Buffer+Temp_Buffer_Offset, Map_Size/65536) : Temp_Buffer_Offset + 1
-;         PokeB(*Temp_Buffer+Temp_Buffer_Offset, Map_Size/256) : Temp_Buffer_Offset + 1
-;         PokeB(*Temp_Buffer+Temp_Buffer_Offset, Map_Size) : Temp_Buffer_Offset + 1
-;         
-;         For i = 0 To Map_Size_X*Map_Size_Y*Map_Size_Z-1
-;           *Pointer.Map_Block = *Map_Data\Data + i * #Map_Block_Element_Size
-; 
-;           If Block(*Pointer\Type)\CPE_Level > Network_Client()\CustomBlocks_Level
-;             PokeB(*Temp_Buffer+Temp_Buffer_Offset, Block(*Pointer\Type)\CPE_Replace) : Temp_Buffer_Offset + 1
-;           Else
-;             PokeB(*Temp_Buffer+Temp_Buffer_Offset, Block(*Pointer\Type)\On_Client) : Temp_Buffer_Offset + 1
-;           EndIf
-;         Next
-;         
-;         Temp_Buffer_2_Size = GZip_CompressBound(Temp_Buffer_Offset) + 1024 + 512
-;         *Temp_Buffer_2 = Mem_Allocate(Temp_Buffer_2_Size, #PB_Compiler_File, #PB_Compiler_Line, "Temp")
-;         
-;         If *Temp_Buffer_2
-;           
-;           *Map_Data\Blockchange_Stopped = 1
-;           UnlockMutex(Main\Mutex)
-;           
-;           ;GZip_Compress_2_File(*Temp_Buffer, Temp_Buffer_Offset, "Temp/Send.gz")
-;           
-;           Compressed_Size = GZip_Compress(*Temp_Buffer_2, Temp_Buffer_2_Size, *Temp_Buffer, Temp_Buffer_Offset)
-;           
-;           Mem_Free(*Temp_Buffer)
-;           
-;           LockMutex(Main\Mutex)
-;           If Map_Select_ID(Map_ID)
-;             *Map_Data.Map_Data = Map_Data()
-;             *Map_Data\Blockchange_Stopped = 0
-;           EndIf
-;           If Compressed_Size <> -1
-;             If Network_Client_Select(Client_ID)
-;               
-;               Compressed_Size + (1024 - (Compressed_Size % 1024))
-;               Network_Client_Output_Write_Byte(Network_Client()\ID, 02)
-;               
-;               Bytes_2_Send = Compressed_Size
-;               Bytes_Sent = 0
-;               
-;               While Bytes_2_Send > 0
-;                 Bytes_In_Block = Bytes_2_Send
-;                 If Bytes_In_Block > 1024 : Bytes_In_Block = 1024 : EndIf
-;                 Network_Client_Output_Write_Byte(Network_Client()\ID, 03)
-;                 Network_Client_Output_Write_Word(Network_Client()\ID, Bytes_In_Block) ; Menge der Bytes
-;                 Network_Client_Output_Write_Buffer(Network_Client()\ID, *Temp_Buffer_2 + Bytes_Sent, Bytes_In_Block)
-;                 Bytes_Sent + Bytes_In_Block
-;                 Network_Client_Output_Write_Byte(Network_Client()\ID, Bytes_Sent*100/Compressed_Size)
-;                 Bytes_2_Send - Bytes_In_Block
-;                 
-;               Wend
-;               
-;               Network_Client_Output_Write_Byte(Network_Client()\ID, 4)
-;               Network_Client_Output_Write_Word(Network_Client()\ID, Map_Size_X)
-;               Network_Client_Output_Write_Word(Network_Client()\ID, Map_Size_Z)
-;               Network_Client_Output_Write_Word(Network_Client()\ID, Map_Size_Y)
-;               CPE_Aftermap_Actions(Network_Client()\ID, *Map_Data)
-;               
-;               ProcedureResult = 1
-;             EndIf
-;             Mem_Free(*Temp_Buffer_2)
-;           Else ; Wenn die Datei nicht komprimiert wurde
-;             Log_Add("Map", Lang_Get("", "Can't send the map: GZip-error"), 10, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
-;             Network_Client_Kick(Client_ID, Lang_Get("", "Mapsending error"), 0)
-;             Mem_Free(*Temp_Buffer_2)
-;           EndIf
-;         Else ; Wenn der Speicher nicht allokiert wurde
-;           Log_Add("Map", Lang_Get("", "Can't send the map: Memory-error"), 10, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
-;           Network_Client_Kick(Client_ID, Lang_Get("", "Mapsending error"), 0)
-;           Mem_Free(*Temp_Buffer)
-;         EndIf
-;       Else ; Wenn der Speicher nicht allokiert wurde
-;         Log_Add("Map", Lang_Get("", "Can't send the map: Memory-error"), 10, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
-;         Network_Client_Kick(Client_ID, Lang_Get("", "Mapsending error"), 0)
-;       EndIf
-;       
-;     EndIf
-;     
-;   EndIf
-;   
-;   ProcedureReturn ProcedureResult
-; EndProcedure
 
 Procedure Map_Export(Map_ID, X_0, Y_0, Z_0, X_1, Y_1, Z_1, Filename.s)
   
@@ -1507,7 +1499,7 @@ Procedure Map_Action_Thread(*Dummy)
       
       If Map_Select_ID(Map_ID)
         Select Action
-          Case 0 ; Speichern
+          Case 0 ; Save
             Watchdog_Watch("Map_Action", "Begin: Map_Save()", 1)
             If Map_Save(Map_Data(), Directory) ; Vorsicht, mutex ist unlocked
               If Map_Select_ID(Map_ID)
@@ -1531,6 +1523,7 @@ Procedure Map_Action_Thread(*Dummy)
             
           Case 1 ; Laden
             Watchdog_Watch("Map_Action", "Begin: Map_Load()", 1)
+            
             If Map_Load(Map_ID, Directory)
               If Client_ID And Map_Select_ID(Map_ID)
                 System_Message_Network_Send(Client_ID, Lang_Get("", "Ingame: Map loaded", Map_Data()\Name))
@@ -1562,7 +1555,7 @@ Procedure Map_Action_Thread(*Dummy)
               EndIf
             EndIf
             
-          Case 10 ; Löschen
+          Case 10 ; Dekete
             Watchdog_Watch("Map_Action", "Begin: Map_Delete()", 1)
             Plugin_Event_Map_Action_Delete(Action_ID, Map_Data())
             Map_Name.s = Map_Data()\Name
@@ -1594,7 +1587,6 @@ Procedure Map_Env_Colors_Change(*Map_Data.Map_Data, Red, Green, Blue, Type)
         ProcedureReturn
     EndIf
     
-    
     *Map_Data\ColorsSet = #True
     
     Select Type
@@ -1624,6 +1616,9 @@ Procedure Map_Env_Appearance_Set(*Map_Data.Map_Data, Texture.s, Side_Block, Edge
         ProcedureReturn
     EndIf
     
+    If FindString(Texture, "http://") = 0
+      Texture = ""
+    EndIf
     
     *Map_Data\CustomAppearance = #True
     *Map_Data\CustomURL = Texture
@@ -1631,7 +1626,7 @@ Procedure Map_Env_Appearance_Set(*Map_Data.Map_Data, Texture.s, Side_Block, Edge
     *Map_Data\Edge_Block = Edge_Block
     *Map_Data\Side_level = Side_Level
     
-    List_Store(*Network_Client_Old, Network_Client()) ; Is against CPE Spec
+    List_Store(*Network_Client_Old, Network_Client())
     
     ForEach Network_Client()
         CPE_Aftermap_Actions(Network_Client()\ID, *Map_Data)    
@@ -1892,6 +1887,16 @@ Procedure Map_Block_Move(*Map_Data.Map_Data, X_0, Y_0, Z_0, X_1, Y_1, Z_1, Undo,
 EndProcedure
 
 Procedure Map_Block_Get_Type(*Map_Data.Map_Data, X.l, Y.l, Z.l)
+  If *Map_Data\Loaded = 0 And *Map_Data\Loading = 0
+    *Map_Data\LastClient = Milliseconds()
+    Map_Reload(*Map_Data\ID)
+  EndIf
+  
+  If (*Map_Data\Loading = 1)
+    While *Map_Data\Loaded = 0
+      Delay(100)
+    Wend
+  EndIf
   
   *Pointer.Map_Block
   
@@ -2176,12 +2181,10 @@ Procedure Map_Blockchanging_Thread(*Dummy) ; In diesem Thread werden alle Blockä
 EndProcedure
 
 Procedure Map_Main()
-  If Map_Main\Timer_File_Check < Milliseconds()
-    Map_Main\Timer_File_Check = Milliseconds() + 1000
-    File_Date = GetFileDate(Files_File_Get("Map_List"), #PB_Date_Modified)
-    If Map_Main\File_Date_Last <> File_Date
-      Map_List_Load(Files_File_Get("Map_List"))
-    EndIf
+  File_Date = GetFileDate(Files_File_Get("Map_List"), #PB_Date_Modified)
+  
+  If Map_Main\File_Date_Last <> File_Date
+    Map_List_Load(Files_File_Get("Map_List"))
   EndIf
  
   If Map_Main\Save_File And Map_Main\Save_File_Timer < Milliseconds()
@@ -2189,19 +2192,33 @@ Procedure Map_Main()
     Map_Main\Save_File = 0
     Map_List_Save(Files_File_Get("Map_List"))
   EndIf
+  
   ForEach Map_Data()
-    If Map_Data()\Save_Intervall > 0 And Map_Data()\Save_Time + Map_Data()\Save_Intervall*60000 < Milliseconds()
+    If Map_Data()\Save_Intervall > 0 And Map_Data()\Save_Time + Map_Data()\Save_Intervall*60000 < Milliseconds() And Map_Data()\Loaded = 1
       Map_Data()\Save_Time = Milliseconds()
       Map_Action_Add_Save(0, Map_Data()\ID, "")
     EndIf
+    
+    If Map_Data()\Clients > 0
+      Map_Data()\LastClient = Milliseconds()
+      
+      If Map_Data()\Loaded = 0
+        Map_Reload(Map_Data()\ID)
+      EndIf
+      
+    EndIf
+    
+    If Map_Data()\Loaded = 1 And (Milliseconds() - Map_Data()\LastClient) > 20000 ; - Memory Conservation!!
+      Map_Unload(Map_Data()\ID)
+    EndIf
+    
   Next
   
-  If Map_Settings\Timer_File_Check < Milliseconds()
-    Map_Settings\Timer_File_Check = Milliseconds() + 1000
-    File_Date = GetFileDate(Files_File_Get("Map_Settings"), #PB_Date_Modified)
-    If Map_Settings\File_Date_Last <> File_Date
-      Map_Settings_Load(Files_File_Get("Map_Settings"))
-    EndIf
+
+  File_Date = GetFileDate(Files_File_Get("Map_Settings"), #PB_Date_Modified)
+  
+  If Map_Settings\File_Date_Last <> File_Date
+    Map_Settings_Load(Files_File_Get("Map_Settings"))
   EndIf
   
   If Map_Main\Timer_Stats < Milliseconds()
@@ -2211,10 +2228,12 @@ Procedure Map_Main()
     
   EndIf
 EndProcedure
+
+RegisterCore("Map", 1000, #Null, #Null, @Map_Main())
 ; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 1009
-; FirstLine = 973
-; Folding = ---4----
+; CursorPosition = 280
+; FirstLine = 241
+; Folding = f79PAeQA-
 ; EnableThread
 ; EnableXP
 ; DisableDebugger

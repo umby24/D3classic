@@ -112,12 +112,12 @@ ProcedureCDLL Main()
     
   EndIf
 EndProcedure
-; IDE Options = PureBasic 4.51 (Windows - x86)
+; IDE Options = PureBasic 5.00 (Windows - x64)
 ; ExecutableFormat = Shared Dll
 ; CursorPosition = 85
-; FirstLine = 66
 ; Folding = -
 ; EnableXP
 ; EnableOnError
 ; Executable = Example.x86.dll
 ; DisableDebugger
+; Compiler = PureBasic 5.00 (Windows - x64)

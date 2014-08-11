@@ -338,7 +338,7 @@ Procedure Error_Handler()
   PrintN("#                            #")
   PrintN("# Please send the html       #")
   PrintN("# file to the developer      #")
-  PrintN("# ( Dadido3@aol.com )        #")
+  PrintN("#wanderingscripter@gmail.com #")
   PrintN("#                            #")
   PrintN("# If you started the         #")
   PrintN("# server with Autostart.exe  #")
@@ -356,8 +356,8 @@ Procedure Error_Main()
   
 EndProcedure
 ; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 326
-; FirstLine = 315
+; CursorPosition = 340
+; FirstLine = 300
 ; Folding = -
 ; EnableXP
 ; DisableDebugger

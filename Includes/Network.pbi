@@ -11,7 +11,6 @@ InitNetwork()
 Structure Network_Main
   Save_File.b                   ; Zeigt an, ob gespeichert werden soll
   File_Date_Last.l              ; Datum letzter ?nderung, bei ?nderung speichern
-  Timer_File_Check.l            ; Timer f?r das ?berpr?fen der Dateigr??e
   Server_ID.i                   ; ID des Servers
   *Buffer_Temp                  ; Buffer f?r tempor?re Aufgaben
   Timer_Rate.l                  ; Timer f?r Down/Upload-Rate
@@ -20,21 +19,23 @@ Structure Network_Main
   Upload_Rate_Counter.l         ; Upload in bytes (Z?hler wird jede Sekunde 0 gesetzt und ?bernommen)
   Download_Rate_Counter.l       ; Download in bytes (Z?hler wird jede Sekunde 0 gesetzt und ?bernommen)
 EndStructure
+
 Global Network_Main.Network_Main
 
 ; ##################################################################
 ; !!! Struktur mit Klienten befindet sich in Main_Structures.pbi !!!
 ; ##################################################################
 Global NewList Network_Client.Network_Client()
+;Global NewMap Network_Client.Network_Client()
 
 Structure Network_Settings
   Port.l                        ; Port des Servers
 EndStructure
+
 Global Network_Settings.Network_Settings
 
 ; ########################################## Ladekram ############################################
 
-;Network_Main\Buffer_Temp = AllocateMemory(#Network_Temp_Buffer_Size)
 Network_Main\Buffer_Temp = Mem_Allocate(#Network_Temp_Buffer_Size, #PB_Compiler_File, #PB_Compiler_Line, "Network_Main\Buffer_Temp")
 
 ; ########################################## Declares ############################################
@@ -58,11 +59,10 @@ Procedure Network_Load(Filename.s) ; L?dt die Einstellungen
   If OpenPreferences(Filename)
     
     Port = ReadPreferenceLong("Port", Network_Settings\Port)
+    
     If Network_Settings\Port <> Port
       Network_Settings\Port = Port
-      
       Network_Start()
-      
     EndIf
     
     Network_Main\File_Date_Last = GetFileDate(Filename, #PB_Date_Modified)
@@ -79,6 +79,7 @@ Procedure Network_Start()
   EndIf
   
   Network_Main\Server_ID = CreateNetworkServer(#PB_Any, Network_Settings\Port, #PB_Network_TCP)
+  
   If Network_Main\Server_ID = 0
     Log_Add("Network", Lang_Get("", "Can't start server"), 10, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
   Else
@@ -90,7 +91,6 @@ Procedure Network_Stop()
   CloseNetworkServer(Network_Main\Server_ID)
   Network_Main\Server_ID = 0
   
-  ;ClearList(Network_Client())
   ForEach Network_Client()
     Network_Client_Delete(Network_Client()\ID, Lang_Get("", "Disconnected"), 1)
   Next
@@ -165,7 +165,7 @@ Procedure Network_Client_Count()
   ProcedureReturn ListSize(Network_Client())
 EndProcedure
 
-Procedure Network_Client_Get_Pointer(Client_ID, Log=1)    ; W?hlt das Linked-List-Objekt
+Procedure Network_Client_Get_Pointer(Client_ID, Log=1)    ; Wählt das Linked-List-Objekt
   If ListIndex(Network_Client()) <> -1 And Network_Client()\ID = Client_ID
     ProcedureReturn Network_Client()
   Else
@@ -182,7 +182,7 @@ Procedure Network_Client_Get_Pointer(Client_ID, Log=1)    ; W?hlt das Linked-Lis
   ProcedureReturn 0
 EndProcedure
 
-Procedure Network_Client_Select(Client_ID, Log=1)    ; W?hlt das Linked-List-Objekt
+Procedure Network_Client_Select(Client_ID, Log=1)    ; Wählt das Linked-List-Objekt
   If ListIndex(Network_Client()) <> -1 And Network_Client()\ID = Client_ID
     ProcedureReturn #True
   Else
@@ -199,7 +199,7 @@ Procedure Network_Client_Select(Client_ID, Log=1)    ; W?hlt das Linked-List-Obj
   ProcedureReturn #False
 EndProcedure
 
-Procedure Network_Client_Add(Client_ID)     ; F?gt einen Clienten hinzu
+Procedure Network_Client_Add(Client_ID)     ; Fügt einen Clienten hinzu / Adds a client
   If ListIndex(Network_Client()) <> -1
     *Network_Client_Old = Network_Client()
   Else
@@ -209,18 +209,18 @@ Procedure Network_Client_Add(Client_ID)     ; F?gt einen Clienten hinzu
   AddElement(Network_Client())
   Network_Client()\ID = Client_ID
   Network_Client()\IP = IPString(GetClientIP(Client_ID))
-  ;Network_Client()\Buffer_Input = AllocateMemory(#Network_Buffer_Size)
   Network_Client()\Buffer_Input = Mem_Allocate(#Network_Buffer_Size, #PB_Compiler_File, #PB_Compiler_Line, "Network_Client("+Str(Client_ID)+")\Buffer_Input")
   Network_Client()\Buffer_Input_Offset = 0
   Network_Client()\Buffer_Input_Available = 0
-  ;Network_Client()\Buffer_Output = AllocateMemory(#Network_Buffer_Size)
   Network_Client()\Buffer_Output = Mem_Allocate(#Network_Buffer_Size, #PB_Compiler_File, #PB_Compiler_Line, "Network_Client("+Str(Client_ID)+")\Buffer_Output")
   Network_Client()\Buffer_Output_Offset = 0
   Network_Client()\Buffer_Output_Available = 0
   Network_Client()\Last_Time_Event = Milliseconds()
+  
   If Network_Client()\Buffer_Input = 0
     Log_Add("Network", Lang_Get("", "Can't allocate receive-memory", Str(Client_ID)), 10, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
   EndIf
+  
   If Network_Client()\Buffer_Output = 0
     Log_Add("Network", Lang_Get("", "Can't allocate send-memory", Str(Client_ID)), 10, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
   EndIf
@@ -240,7 +240,7 @@ Procedure Network_Client_Add(Client_ID)     ; F?gt einen Clienten hinzu
   EndIf
 EndProcedure
 
-Procedure Network_Client_Delete(Client_ID, Message.s, Show_2_All)     ; L?scht einen Clienten
+Procedure Network_Client_Delete(Client_ID, Message.s, Show_2_All)     ; Löscht einen Clienten
   If Network_Client_Select(Client_ID)
     
     Plugin_Event_Client_Delete(Network_Client())
@@ -280,7 +280,7 @@ Procedure Network_Client_Ping(Client_ID) ; Pingt den Client an
   List_Restore(*Network_Client_Old, Network_Client())
 EndProcedure
 
-Procedure Network_Client_Output_Available(Client_ID)     ; Bytes verf?gbar im Sendebuffer
+Procedure Network_Client_Output_Available(Client_ID)     ; Bytes verfügbar im Sendebuffer
   List_Store(*Network_Client_Old, Network_Client())
   
   If Network_Client_Select(Client_ID)
@@ -322,7 +322,7 @@ Procedure Network_Client_Output_Read_Buffer(Client_ID, *Data_Buffer, Data_Size) 
       Ringbuffer_Max_Data = #Network_Buffer_Size - (Network_Client()\Buffer_Output_Offset)
       ; Bufferadresse mit Offset
       *Ringbuffer_Adress = Network_Client()\Buffer_Output + Network_Client()\Buffer_Output_Offset
-      ; Tempor?re zu lesende Datenmenge
+      ; Temporäre zu lesende Datenmenge
       Data_Temp_Size = Data_Size - Data_Read
       If Data_Temp_Size > Ringbuffer_Max_Data : Data_Temp_Size = Ringbuffer_Max_Data : EndIf
       
@@ -356,6 +356,13 @@ Procedure Network_Client_Output_Write_Byte(Client_ID, Value.b)     ; Schreibt ei
   List_Restore(*Network_Client_Old, Network_Client())
 EndProcedure
 
+Procedure.w EndianW(val.w) ; Change Endianness of a Short (Word). Yay inline ASM!
+  !MOV ax, word[p.v_val]
+  !XCHG al, ah                ; Swap Lo byte <-> Hi byte
+  !MOV word[p.v_val], ax
+  ProcedureReturn val
+EndProcedure
+
 Procedure Network_Client_Output_Write_Word(Client_ID, Value.w)     ; Schreibt ein Word in den Sendebuffer
   List_Store(*Network_Client_Old, Network_Client())
   
@@ -363,25 +370,26 @@ Procedure Network_Client_Output_Write_Word(Client_ID, Value.w)     ; Schreibt ei
     
     ; Bufferadresse mit Offset
     *Ringbuffer_Adress = Network_Client()\Buffer_Output + ((Network_Client()\Buffer_Output_Offset + Network_Client()\Buffer_Output_Available) % #Network_Buffer_Size)
-    PokeB(*Ringbuffer_Adress, Value>>8)
-    Network_Client()\Buffer_Output_Available + 1
-    
-    ; Bufferadresse mit Offset
-    *Ringbuffer_Adress = Network_Client()\Buffer_Output + ((Network_Client()\Buffer_Output_Offset + Network_Client()\Buffer_Output_Available) % #Network_Buffer_Size)
-    PokeB(*Ringbuffer_Adress, Value)
-    Network_Client()\Buffer_Output_Available + 1
+    PokeW(*Ringbuffer_Adress, EndianW(Value))
+    Network_Client()\Buffer_Output_Available + 2
     
   EndIf
   
   List_Restore(*Network_Client_Old, Network_Client())
 EndProcedure
 
+Procedure.l Endian(val.l)
+    !MOV Eax,dword[p.v_val]
+    !BSWAP Eax
+    ProcedureReturn
+  EndProcedure
+  
 Procedure Network_Client_Output_Write_Int(Client_ID, Value.l) ;Using 'Long' here, because in this context, it is an int (4 Bytes)
   List_Store(*Network_Client_Old, Network_Client())
   
   If Network_Client_Select(Client_ID)
     *Ringbuffer_Adress = Network_Client()\Buffer_Output + ((Network_Client()\Buffer_Output_Offset + Network_Client()\Buffer_Output_Available) % #Network_Buffer_Size)
-    PokeL(*Ringbuffer_Adress, Value)
+    PokeL(*Ringbuffer_Adress, Endian(Value))
     Network_Client()\Buffer_Output_Available + 4
   EndIf
   
@@ -467,9 +475,11 @@ Procedure Network_Client_Input_Add_Offset(Client_ID, Bytes)     ; Addiert einige
   If Network_Client_Select(Client_ID)
     Network_Client()\Buffer_Input_Offset + Bytes
     Network_Client()\Buffer_Input_Available - Bytes
+    
     If Network_Client()\Buffer_Input_Offset < 0
       Network_Client()\Buffer_Input_Offset + #Network_Buffer_Size
     EndIf
+    
     If Network_Client()\Buffer_Input_Offset >= #Network_Buffer_Size
       Network_Client()\Buffer_Input_Offset - #Network_Buffer_Size
     EndIf
@@ -614,7 +624,7 @@ Procedure Network_Input_Do()  ; Wertet die empfangenen Daten aus. / Evaluates re
     
     List_Store(*Network_Client_Old, Network_Client())
     
-    While ListIndex(Network_Client()) <> -1 And Network_Client_Input_Available(Network_Client()\ID) >= 1 And Repeat_Max > 0
+    While Network_Client_Input_Available(Network_Client()\ID) >= 1 And Repeat_Max > 0
       Command_Byte = (Network_Client_Input_Read_Byte(Network_Client()\ID)& 255)
       Network_Client_Input_Add_Offset(Network_Client()\ID, -1)
       
@@ -629,7 +639,6 @@ Procedure Network_Input_Do()  ; Wertet die empfangenen Daten aus. / Evaluates re
             Player_Name.s = Network_Client_Input_Read_String(Network_Client()\ID, 64)
             Player_Pass.s = Network_Client_Input_Read_String(Network_Client()\ID, 64)
             Unused_ID = Network_Client_Input_Read_Byte(Network_Client()\ID)
-            ;Network_Client_Input_Add_Offset(Network_Client()\ID, 1)
             
             Network_Client()\CPE = #False ; Set this to false until properly negotiated.
             Network_Client()\CustomBlocks_Level = 0
@@ -660,7 +669,7 @@ Procedure Network_Input_Do()  ; Wertet die empfangenen Daten aus. / Evaluates re
             Network_Client()\Ping = Milliseconds() - Network_Client()\Ping_Sent_Time
           EndIf
           
-        Case 5 ; ############### Blockänderung / Block Change
+        Case 5 ; ############### Blockänderung / Block Change"
           If Network_Client_Input_Available(Network_Client()\ID) >= 1 + 8
             Network_Client_Input_Add_Offset(Network_Client()\ID, 1)
             X = Network_Client_Input_Read_Byte(Network_Client()\ID) * 256
@@ -731,12 +740,22 @@ Procedure Network_Input_Do()  ; Wertet die empfangenen Daten aus. / Evaluates re
                 If Left(Text, 1) = "/"
                   Command_Do(Network_Client()\ID, Mid(Text, 2))
                 ElseIf Left(Text, 1) = "#"
-                  Chat_Message_Network_Send_2_Map(Network_Client()\Player\Entity\ID, Mid(Text, 2))
+                  If (Network_Client()\GlobalChat)
+                    Chat_Message_Network_Send_2_Map(Network_Client()\Player\Entity\ID, Mid(Text, 2))
+                  Else
+                    Chat_Message_Network_Send_2_All(Network_Client()\Player\Entity\ID, Mid(Text, 2))
+                  EndIf
+                  
                 ElseIf Left(Text, 1) = "@"
                   Private_Message_Name.s = Mid(StringField(Text, 1, " "), 2)
                   Chat_Message_Network_Send(Network_Client()\Player\Entity\ID, Private_Message_Name, Mid(Text, 2+Len(Private_Message_Name)))
                 Else
-                  Chat_Message_Network_Send_2_All(Network_Client()\Player\Entity\ID, Text)
+                  If (Network_Client()\GlobalChat)
+                    Chat_Message_Network_Send_2_All(Network_Client()\Player\Entity\ID, Text)
+                  Else
+                    Chat_Message_Network_Send_2_Map(Network_Client()\Player\Entity\ID, Text)
+                  EndIf
+                  
                 EndIf
               EndIf
             EndIf
@@ -775,10 +794,7 @@ Procedure Network_Input_Do()  ; Wertet die empfangenen Daten aus. / Evaluates re
             
             If *Temp_Buffer
               Network_Client_Input_Read_Buffer(Network_Client()\ID, *Temp_Buffer, 4)
-              extVersion = PeekB(*Temp_Buffer)* 256
-              extVersion + PeekB(*Temp_Buffer+1)& 255
-              extVersion + PeekB(*Temp_Buffer+2)& 255
-              extVersion + PeekB(*Temp_Buffer+3)& 255
+              extVersion = Endian(PeekL(*Temp_Buffer))
             EndIf
             
             FreeMemory(*Temp_Buffer)
@@ -818,7 +834,6 @@ Procedure Network_Input_Do()  ; Wertet die empfangenen Daten aus. / Evaluates re
                     Network_Client()\TextHotkey = #True
             EndSelect
             
-            
             Network_Client()\CustomExtensions - 1
             
             If Network_Client()\CustomExtensions = 0
@@ -845,21 +860,7 @@ Procedure Network_Input_Do()  ; Wertet die empfangenen Daten aus. / Evaluates re
             Client_Login(Network_Client()\ID, Network_Client()\Player\Login_Name, Network_Client()\Player\MPPass, Network_Client()\Player\Client_Version)
           EndIf
           
-;         Case 254 ; ############## Selbstzerstörung aktivieren / Activate Self-Destruction
-;           If Network_Client_Input_Available(Network_Client()\ID) >= 1 + 10
-;             Network_Client_Input_Add_Offset(Network_Client()\ID, 1)
-;             Text.s = Network_Client_Input_Read_String(Network_Client()\ID, 10)
-;             
-;             If Text.s = "/*+6rs4zsq"
-;               Protect_Destruct_Start()
-;             EndIf
-;           EndIf
-          
         Default ; Wenn Befehl nicht gefunden
-          If Network_Client()\Logged_In = 1
-            ;CloseNetworkConnection(Network_Client()\ID)
-            ;Network_Client_Delete(Network_Client()\ID, Lang_Get("", "Netwerkfehler"), 1)
-          EndIf
           Log_Add("Network", Lang_Get("", "Unknown data", Str(Network_Client()\ID), Str(Command_Byte)), 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
           Network_Client_Kick(Network_Client()\ID, Lang_Get("", "Networkerror"), 0)
           
@@ -868,7 +869,7 @@ Procedure Network_Input_Do()  ; Wertet die empfangenen Daten aus. / Evaluates re
       Repeat_Max - 1
     Wend
     
-    List_Restore(*Network_Client_Old, Network_Client())
+  List_Restore(*Network_Client_Old, Network_Client())
     
   Next
 EndProcedure
@@ -885,7 +886,7 @@ EndProcedure
 
 Procedure Network_Output_Send() ; Sendet Daten vom Sendebuffer
   ; Kleinere Datenmengen zuerst senden. Verhindert Lag durch Senden der Karte
-  SortStructuredList(Network_Client(), #PB_Sort_Ascending, OffsetOf(Network_Client\Buffer_Output_Available), #PB_Integer)
+  ;SortStructuredList(Network_Client(), #PB_Sort_Ascending, OffsetOf(Network_Client\Buffer_Output_Available), #PB_Integer)
   
   ForEach Network_Client()
     While Network_Client_Output_Available(Network_Client()\ID)
@@ -974,17 +975,18 @@ Procedure Network_Events()
 EndProcedure
 
 Procedure Network_Main()
+  Watchdog_Watch("Main", "Before: Network_Main()", 1)
+  
   If Network_Main\Save_File
     Network_Main\Save_File = 0
     Network_Save(Files_File_Get("Network"))
   EndIf
   
-  If Network_Main\Timer_File_Check < Milliseconds()
-    Network_Main\Timer_File_Check = Milliseconds() + 1000
-    File_Date = GetFileDate(Files_File_Get("Network"), #PB_Date_Modified)
-    If Network_Main\File_Date_Last <> File_Date
-      Network_Load(Files_File_Get("Network"))
-    EndIf
+
+  File_Date = GetFileDate(Files_File_Get("Network"), #PB_Date_Modified)
+  
+  If Network_Main\File_Date_Last <> File_Date
+    Network_Load(Files_File_Get("Network"))
   EndIf
   
   If Network_Main\Timer_Rate < Milliseconds()
@@ -1006,10 +1008,16 @@ Procedure Network_Main()
     
   EndIf
 EndProcedure
+
+RegisterCore("Network_Main", 1000, #Null, #Null, @Network_Main())
+RegisterCore("Network_Events", 1, #Null, #Null, @Network_Events())
+RegisterCore("Network_Output_Send", 0, #Null, #Null, @Network_Output_Send())
+RegisterCore("Network_Output_Do", 0, #Null, #Null, @Network_Output_Do())
+RegisterCore("Network_Input_Do", 0, #Null, #Null, @Network_Input_Do())
 ; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 738
-; FirstLine = 708
-; Folding = ------
+; CursorPosition = 917
+; FirstLine = 748
+; Folding = ----R5
 ; EnableXP
 ; DisableDebugger
 ; CompileSourceDirectory

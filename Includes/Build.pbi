@@ -22,7 +22,7 @@ EndStructure
 
 Global NewList Build_Player_Queue.Build_Player_Queue()
 
-; ########################################## Ladekram ############################################
+; ########################################## Constants ############################################
 
 ; ########################################## Declares ############################################
 
@@ -92,6 +92,7 @@ Procedure Build_Box_Player(Player_Number, Map_ID, X_0, Y_0, Z_0, X_1, Y_1, Z_1, 
             
             ElseIf Hollow = 0
               LastElement(Build_Player_Queue())
+              
               If AddElement(Build_Player_Queue())
                 Build_Player_Queue()\Player_Number = Player_Number
                 Build_Player_Queue()\Map_ID = Map_ID
@@ -177,7 +178,7 @@ Procedure Build_Rank_Box(Map_ID, X_0, Y_0, Z_0, X_1, Y_1, Z_1, Rank, Max_Rank) ;
 EndProcedure
 
 Procedure Build_Queue_Do()
-    Temp_Time = Milliseconds()
+  Temp_Time = Milliseconds()
     
   While FirstElement(Build_Player_Queue())
     If Player_List_Select_Number(Build_Player_Queue()\Player_Number)
@@ -197,9 +198,11 @@ EndProcedure
 Procedure Build_Main()
   Build_Queue_Do()
 EndProcedure
+
+RegisterCore("Build", 0, #Null, #Null, @Build_Main())
 ; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 151
-; FirstLine = 127
+; CursorPosition = 201
+; FirstLine = 143
 ; Folding = --
 ; EnableXP
 ; DisableDebugger

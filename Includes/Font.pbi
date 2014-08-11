@@ -175,12 +175,10 @@ Procedure Font_Draw_Text_Player(*Player.Player_List, Font_ID.s, Map_ID, X, Y, Z,
 EndProcedure
 
 Procedure Font_Main()
-  If Font_Main\Timer_File_Check < Milliseconds()
-    Font_Main\Timer_File_Check = Milliseconds() + 1000
-    File_Date = GetFileDate(Files_File_Get("Font"), #PB_Date_Modified)
-    If Font_Main\File_Date_Last <> File_Date
-      Font_Load(Files_File_Get("Font"))
-    EndIf
+  File_Date = GetFileDate(Files_File_Get("Font"), #PB_Date_Modified)
+  
+  If Font_Main\File_Date_Last <> File_Date
+    Font_Load(Files_File_Get("Font"))
   EndIf
   
   
@@ -244,9 +242,11 @@ Procedure Font_Main()
   EndIf
   ; ##############################
 EndProcedure
+
+RegisterCore("Font", 1000, #Null, #Null, @Font_Main())
 ; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 236
-; FirstLine = 204
+; CursorPosition = 245
+; FirstLine = 186
 ; Folding = --
 ; EnableXP
 ; DisableDebugger

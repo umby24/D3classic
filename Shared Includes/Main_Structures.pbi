@@ -26,6 +26,7 @@ Structure Player_List
   Attribute_Long.l [#Player_Attributes]   ; Wert des Attributs
   Attribute_String.s [#Player_Attributes] ; Wert des Attributs
   Inventory.u [256]           ; Anzahl verfügbarer Blöcke des Spielers
+  GlobalChat.b
 EndStructure
 
 ; ################################################################################################################
@@ -150,13 +151,17 @@ Structure Map_Data
   List Map_Block_Changed.Map_Block_Changed(); Blockchange-Queue
   List Undo_Step.Undo_Step(); Undo-Steps
   List Rank.Map_Rank_Element(); Liste aller Rang-Box-Elemente (neusten und vordersten Elemente am Anfang der Liste)
-  List Teleporter.Map_Teleporter_Element(); List aller Teleporter
+  Map Teleporter.Map_Teleporter_Element(); List aller Teleporter
   Physic_Stopped.a          ; Wenn 1, dann wurde die Physik auf der Karte deaktiviert
   Blockchange_Stopped.a     ; Wenn 1, dann wurde das Senden von Blockchanges deaktiviert (Für das Senden der Karte)
   Rank_Build.w              ; Benötigter Rang um zu bauen
   Rank_Join.w               ; Benötigter Rang um Karte zu betreten
   Rank_Show.w               ; Benötigter Rang um die Karte zu sehen (Betreten ist möglich)
   MOTD_Override.s           ; Wenn ungleich "", dann wird beim Betreten der Karte diese MOTD angezeigt
+  Loading.b
+  Loaded.b
+  LastClient.l
+  Clients.l
   
   SkyColor.l                ; CPE EnvSetColor Parameters.
   CloudColor.l
@@ -288,6 +293,7 @@ Structure Network_Client
   EnvMapAppearance.b          ; Defines if the client supports EnvMapAppearance.
   HackControl.b               ; Defines if the client supports HackControl
   TextHotkey.b                ; Defines if the client supports TextHotkey.
+  GlobalChat.b
   
   List Extensions.s()        ; Holds a list of all supported plugins on the client.
   List ExtensionVersions.i()  ;Holds a list of the extension versions that work.
@@ -295,8 +301,6 @@ Structure Network_Client
 EndStructure
 
 ; #################################################################################################################
-
-
 
 ; #################################################################################################################
 
@@ -331,9 +335,18 @@ Structure Rank
   Suffix.s            ; Suffix
   On_Client.b         ; Byte, welches zum Clienten gesendet wird
 EndStructure
-; IDE Options = PureBasic 5.00 (Windows - x86)
-; CursorPosition = 179
-; FirstLine = 130
+
+Structure EventStruct
+    InitFunction.i
+    ShutdownFunciton.i
+    MainFunction.i
+    ID.s
+    Timer.i
+    Time.i
+EndStructure
+; IDE Options = PureBasic 5.00 (Windows - x64)
+; CursorPosition = 296
+; FirstLine = 246
 ; EnableXP
 ; DisableDebugger
 ; CompileSourceDirectory

@@ -14,7 +14,7 @@ Structure Answer
 EndStructure
 Global NewList Answer.Answer()
 
-; ########################################## Ladekram ############################################
+; ########################################## Constants ############################################
 
 ; ########################################## Declares ############################################
 
@@ -29,9 +29,11 @@ Procedure Answer_Load(Filename.s)
       While NextPreferenceGroup()
         AddElement(Answer())
         Answer()\Command = ReadPreferenceString("Command", "")
+        
         For i = 0 To #Command_Operators_Max-1
           Answer()\Operator [i] = ReadPreferenceString("Operator["+Str(i)+"]", "")
         Next
+        
         Answer()\Answer = ReadPreferenceString("Answer", "")
       Wend
     EndIf
@@ -54,6 +56,7 @@ Procedure Answer_Save(Filename.s)
       For i = 0 To #Command_Operators_Max-1
         WriteStringN(File_ID, "Operator["+Str(i)+"] = "+Answer()\Operator [i])
       Next
+      
       WriteStringN(File_ID, "Answer = "+Answer()\Answer)
     Next
     
@@ -72,6 +75,7 @@ Procedure Answer_Do()
     If Answer()\Command <> LCase(Command_Main\Parsed_Command)
       Correct = 0
     EndIf
+    
     For i = 0 To #Command_Operators_Max-1
       If Answer()\Operator [i] <> LCase(Command_Main\Parsed_Operator [i])
         Correct = 0
@@ -93,17 +97,19 @@ Procedure Answer_Main()
     Answer_Save(Files_File_Get("Answer"))
   EndIf
   
-  If Answer_Main\Timer_File_Check < Milliseconds()
-    Answer_Main\Timer_File_Check = Milliseconds() + 1000
-    File_Date = GetFileDate(Files_File_Get("Answer"), #PB_Date_Modified)
-    If Answer_Main\File_Date_Last <> File_Date
-      Answer_Load(Files_File_Get("Answer"))
-    EndIf
+
+  File_Date = GetFileDate(Files_File_Get("Answer"), #PB_Date_Modified)
+  
+  If Answer_Main\File_Date_Last <> File_Date
+    Answer_Load(Files_File_Get("Answer"))
   EndIf
 EndProcedure
+
+RegisterCore("Answer", 1000, #Null, #Null, @Answer_Main())
 ; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 18
-; Folding = --
+; CursorPosition = 107
+; FirstLine = 48
+; Folding = -
 ; EnableXP
 ; DisableDebugger
 ; CompileSourceDirectory

@@ -76,17 +76,17 @@ Procedure TMessage_Main()
     TMessage_Save(Files_File_Get("Timed_Messages"))
   EndIf
   
-  If TMessage_Main\Timer_File_Check < Milliseconds()
-    TMessage_Main\Timer_File_Check = Milliseconds() + 1000
-    File_Date = GetFileDate(Files_File_Get("Timed_Messages"), #PB_Date_Modified)
-    If TMessage_Main\File_Date_Last <> File_Date
-      TMessage_Load(Files_File_Get("Timed_Messages"))
-    EndIf
+  File_Date = GetFileDate(Files_File_Get("Timed_Messages"), #PB_Date_Modified)
+  
+  If TMessage_Main\File_Date_Last <> File_Date
+    TMessage_Load(Files_File_Get("Timed_Messages"))
   EndIf
 EndProcedure
-; IDE Options = PureBasic 4.51 (Windows - x86)
-; CursorPosition = 79
-; FirstLine = 38
+
+RegisterCore("TMessage", 1000, #Null, #Null, @TMessage_Main())
+; IDE Options = PureBasic 5.00 (Windows - x64)
+; CursorPosition = 85
+; FirstLine = 26
 ; Folding = -
 ; EnableXP
 ; DisableDebugger

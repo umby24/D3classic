@@ -53,6 +53,7 @@ System = [Main][Data]System.txt
 Teleporter = [Main][Data]Teleporter.txt
 Timed_Messages = [Main][Data]Timed_Messages.txt
 Undo = [Main][Data]Undo.txt
+LogSet = [Main][Data]Log.txt
 
 Heartbeat_Executable_Win = [Main][Heartbeat]Heartbeat.exe
 Heartbeat_Executable_Linux = [Main][Heartbeat]Heartbeat_Linux

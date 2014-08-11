@@ -1,11 +1,12 @@
+;Done
 ; ########################################## Variablen ##########################################
 
 Structure Language_Main
   Save_File.b             ; Zeigt an, ob gespeichert werden soll
   File_Date_Last.l        ; Datum letzter Änderung, bei Änderung laden
-  Timer_File_Check.l      ; Timer für das überprüfen der Dateigröße
   Language.s              ; Main language, if not specificed.
 EndStructure
+
 Global Language_Main.Language_Main
 
 Structure Language_String_Output
@@ -42,11 +43,13 @@ Procedure Language_Strings_Load(Filename.s)
       If Left(Line, 1) = "["
         String_Input.s = Mid(Line, 2, Len(Line)-3)
         AddElement(Language_String())
+        
         Language_String()\Input = String_Input
         Language_String()\Arguments = Val(Right(Line, 1))
       ElseIf Line <> ""
         String_Language.s = StringField(Line, 1, ":")
         String_Output.s = Mid(Line, Len(String_Language)+3)
+        
         If ListIndex(Language_String()) <> -1
           AddElement(Language_String()\Output())
           Language_String()\Output()\Language = String_Language
@@ -64,15 +67,18 @@ EndProcedure
 
 Procedure Language_Strings_Save(Filename.s)
   File_ID = CreateFile(#PB_Any, Filename)
+  
   If IsFile(File_ID)
     
     SortStructuredList(Language_String(), #PB_Sort_Ascending, OffsetOf(Language_String\Input), #PB_Sort_String)
     
     ForEach Language_String()
       WriteStringN(File_ID, "["+Language_String()\Input+"]"+Str(Language_String()\Arguments))
+      
       ForEach Language_String()\Output()
         WriteStringN(File_ID, Language_String()\Output()\Language+": "+Language_String()\Output()\Output)
       Next
+      
       WriteStringN(File_ID, "")
     Next
     
@@ -84,6 +90,7 @@ Procedure Language_Strings_Save(Filename.s)
 EndProcedure
 
 Threaded Lang_Get_Return_String.s = ""
+
 Procedure.s Lang_Get(Language.s, Input.s, Field_0.s = "", Field_1.s = "", Field_2.s = "", Field_3.s = "") ; Wandelt einen String zur passenden Sprache  
   If Language = ""
     Language = Language_Main\Language
@@ -96,12 +103,14 @@ Procedure.s Lang_Get(Language.s, Input.s, Field_0.s = "", Field_1.s = "", Field_
   ForEach Language_String()
     If Language_String()\Input = Input
       Found = 1
+      
       ForEach Language_String()\Output()
         If Language_String()\Output()\Language = Language
           Lang_Get_Return_String = Language_String()\Output()\Output
           Break
         EndIf
       Next
+      
       Break
     EndIf
   Next
@@ -126,12 +135,10 @@ Procedure.s Lang_Get(Language.s, Input.s, Field_0.s = "", Field_1.s = "", Field_
 EndProcedure
 
 Procedure Language_Main()
-  If Language_Main\Timer_File_Check < Milliseconds()
-    Language_Main\Timer_File_Check = Milliseconds() + 1000
-    File_Date = GetFileDate(Files_File_Get("Language_Strings"), #PB_Date_Modified)
-    If Language_Main\File_Date_Last <> File_Date
-      Language_Strings_Load(Files_File_Get("Language_Strings"))
-    EndIf
+  File_Date = GetFileDate(Files_File_Get("Language_Strings"), #PB_Date_Modified)
+  
+  If Language_Main\File_Date_Last <> File_Date
+    Language_Strings_Load(Files_File_Get("Language_Strings"))
   EndIf
   
   If Language_Main\Save_File
@@ -139,10 +146,10 @@ Procedure Language_Main()
     Language_Strings_Save(Files_File_Get("Language_Strings"))
   EndIf
 EndProcedure
+
+RegisterCore("Language", 1000, #Null, #Null, @Language_Main())
 ; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 20
-; FirstLine = 36
-; Folding = --
+; Folding = -
 ; EnableXP
 ; DisableDebugger
 ; CompileSourceDirectory

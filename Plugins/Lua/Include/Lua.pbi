@@ -2227,7 +2227,17 @@ ProcedureC Lua_CMD_System_Message_Network_Send_2_All(Lua_State)
   Map_ID = lua_tointeger(Lua_State, 1)
   lua_tostring(Message.s, Lua_State, 2) ;Message.s = PeekS(lua_tolstring(Lua_State, 2, #Null))
   
-  System_Message_Network_Send_2_All(Map_ID, Message.s)
+  If lua_isnumber(Lua_State, 3)
+    MessageType = lua_tointeger(Lua_State, 3)
+  EndIf
+  
+  If MessageType
+    System_Message_Network_Send_2_All(Map_ID, Message.s, MessageType)
+  Else
+    System_Message_Network_Send_2_All(Map_ID, Message.s)
+  EndIf
+  
+  
   
   ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
@@ -2236,8 +2246,16 @@ ProcedureC Lua_CMD_System_Message_Network_Send(Lua_State)
   Client_ID = lua_tointeger(Lua_State, 1)
   lua_tostring(Message.s, Lua_State, 2) ;Message.s = PeekS(lua_tolstring(Lua_State, 2, #Null))
   
-  System_Message_Network_Send(Client_ID, Message.s)
+  If lua_isnumber(Lua_State, 3)
+    MessageType = lua_tointeger(Lua_State, 3)
+  EndIf
   
+  If MessageType
+    System_Message_Network_Send(Client_ID, Message.s, MessageType)
+  Else
+    System_Message_Network_Send(Client_ID, Message.s)
+  EndIf
+
   ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
@@ -2667,136 +2685,6 @@ ProcedureC Lua_CMD_Map_Hackcontrol_Set(Lua_State)
     ProcedureReturn 0
 EndProcedure
 
-;-########### Messages #####################
-ProcedureC Lua_CMD_System_Message_Status1_Send(Lua_State)
-    Client_ID = lua_tointeger(Lua_State, 1)
-    lua_tostring(Message.s, Lua_State, 2)
-    
-    System_Message_Status1_Send(Client_ID, Message)
-    
-    ProcedureReturn 0
-EndProcedure
-ProcedureC Lua_CMD_System_Message_Status1_Send_2_All(Lua_State)
-    Map_ID = lua_tointeger(Lua_State, 1)
-    lua_tostring(Message.s, Lua_State, 2)
-    
-    System_Message_Status1_Send_2_All(Map_ID, Message)
-    
-    ProcedureReturn 0
-EndProcedure
-ProcedureC Lua_CMD_System_Message_Status2_Send(Lua_State)
-    Client_ID = lua_tointeger(Lua_State, 1)
-    lua_tostring(Message.s, Lua_State, 2)
-    
-    System_Message_Status2_Send(Client_ID, Message)
-    
-    ProcedureReturn 0
-EndProcedure
-ProcedureC Lua_CMD_System_Message_Status2_Send_2_All(Lua_State)
-    Map_ID = lua_tointeger(Lua_State, 1)
-    lua_tostring(Message.s, Lua_State, 2)
-    
-    System_Message_Status2_Send_2_All(Map_ID, Message)
-    
-    ProcedureReturn 0    
-EndProcedure
-ProcedureC Lua_CMD_System_Message_Status3_Send(Lua_State)
-    Client_ID = lua_tointeger(Lua_State, 1)
-    lua_tostring(Message.s, Lua_State, 2)
-    
-    System_Message_Status3_Send(Client_ID, Message)
-    
-    ProcedureReturn 0
-EndProcedure
-ProcedureC Lua_CMD_System_Message_Status3_Send_2_All(Lua_State)
-    Map_ID = lua_tointeger(Lua_State, 1)
-    lua_tostring(Message.s, Lua_State, 2)
-    
-    System_Message_Status3_Send_2_All(Map_ID, Message)
-    
-    ProcedureReturn 0    
-EndProcedure
-;-
-ProcedureC Lua_CMD_System_Message_BR1_Send(Lua_State)
-    Client_ID = lua_tointeger(Lua_State, 1)
-    lua_tostring(Message.s, Lua_State, 2)
-    
-    System_Message_BR1_Send(Client_ID, Message)
-    
-    ProcedureReturn 0
-EndProcedure
-ProcedureC Lua_CMD_System_Message_BR1_Send_2_All(Lua_State)
-    Map_ID = lua_tointeger(Lua_State, 1)
-    lua_tostring(Message.s, Lua_State, 2)
-    
-    System_Message_BR1_Send_2_All(Map_ID, Message)
-    
-    ProcedureReturn 0    
-EndProcedure
-ProcedureC Lua_CMD_System_Message_BR2_Send(Lua_State)
-    Client_ID = lua_tointeger(Lua_State, 1)
-    lua_tostring(Message.s, Lua_State, 2)
-    
-    System_Message_BR2_Send(Client_ID, Message)
-    
-    ProcedureReturn 0
-EndProcedure
-ProcedureC Lua_CMD_System_Message_BR2_Send_2_All(Lua_State)
-    Map_ID = lua_tointeger(Lua_State, 1)
-    lua_tostring(Message.s, Lua_State, 2)
-    
-    System_Message_BR2_Send_2_All(Map_ID, Message)
-    
-    ProcedureReturn 0    
-EndProcedure
-ProcedureC Lua_CMD_System_Message_BR3_Send(Lua_State)
-    Client_ID = lua_tointeger(Lua_State, 1)
-    lua_tostring(Message.s, Lua_State, 2)
-    
-    System_Message_BR3_Send(Client_ID, Message)
-    
-    ProcedureReturn 0
-EndProcedure
-ProcedureC Lua_CMD_System_Message_BR3_Send_2_All(Lua_State)
-    Map_ID = lua_tointeger(Lua_State, 1)
-    lua_tostring(Message.s, Lua_State, 2)
-    
-    System_Message_BR3_Send_2_All(Map_ID, Message)
-    
-    ProcedureReturn 0    
-EndProcedure
-ProcedureC Lua_CMD_System_Message_TopLeft_Send(Lua_State)
-    Client_ID = lua_tointeger(Lua_State, 1)
-    lua_tostring(Message.s, Lua_State, 2)
-    
-    System_Message_TopLeft_Send(Client_ID, Message)
-    
-    ProcedureReturn 0
-EndProcedure
-ProcedureC Lua_CMD_System_Message_TopLeft_Send_2_All(Lua_State)
-    Map_ID = lua_tointeger(Lua_State, 1)
-    lua_tostring(Message.s, Lua_State, 2)
-    
-    System_Message_TopLeft_Send_2_All(Map_ID, Message)
-    
-    ProcedureReturn 0    
-EndProcedure
-ProcedureC Lua_CMD_System_Message_Announcement_Send(Lua_State)
-    Client_ID = lua_tointeger(Lua_State, 1)
-    lua_tostring(Message.s, Lua_State, 2)
-    
-    System_Message_Announcement_Send(Client_ID, Message)
-    
-    ProcedureReturn 0
-EndProcedure
-ProcedureC Lua_CMD_System_Message_Announcement_Send_2_All(Lua_State)
-    Map_ID = lua_tointeger(Lua_State, 1)
-    lua_tostring(Message.s, Lua_State, 2)
-    
-    System_Message_Announcement_Send_2_All(Map_ID, Message)
-    
-    ProcedureReturn 0    
-EndProcedure
 ;-########################################## Event-Proceduren ####################################
 
 Procedure Lua_Event_Select(ID.s, Log.a=0)
@@ -3467,25 +3355,6 @@ Procedure Lua_Register_All()
     lua_register(Lua_Main\State, "CPE_Client_Set_Block_Permissions", @Lua_CMD_CPE_Client_Set_Block_Permissions())
     lua_register(Lua_Main\State, "Map_Env_Apperance_Set", @Lua_CMD_Map_Env_Apperance_Set())
     lua_register(Lua_Main\State, "Client_Send_Map_Appearence", @Lua_CMD_Client_Send_Map_Appearence())
-    
-    lua_register(Lua_Main\State, "System_Message_Status1_Send", @Lua_CMD_System_Message_Status1_Send())
-    lua_register(Lua_Main\State, "System_Message_Status2_Send", @Lua_CMD_System_Message_Status2_Send())
-    lua_register(Lua_Main\State, "System_Message_Status3_Send", @Lua_CMD_System_Message_Status3_Send())
-    lua_register(Lua_Main\State, "System_Message_BR1_Send", @Lua_CMD_System_Message_BR1_Send())
-    lua_register(Lua_Main\State, "System_Message_BR2_Send", @Lua_CMD_System_Message_BR2_Send())
-    lua_register(Lua_Main\State, "System_Message_BR3_Send", @Lua_CMD_System_Message_BR3_Send())
-    lua_register(Lua_Main\State, "System_Message_TopLeft_Send", @Lua_CMD_System_Message_TopLeft_Send())
-    lua_register(Lua_Main\State, "System_Message_Announcement_Send", @Lua_CMD_System_Message_Announcement_Send())
-    
-    lua_register(Lua_Main\State, "System_Message_Status1_Send_2_All", @Lua_CMD_System_Message_Status1_Send_2_All())
-    lua_register(Lua_Main\State, "System_Message_Status2_Send_2_All", @Lua_CMD_System_Message_Status2_Send_2_All())
-    lua_register(Lua_Main\State, "System_Message_Status3_Send_2_All", @Lua_CMD_System_Message_Status3_Send_2_All())
-    lua_register(Lua_Main\State, "System_Message_BR1_Send_2_All", @Lua_CMD_System_Message_BR1_Send_2_All())
-    lua_register(Lua_Main\State, "System_Message_BR2_Send_2_All", @Lua_CMD_System_Message_BR2_Send_2_All())
-    lua_register(Lua_Main\State, "System_Message_BR3_Send_2_All", @Lua_CMD_System_Message_BR3_Send_2_All())
-    lua_register(Lua_Main\State, "System_Message_TopLeft_Send_2_All", @Lua_CMD_System_Message_TopLeft_Send_2_All())
-    lua_register(Lua_Main\State, "System_Message_Announcement_Send_2_All", @Lua_CMD_System_Message_Announcement_Send_2_All())
-    
     lua_register(Lua_Main\State, "CPE_Client_Hackcontrol_Send", @Lua_CMD_CPE_Client_Hackcontrol_Send())
     lua_register(Lua_Main\State, "Hotkey_Add", @Lua_CMD_Hotkey_Add())
     lua_register(Lua_Main\State, "Hotkey_Remove", @Lua_CMD_Hotkey_Remove())
@@ -3606,9 +3475,9 @@ Procedure Lua_Check_New_Files(Directory.s)
 EndProcedure
 ; IDE Options = PureBasic 5.00 (Windows - x64)
 ; ExecutableFormat = Shared Dll
-; CursorPosition = 181
-; FirstLine = 156
-; Folding = ----------------------6------------
+; CursorPosition = 2247
+; FirstLine = 2216
+; Folding = ----------------------6---------
 ; EnableThread
 ; EnableXP
 ; EnableOnError

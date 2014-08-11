@@ -15,7 +15,6 @@ Global NewList Hotkeys.Hotkey()
 
 Declare Hotkeys_Save(Filename.s)
 
-
 Procedure Hotkey_Remove(Label.s)
     ForEach Hotkeys()
         If Hotkeys()\Label = Label
@@ -27,8 +26,6 @@ Procedure Hotkey_Remove(Label.s)
 EndProcedure
 
 Procedure Hotkey_Add(Label.s, Action.s, Keycode.l, Keymods.b)
-    PrintN(Str(Keycode))
-    PrintN(Str(keymods))
     Hotkey_Remove(Label)
     AddElement(Hotkeys())
     Hotkeys()\Label = Label
@@ -85,21 +82,18 @@ Procedure Hotkeys_Save(Filename.s)
 EndProcedure
 
 Procedure Hotkey_Main()
-    If Hotkey_Main\Timer_File_Check < Milliseconds()
-        Hotkey_Main\Timer_File_Check = Milliseconds() + 1000
-        File_Date = GetFileDate(Files_File_Get("Hotkeys"), #PB_Date_Modified)
-        
-        If Hotkey_Main\File_Date_Last <> File_Date
-            Hotkeys_Load(Files_File_Get("Hotkeys"))
-            Hotkey_Main\File_Date_Last = File_Date
-        EndIf
-        
-    EndIf
+  File_Date = GetFileDate(Files_File_Get("Hotkeys"), #PB_Date_Modified)
+  
+  If Hotkey_Main\File_Date_Last <> File_Date
+      Hotkeys_Load(Files_File_Get("Hotkeys"))
+      Hotkey_Main\File_Date_Last = File_Date
+  EndIf
 EndProcedure
 
-; IDE Options = PureBasic 5.00 (Windows - x86)
-; CursorPosition = 30
-; FirstLine = 15
+RegisterCore("Hotkeys", 1000, #Null, #Null, @Hotkey_Main())
+; IDE Options = PureBasic 5.00 (Windows - x64)
+; CursorPosition = 82
+; FirstLine = 33
 ; Folding = -
 ; EnableThread
 ; EnableXP

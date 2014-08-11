@@ -210,4 +210,4 @@ EndProcedure
 ; Executable = Heartbeat.x86.dll
 ; DisableDebugger
 ; CompileSourceDirectory
-; Compiler = PureBasic 5.00 (Windows - x64)
+; Compiler = PureBasic 5.00 (Windows - x86)

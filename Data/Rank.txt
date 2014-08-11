@@ -41,5 +41,5 @@ Prefix = &b
 On_Client = 100
 [32767]
 Name = Founder
-Prefix = &8
+Prefix = &8[Founder]
 On_Client = 100

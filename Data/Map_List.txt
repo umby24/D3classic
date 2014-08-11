@@ -3,8 +3,13 @@ Name = Hub
 Directory = Maps/Hub/
 Delete = 0
 Reload = 0
+[2]
+Name = Theatre
+Directory = Maps/Theatre/
+Delete = 0
+Reload = 0
 [1]
-Name = Khazad Dum
-Directory = Maps/Khazad_Dum/Bridge/
+Name = temp
+Directory = Maps/temp/
 Delete = 0
 Reload = 0

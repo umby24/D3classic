@@ -1,7 +1,7 @@
 ; ########################################## Variablen ##########################################
 
-#Log_Size_Max = 1000 ; Größe in Einträgen (Intern)
-#Log_File_Size_Max = 1000000 ; Größe in Bytes (Extern)
+#Log_Size_Max = 1000 ; Size in entries (Internal)
+#Log_File_Size_Max = 1000000 ; Size in bytes (External)
 
 Structure Log_Main
   Timer_Do.l              ; Timer für das Ausführen von speziellen Aufgaben
@@ -11,8 +11,8 @@ EndStructure
 Global Log_Main.Log_Main
 
 Structure Log_Message
-  Module.s      ; Welches Modul den Eintrag erstellte
-  Message.s     ; Nachricht des Eintrags
+  Module.s      ; Which module created the entry
+  Message.s     ; Message from the entry
   PB_File.s     ; Source-Code-Datei, in welcher der Log-Eintrag erstellt wurde
   PB_Line.l     ; Source-Code-Zeile, in welcher der Log-Eintrag erstellt wurde
   PB_Procedure.s; Source-Code-Procedure, in welcher der Log-Eintrag erstellt wurde
@@ -105,10 +105,11 @@ EndProcedure
 Procedure Log_Main()
   
 EndProcedure
-; IDE Options = PureBasic 4.50 (Windows - x86)
-; CursorPosition = 71
-; Folding = -
+; IDE Options = PureBasic 5.00 (Windows - x64)
+; CursorPosition = 14
+; Folding = --
 ; EnableXP
 ; DisableDebugger
+; CompileSourceDirectory
 ; EnableCompileCount = 0
 ; EnableBuildCount = 0

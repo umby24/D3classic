@@ -1,0 +1,42 @@
+[hub_2_pub]
+X_0 = 58
+Y_0 = 27
+Z_0 = 36
+X_1 = 58
+Y_1 = 34
+Z_1 = 45
+Dest_Map_Unique_ID = YTCNCQBHZMGBEKPQ
+Dest_Map_ID = -1
+Dest_X = 218.19
+Dest_Y = 27.78
+Dest_Z = 163.00
+Dest_Rot = -109.69
+Dest_Look = 15.47
+[war]
+X_0 = 26
+Y_0 = 1
+Z_0 = 32
+X_1 = 40
+Y_1 = 1
+Z_1 = 41
+Dest_Map_Unique_ID = 
+Dest_Map_ID = 4
+Dest_X = 68.09
+Dest_Y = 35.41
+Dest_Z = 80.00
+Dest_Rot = 0.00
+Dest_Look = 11.25
+[hub_2_guest]
+X_0 = 27
+Y_0 = 58
+Z_0 = 34
+X_1 = 37
+Y_1 = 58
+Z_1 = 46
+Dest_Map_Unique_ID = SVBQGFDXWDJPPLXU
+Dest_Map_ID = -1
+Dest_X = 44.78
+Dest_Y = 12.84
+Dest_Z = 67.41
+Dest_Rot = -180.00
+Dest_Look = 23.91

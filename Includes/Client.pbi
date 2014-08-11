@@ -1,7 +1,7 @@
 ; ########################################## Variablen ##########################################
 
 Structure Client_Main
-  Login_Thread_ID.i               ; ID des Login-Threads
+  Login_Thread_ID.i               ; ID of the login thread.
 EndStructure
 Global Client_Main.Client_Main
 
@@ -11,13 +11,11 @@ Global Client_Main.Client_Main
 
 ; ########################################## Proceduren ##########################################
 
-Procedure Client_Login(Client_ID, Name.s, MPPass.s, Version) ; Ein neuer Spieler hat sich eingeloggt, hier wird alles wichtige erstellt.
+Procedure Client_Login(Client_ID, Name.s, MPPass.s, Version) ; A new player has logged in, everything important is created.
   List_Store(*Network_Client_Old, Network_Client())
   
   If Network_Client_Select(Client_ID)
     
-    ;Fingerprint.s = "";Str(Heartbeat_Salt_Get()) + Name
-    ;MPPass_Valid.s = LTrim( MD5Fingerprint(@Fingerprint, Len(Fingerprint)) , "0")
     Network_Client()\Player\Login_Name = Name
     Network_Client()\Player\MPPass = MPPass
     Network_Client()\Player\Client_Version = Version
@@ -52,7 +50,7 @@ Procedure Client_Login(Client_ID, Name.s, MPPass.s, Version) ; Ein neuer Spieler
     
     If Pre_Login_Correct = 1
       
-      ; ###### Wenn nicht in der Spielerliste vorhanden, hinzufügen.
+      ; ###### If not present in the list of players, add.
       If Player_List_Select(Network_Client()\Player\Login_Name, 0) = #False
         Player_List_Add(Network_Client()\Player\Login_Name)
       EndIf
@@ -164,7 +162,7 @@ Procedure Client_Login(Client_ID, Name.s, MPPass.s, Version) ; Ein neuer Spieler
   List_Restore(*Network_Client_Old, Network_Client())
 EndProcedure
 
-Procedure Client_Logout(Client_ID, Message.s, Show_2_All) ; Player hat sich ausgeloggt, hier wird alles wichtige dazu gemacht/gesendet...
+Procedure Client_Logout(Client_ID, Message.s, Show_2_All) ; Player has logged out, everything important is sent out and done.
   List_Store(*Network_Client_Old, Network_Client())
   
   If Network_Client_Select(Client_ID)
@@ -204,7 +202,7 @@ Procedure Client_Logout(Client_ID, Message.s, Show_2_All) ; Player hat sich ausg
   List_Restore(*Network_Client_Old, Network_Client())
 EndProcedure
 
-Procedure Client_Login_Thread(*Dummy) ; In diesem Thread werden alle Logins (Login, Karte, Startposition) nacheinander verarbeitet
+Procedure Client_Login_Thread(*Dummy) ; In this thread, all logins are processed sequentially.
   Repeat
     
     LockMutex(Main\Mutex)
@@ -237,20 +235,20 @@ Procedure Client_Login_Thread(*Dummy) ; In diesem Thread werden alle Logins (Log
           
           System_Login_Screen(Client_ID, System_Main\Server_Name, MOTD, Rank_Get_On_Client(Rank))
           
-          ; ############# Mutex ist unlocked
+          ; ############# Mutex is unlocked
           Map_Send(Client_ID, Entity_Map_ID)
-          ; ############# Mutex ist locked
+          ; ############# Mutex is locked
           
           If Network_Client_Select(Client_ID)
-            ; ############### Mapspawn senden
+            ; ############### Send map spawn
             Network_Out_Entity_Position(Client_ID, 255, Entity_X, Entity_Y, Entity_Z, Entity_Rotation, Entity_Look)
-            ; ############### Entities löschen
+            ; ############### Entity locations
             ForEach Network_Client()\Player\Entities()
               ID_Client = Network_Client()\Player\Entities()\ID_Client
               Network_Out_Entity_Delete(Network_Client()\ID, ID_Client)
               DeleteElement(Network_Client()\Player\Entities())
             Next
-            ; ############### Karte ist nun gesendet, Client-Map ändern
+            ; ############### Map is now sent, change client map.
             Network_Client()\Player\Map_ID = Entity_Map_ID
           EndIf
         EndIf
@@ -269,11 +267,12 @@ EndProcedure
 Procedure Client_Main()
   
 EndProcedure
-; IDE Options = PureBasic 5.00 (Windows - x86)
-; CursorPosition = 180
-; FirstLine = 166
+; IDE Options = PureBasic 5.00 (Windows - x64)
+; CursorPosition = 250
+; FirstLine = 216
 ; Folding = -
 ; EnableXP
 ; DisableDebugger
+; CompileSourceDirectory
 ; EnableCompileCount = 0
 ; EnableBuildCount = 0

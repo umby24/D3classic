@@ -148,7 +148,6 @@ function Import_Event_Timer(Map_ID)
 		if Build_Mode_Get(Client_ID) == "Import Map-Area" and Client_Get_Extension(Client_ID, "SelectionCuboid") then -- Not gonna waste the cpu cycles if they don't support SelectionCuboid :P
 			local Entity_ID = Client_Get_Entity(Client_ID)
 			local Size_X, Size_Y, Size_Z = Map_Export_Get_Size(Build_Mode_String_Get(Client_ID, 0))
-			local SX, SY, SZ = Build_Mode_Long_Get(Client_ID, 0), Build_Mode_Long_Get(Client_ID, 1), Build_Mode_Long_Get(Client_ID, 2)
 			local X, Y, Z, Rotation, Look = Entity_Get_X(Entity_ID), Entity_Get_Y(Entity_ID), Entity_Get_Z(Entity_ID), Entity_Get_Rotation(Entity_ID), Entity_Get_Look(Entity_ID)
 			local M_X, M_Y, M_Z = math.cos(math.rad(Rotation-90))*math.cos(math.rad(Look))*4, math.sin(math.rad(Rotation-90))*math.cos(math.rad(Look))*4, -math.sin(math.rad(Look))*4
 			local G_X, G_Y, G_Z = math.floor(X+M_X), math.floor(Y+M_Y), math.floor(Z+1.6+M_Z)

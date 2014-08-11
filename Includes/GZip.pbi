@@ -28,7 +28,7 @@ Structure GZip_Main
 EndStructure
 Global GZip_Main.GZip_Main
 
-; ########################################## Konstanten ##########################################
+; ########################################## Constants ##########################################
 
 #ZLIB_VERSION = "1.2.5"
 
@@ -245,11 +245,12 @@ Procedure GZip_Decompress_From_File(Filename.s, *Output, Output_Len)
     ProcedureReturn Result
   EndIf
 EndProcedure
-; IDE Options = PureBasic 4.51 (Windows - x86)
-; CursorPosition = 142
-; FirstLine = 116
+; IDE Options = PureBasic 5.00 (Windows - x64)
+; CursorPosition = 187
+; FirstLine = 204
 ; Folding = --
 ; EnableXP
 ; DisableDebugger
+; CompileSourceDirectory
 ; EnableCompileCount = 0
 ; EnableBuildCount = 0

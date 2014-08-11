@@ -4,20 +4,21 @@ Structure Language_Main
   Save_File.b             ; Zeigt an, ob gespeichert werden soll
   File_Date_Last.l        ; Datum letzter Änderung, bei Änderung laden
   Timer_File_Check.l      ; Timer für das überprüfen der Dateigröße
-  Language.s              ; Hauptsprache, wenn keine angegeben
+  Language.s              ; Main language, if not specificed.
 EndStructure
 Global Language_Main.Language_Main
 
 Structure Language_String_Output
-  Language.s                            ; Sprache in Kurzform
-  Output.s                              ; Ausgabe
+  Language.s                            ; Language in short form
+  Output.s                              ; Output
 EndStructure
 
 Structure Language_String
-  Input.s                               ; Eingabe
-  Arguments.a                           ; Anzahl der Argumente
-  List Output.Language_String_Output()  ; Liste mit Ausgaben
+  Input.s                               ; Input
+  Arguments.a                           ; Number of Arguments
+  List Output.Language_String_Output()  ; List of outputs
 EndStructure
+
 Global NewList Language_String.Language_String()
 
 ; ########################################## Ladekram ############################################
@@ -138,11 +139,12 @@ Procedure Language_Main()
     Language_Strings_Save(Files_File_Get("Language_Strings"))
   EndIf
 EndProcedure
-; IDE Options = PureBasic 4.51 (Windows - x86)
-; CursorPosition = 128
-; FirstLine = 92
-; Folding = -
+; IDE Options = PureBasic 5.00 (Windows - x64)
+; CursorPosition = 20
+; FirstLine = 36
+; Folding = --
 ; EnableXP
 ; DisableDebugger
+; CompileSourceDirectory
 ; EnableCompileCount = 0
 ; EnableBuildCount = 0

@@ -4,7 +4,7 @@ local function X_Ray(Player_Number, Map_ID, X, Y, Z, Rot, Look, Send_Priority, T
 		local Block_Type = Map_Block_Get_Type(Map_ID, X+M_X*i, Y+M_Y*i, Z+M_Z*i)
 		if Block_Type == 7 then
 			break
-		elseif Block_Type ~= 0 and Block_Type ~= Ignore_Material and Block_Type ~= 51 then
+		elseif Block_Type ~= 0 and Block_Type ~= Ignore_Material and Block_Type ~= 88 then
 			if math.random(5) == 1 then
 				Map_Block_Change(Player_Number, Map_ID, X+M_X*i, Y+M_Y*i, Z+M_Z*i, 232, 1, 1, 1, Send_Priority) -- Ash
 			else
@@ -16,7 +16,7 @@ local function X_Ray(Player_Number, Map_ID, X, Y, Z, Rot, Look, Send_Priority, T
 			end
 		end
 		if math.random(i*50) == 1 and Block_Type == 0 then 
-			Map_Block_Change(Player_Number, Map_ID, X+M_X*i, Y+M_Y*i, Z+M_Z*i, 51, 1, 1, 1, Send_Priority+1) -- Fire
+			Map_Block_Change(Player_Number, Map_ID, X+M_X*i, Y+M_Y*i, Z+M_Z*i, 88, 1, 1, 1, Send_Priority+1) -- Fire
 		end
 	end
 end

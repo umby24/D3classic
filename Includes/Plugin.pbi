@@ -1183,10 +1183,10 @@ Procedure Plugin_Thread(*Dummy)
         Delay(100)
     ForEver
 EndProcedure
-; IDE Options = PureBasic 5.00 (Linux - x86)
-; CursorPosition = 276
-; FirstLine = 267
-; Folding = ----------
+; IDE Options = PureBasic 5.00 (Windows - x64)
+; CursorPosition = 65
+; FirstLine = 61
+; Folding = -----------
 ; EnableXP
 ; DisableDebugger
 ; CompileSourceDirectory

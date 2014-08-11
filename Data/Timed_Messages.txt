@@ -1,6 +1,6 @@
 &bVersion INFO!
 &bUseful commands: &e/faq /help /rules /commands /site
-&bGet the server on: &3http://github.com/Dadido3/D3classic
+&bD3 Forums: &3http://d3-serv.net/ &bFeel free to post.
 &bUse &c@&e[name]&b [message] for private messages.
 &bFeature: Multiple Maps.<br>&bUse &e/maps &band &e/map [name]
 &bUse &c#&b[text] for global messages.

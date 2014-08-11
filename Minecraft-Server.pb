@@ -137,7 +137,7 @@ Global FreeID.w = 0
 Global NextID.w = 0
 ; ########################################## Ladekram / Loading ############################################
 
-Main\Version = 1010 ;#PB_Editor_CompileCount*0.4 + #PB_Editor_BuildCount*4.9
+Main\Version = 1013 ;#PB_Editor_CompileCount*0.4 + #PB_Editor_BuildCount*4.9
 
 Main\Running_Time = Date()
 
@@ -373,7 +373,7 @@ XIncludeFile "Includes/Client.pbi"
 XIncludeFile "Includes/Chat.pbi"
 XIncludeFile "Includes/Build_Mode.pbi"
 XIncludeFile "Includes/Plugin.pbi"
-;XIncludeFile "Includes/Trace.pbi"
+XIncludeFile "Includes/Trace.pbi"
 XIncludeFile "Includes/Command.pbi"
 XIncludeFile "Includes/Answer.pbi"
 XIncludeFile "Includes/TMessage.pbi"
@@ -531,8 +531,8 @@ Repeat
   Watchdog_Watch("Main", "Before: Entity_Main()", 1)
   Entity_Main()
   
-  ;Watchdog_Watch("Main", "Before: Trace_Main()", 1)
-  ;Trace_Main()
+  Watchdog_Watch("Main", "Before: Trace_Main()", 1)
+  Trace_Main()
   
   Watchdog_Watch("Main", "Before: Hotkey_Main()", 1)
   Hotkey_Main()
@@ -546,10 +546,10 @@ Repeat
 ForEver
 
 ; ########################################## Ende / End ##########################################
-; IDE Options = PureBasic 5.00 (Linux - x86)
+; IDE Options = PureBasic 5.00 (Windows - x64)
 ; ExecutableFormat = Console
-; CursorPosition = 382
-; FirstLine = 373
+; CursorPosition = 139
+; FirstLine = 123
 ; Folding = -
 ; EnableThread
 ; EnableXP

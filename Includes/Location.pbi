@@ -8,7 +8,7 @@ EndStructure
 Global Location_Main.Location_Main
 
 Structure Location
-  Name.s                  ; Name der Location
+  Name.s                  ; Name of the Location
   Map_ID.l
   X.f
   Y.f
@@ -131,11 +131,11 @@ Procedure Location_Main()
     EndIf
   EndIf
 EndProcedure
-; IDE Options = PureBasic 4.51 (Windows - x86)
-; CursorPosition = 126
-; FirstLine = 85
+; IDE Options = PureBasic 5.00 (Windows - x64)
+; CursorPosition = 10
 ; Folding = --
 ; EnableXP
 ; DisableDebugger
+; CompileSourceDirectory
 ; EnableCompileCount = 0
 ; EnableBuildCount = 0

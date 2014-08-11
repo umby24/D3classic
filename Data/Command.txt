@@ -6,6 +6,14 @@ Plugin =
 Group = OP
 Description = &eKicks a player.<br>&eUsage: /kick [Name] <Reason>
 
+[Accept]
+Name = accept
+Rank = 50
+Rank_Show = 0
+Plugin = Lua:Command_Build_Mode_Accept
+Group = Build
+Description = Accepts a buildmode change.
+
 [Say]
 Name = say
 Rank = 255
@@ -88,7 +96,7 @@ Description = &eGives a list of online players.
 
 [Player-Info]
 Name = pinfo
-Rank = 200
+Rank = 149
 Rank_Show = 0
 Plugin = 
 Group = OP
@@ -632,7 +640,7 @@ Description = &eGives a list of available materials.
 
 [Teleport]
 Name = tp
-Rank = 0
+Rank = 100
 Rank_Show = 0
 Plugin = 
 Group = TP
@@ -870,14 +878,6 @@ Plugin = Lua:Command_Mobs_Delete
 Group = Normal
 Description = &eDeletes all mobs on a map.
 
-[Gun]
-Name = gun
-Rank = 10
-Rank_Show = 0
-Plugin = Lua:Command_Gun
-Group = Normal
-Description = &eActivates the gun.
-
 [Message To Admins]
 Name = mad
 Rank = 50
@@ -894,11 +894,251 @@ Plugin = Lua:Command_Trace
 Group = OP
 Description = 
 
-[Gamemode Gun]
-Name = gungame
+[CW start]
+Name = start
+Rank = 0
+Rank_Show = 0
+Plugin = Lua:Command_Cannonwars_Start
+Group = CW
+Description = Starts game of cannonwars.<br>Usage: /start [type] [kills] [Timer]<br>Type is 0 or 1, 0 = teams, 1 = Free-For-All<br>Timer is time until round start in seconds.
+
+[CW join]
+Name = join
+Rank = 0
+Rank_Show = 0
+Plugin = Lua:Command_Join_Cannonwars
+Group = CW
+Description = Joins a active cannonwars game.
+
+[CW teams]
+Name = teams
+Rank = 0
+Rank_Show = 0
+Plugin = Lua:Coomand_cw_Teams
+Group = CW
+Description = Lists cannonwar teams.
+
+[CW end]
+Name = end
+Rank = 100
+Rank_Show = 100
+Plugin = Lua:Round_End
+Group = CW
+Description = Ends the current cannonwars game
+
+[cw tstats]
+Name = tstats
+Rank = 0
+Rank_Show = 0
+Plugin = Lua:command_cw_team_stats
+Group = CW
+Description = Displays the current kills for each Cannonwars team
+
+[cw pstats]
+Name = stats
+Rank = 0
+Rank_Show = 0
+Plugin = Lua:command_cw_my_stats
+Group = CW
+Description = 
+
+[gun]
+Name = gun
+Rank = 0
+Rank_Show = 0
+Plugin = Lua:Command_Gun
+Group = 
+Description = Pull out your gun
+
+[CW_Options]
+Name = options
+Rank = 0
+Rank_Show = 0
+Plugin = Lua:Command_Options
+Group = CW
+Description = Lists the maps avaliable for voting
+
+[CW_vote]
+Name = vote
+Rank = 0
+Rank_Show = 0
+Plugin = Lua:Command_Vote
+Group = CW
+Description = Vote for a cannonwars map.
+
+[cw_votes]
+Name = votes
+Rank = 0
+Rank_Show = 0
+Plugin = Lua:Command_Votes
+Group = CW
+Description = List out the number of votes for the next cannonwars map.
+
+[copy]
+Name = copy
+Rank = 245
+Rank_Show = 200
+Plugin = Lua:Command_Build_Mode_Copy
+Group = Build
+Description = &eCopies area to clipboard
+
+[paste]
+Name = paste
+Rank = 245
+Rank_Show = 200
+Plugin = Lua:Command_Paste
+Group = Build
+Description = &ePastes area from clipboard
+
+[ww_resize]
+Name = wwresize
+Rank = 200
+Rank_Show = 200
+Plugin = Lua:Command_WW_Resize
+Group = Map
+Description = &eResize wireworld. Usage: /wwresize [X] [Y] [Z]
+
+[ww_info]
+Name = wwinfo
+Rank = 0
+Rank_Show = 0
+Plugin = Lua:Command_WW_Info
+Group = Map
+Description = &eDisplay current WW info.
+
+[wwstop]
+Name = wwstop
+Rank = 150
+Rank_Show = 150
+Plugin = Lua:Command_WW_Stop
+Group = 
+Description = Stop Wireworld
+
+[awwstart]
+Name = awwstart
+Rank = 150
+Rank_Show = 150
+Plugin = Lua:Command_WW_Start
+Group = 
+Description = Start wireworld if it is stopped.
+
+[wee]
+Name = wee
+Rank = 0
+Rank_Show = 0
+Plugin = Test
+Group = 
+Description = 
+
+[ircload]
+Name = ircload
+Rank = 200
+Rank_Show = 200
+Plugin = IRC Bridge
+Group = IRC
+Description = Loads IRC settings
+
+[ircsave]
+Name = ircsave
+Rank = 200
+Rank_Show = 200
+Plugin = IRC Bridge
+Group = IRC
+Description = Saves the IRC settings.
+
+[irc_control]
+Name = irc
+Rank = 200
+Rank_Show = 200
+Plugin = IRC Bridge
+Group = IRC
+Description = Control the IRC Bridge.
+
+[ircserver]
+Name = server
+Rank = 200
+Rank_Show = 200
+Plugin = IRC Bridge
+Group = IRC
+Description = Sets the server ip for the irc client
+
+[ircport]
+Name = port
+Rank = 200
+Rank_Show = 200
+Plugin = IRC Bridge
+Group = IRC
+Description = Sets the server port for the irc client
+
+[ircname]
+Name = botname
+Rank = 200
+Rank_Show = 200
+Plugin = IRC Bridge
+Group = IRC
+Description = Sets the nick of the IRC Client
+
+[ircident]
+Name = ident
+Rank = 200
+Rank_Show = 200
+Plugin = IRC Bridge
+Group = IRC
+Description = Sets the IDENT of the irc client
+
+[ircrn]
+Name = realname
+Rank = 200
+Rank_Show = 200
+Plugin = IRC Bridge
+Group = IRC
+Description = Sets the Real Name sent to IRC by the client
+
+[channel]
+Name = channel
+Rank = 200
+Rank_Show = 200
+Plugin = IRC Bridge
+Group = IRC
+Description = Sets the Channel of the IRC Client
+
+[NickPass]
+Name = nickpass
+Rank = 200
+Rank_Show = 200
+Plugin = IRC Bridge
+Group = IRC
+Description = Sets the nickserv password for the IRC client
+
+[WWSTART]
+Name = wwbstart
+Rank = 200
+Rank_Show = 200
+Plugin = Wireworld
+Group = IRC
+Description = Sets the nickserv password for the IRC client
+
+[model]
+Name = model
+Rank = 0
+Rank_Show = 0
+Plugin = Lua:Command_Change_Model
+Group = General
+Description = Changes you into a different model!<br>You may insert a block ID, or one of the following types:<br>Chicken, Creeper, Croc, Printer, Zombie, Pig, Sheep, Skeleton, Spider
+
+[EnvColors]
+Name = envcolors
 Rank = 200
 Rank_Show = 0
-Plugin = Lua:Command_Gamemode_Gun_Start
-Group = Normal
-Description = -
+Plugin = Lua:Command_Set_Env_Colors
+Group = Map
+Description = Sets the map enviroment colors.<br>&eUsage: &f/envcolors [Red] [Green] [Blue] [Type]<br>Type is 0-4, Sky color, cloud color, light color, ALight, DLight.
+
+[Reset Model]
+Name = resetmodel
+Rank = 0
+Rank_Show = 0
+Plugin = Lua:Command_Model_Reset
+Group = General
+Description = Resets your CPE Model to human.
 

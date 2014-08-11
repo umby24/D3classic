@@ -1,8 +1,9 @@
 ; ########################################## Variablen ##########################################
 
 Structure Error_Main
-  Counter.l                     ; Um bei mehreren Fehlen nicht die selbe Datei zu überschreiben
+  Counter.l                     ; In order not to overwrite the same file in several absence
 EndStructure
+
 Global Error_Main.Error_Main
 
 ; ########################################## Declares ############################################
@@ -11,7 +12,7 @@ Declare Error_Handler()
 
 ; ########################################## Ladekram ############################################
 
-;OnErrorCall(@Error_Handler())
+OnErrorCall(@Error_Handler())
 
 ; ########################################## Proceduren ##########################################
 
@@ -46,6 +47,7 @@ Procedure Error_Handler()
         WriteStringN(File_ID, "    <b><u>Version:</u> "+StrF(Main\Version/1000,3)+" Linux (x64)</b><br>")
       CompilerEndIf
     CompilerEndIf
+  
     WriteStringN(File_ID, "    <b><u>Servertime:</u> "+FormatDate("%hh:%ii:%ss   %dd.%mm.%yyyy", Date())+" (t = "+Str(Date())+")</b><br>")
     WriteStringN(File_ID, "    <b><u>Runningtime:</u> "+Running_Time+"h</b><br>")
     WriteStringN(File_ID, "    <b><u>Elapsedmilliseconds:</u> "+Str(Milliseconds())+"ms</b><br>")
@@ -59,9 +61,11 @@ Procedure Error_Handler()
     WriteStringN(File_ID, "    Message: <b>"+ErrorMessage()+"</b><br>")
     WriteStringN(File_ID, "    Code: <b>"+Str(ErrorCode())+"</b><br>")
     WriteStringN(File_ID, "    Address: <b>"+Str(ErrorAddress())+"</b><br>")
+    
     If ErrorCode() = #PB_OnError_InvalidMemory   
       WriteStringN(File_ID, "    Target Address: <b>"+Str(ErrorTargetAddress())+"</b><br>")
     EndIf
+  
     WriteStringN(File_ID, "    Line: <b>"+Str(ErrorLine())+"</b><br>")
     WriteStringN(File_ID, "    File: <b>"+GetFilePart(ErrorFile())+"</b><br>")
     
@@ -82,6 +86,7 @@ Procedure Error_Handler()
     WriteStringN(File_ID, "        <th><b>Message</b></th>")
     WriteStringN(File_ID, "      </tr>")
     LastElement(Log_Message())
+    
     For i = 1 To 60
       If ListIndex(Log_Message()) <> -1
         WriteStringN(File_ID, "      <tr>")
@@ -98,6 +103,7 @@ Procedure Error_Handler()
         Break
       EndIf
     Next
+  
     WriteString(File_ID, "    </table>")
     
     FlushFileBuffers(File_ID)
@@ -124,6 +130,7 @@ Procedure Error_Handler()
     WriteStringN(File_ID, "        <th><b>Kernel-Time</b></th>")
     WriteStringN(File_ID, "        <th><b>Usermode-Time</b></th>")
     WriteStringN(File_ID, "      </tr>")
+    
     ForEach Watchdog_Module()
       WriteStringN(File_ID, "      <tr>")
       WriteStringN(File_ID, "        <td>"+Watchdog_Module()\Name+"</td>")
@@ -132,11 +139,13 @@ Procedure Error_Handler()
       Else
         WriteStringN(File_ID, "      <td><font color="+Chr(34)+"#00AA00"+Chr(34)+"><b>Well</b></font></td>")
       EndIf
+      
       WriteStringN(File_ID, "        <td>"+Str(Watchdog_Module()\Timeout_Biggest)+"ms (Max. "+Str(Watchdog_Module()\Timeout_Max)+"ms)</td>")
       WriteStringN(File_ID, "        <td>"+Watchdog_Module()\Message_Biggest+"</td>")
       WriteStringN(File_ID, "        <td>"+Watchdog_Module()\Message_Last+"</td>")
       WriteStringN(File_ID, "        <td>"+StrD(Watchdog_Module()\Calls_Per_Second*1000/Time, 1)+"/s</td>")
       WriteStringN(File_ID, "        <td>"+StrD(Watchdog_Module()\CPU_Usage, 3)+"%</td>")
+      
       If Watchdog_Module()\Thread_ID
         WriteStringN(File_ID, "        <td>"+Str(ThreadID(Watchdog_Module()\Thread_ID))+"</td>")
         WriteStringN(File_ID, "        <td>"+StrD(Watchdog_Module()\CPU_Kernel_Time/10000000,3)+"s</td>")
@@ -175,7 +184,9 @@ Procedure Error_Handler()
     WriteStringN(File_ID, "      <br>")
     WriteStringN(File_ID, "      <table border=0 cellspacing=0>")
     WriteStringN(File_ID, "        <tr>")
+    
     Max = 1
+    
     ForEach Mem_Usage_Chronic()
       If Max < Mem_Usage_Chronic()\Mem
         Max = Mem_Usage_Chronic()\Mem
@@ -187,6 +198,7 @@ Procedure Error_Handler()
         Max = Mem_Usage_Chronic()\Page
       EndIf
     Next
+    
     ForEach Mem_Usage_Chronic()
       Factor.f = Mem_Usage_Chronic()\Mem/Max
       WriteStringN(File_ID, "          <td bgcolor="+Chr(34)+"#000000"+Chr(34)+" valign="+Chr(34)+"bottom"+Chr(34)+" height="+Chr(34)+"500"+Chr(34)+" >")
@@ -201,6 +213,7 @@ Procedure Error_Handler()
       WriteStringN(File_ID, "            <table border=0 cellspacing=0><td bgcolor="+Chr(34)+"#FFFFFF"+Chr(34)+" height="+Chr(34)+Str((Factor)*500)+Chr(34)+" width="+Chr(34)+"3"+Chr(34)+"> </td></table>")
       WriteStringN(File_ID, "          </td>")
     Next
+    
     WriteStringN(File_ID, "        </tr>")
     WriteStringN(File_ID, "      </table>")
     
@@ -212,8 +225,10 @@ Procedure Error_Handler()
     WriteStringN(File_ID, "      <br>")
     WriteStringN(File_ID, "      <table border="+Chr(34)+"0"+Chr(34)+" cellspacing="+Chr(34)+"0"+Chr(34)+" cellpadding="+Chr(34)+"0"+Chr(34)+" bgcolor="+Chr(34)+"#000000"+Chr(34)+" >")
     WriteStringN(File_ID, "        <tr>")
+    
     Pos.d = 0
     Max_Pos.d = Pow(2,32)
+    
     ForEach Mem_Element()
       Free.d = Round((Mem_Element()\Memory-Pos)/Max_Pos*800, 1)
       Size.d = Round(Mem_Element()\Size/Max_Pos*800, 1)
@@ -221,7 +236,9 @@ Procedure Error_Handler()
       WriteStringN(File_ID, "          <td bgcolor="+Chr(34)+"#000000"+Chr(34)+" width="+Chr(34)+Str(Free)+Chr(34)+" height="+Chr(34)+"20"+Chr(34)+"> </td>")
       WriteStringN(File_ID, "          <td bgcolor="+Chr(34)+"#FF0000"+Chr(34)+" width="+Chr(34)+Str(Size)+Chr(34)+" height="+Chr(34)+"20"+Chr(34)+"> </td>")
     Next
+    
     Free.d = Round((Max_Pos-Pos)/Max_Pos*800, 1)
+    
     WriteStringN(File_ID, "          <td bgcolor="+Chr(34)+"#000000"+Chr(34)+" width="+Chr(34)+Str(Free)+Chr(34)+" height="+Chr(34)+"20"+Chr(34)+"> </td>")
     WriteStringN(File_ID, "        </tr>")
     WriteStringN(File_ID, "      </table>")
@@ -242,6 +259,7 @@ Procedure Error_Handler()
     WriteStringN(File_ID, "          <th><b>Line</b></th>")
     WriteStringN(File_ID, "          <th><b>Message</b></th>")
     WriteStringN(File_ID, "        </tr>")
+    
     ForEach Mem_Element()
       WriteStringN(File_ID, "        <tr>")
       WriteStringN(File_ID, "          <td>"+Str(Mem_Element()\Memory)+"</td>")
@@ -251,6 +269,7 @@ Procedure Error_Handler()
       WriteStringN(File_ID, "          <td>"+Mem_Element()\Message+"</td>")
       WriteStringN(File_ID, "        </tr>")
     Next
+    
     WriteString(File_ID,  "      </table>")
     
     FlushFileBuffers(File_ID)
@@ -272,6 +291,7 @@ Procedure Error_Handler()
     WriteStringN(File_ID, "          <th><b>Upload_Rate</b></th>")
     WriteStringN(File_ID, "          <th><b>Entity_ID</b></th>")
     WriteStringN(File_ID, "        </tr>")
+    
     ForEach Network_Client()
       WriteStringN(File_ID, "        <tr>")
       WriteStringN(File_ID, "          <td>"+Str(Network_Client()\ID)+"</td>")
@@ -285,6 +305,7 @@ Procedure Error_Handler()
       EndIf
       WriteStringN(File_ID, "        </tr>")
     Next
+    
     WriteString(File_ID,  "      </table>")
     
     WriteStringN(File_ID, "  </body>")
@@ -298,9 +319,11 @@ Procedure Error_Handler()
   PrintN("Message: "+ErrorMessage())
   PrintN("Code: "+Str(ErrorCode()))
   PrintN("Address: "+Str(ErrorAddress()))
+  
   If ErrorCode() = #PB_OnError_InvalidMemory   
     PrintN("Target Address: "+Str(ErrorTargetAddress()))
   EndIf
+  
   PrintN("Line: "+Str(ErrorLine()))
   PrintN("File: "+GetFilePart(ErrorFile()))
   PrintN("")
@@ -333,7 +356,8 @@ Procedure Error_Main()
   
 EndProcedure
 ; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 13
+; CursorPosition = 326
+; FirstLine = 315
 ; Folding = -
 ; EnableXP
 ; DisableDebugger

@@ -1,16 +1,16 @@
-; ########################################## Variablen ##########################################
+; ########################################## Variables ##########################################
 
 Structure Answer_Main
-  Save_File.b             ; Zeigt an, ob gespeichert werden soll
-  File_Date_Last.l        ; Datum letzter Änderung, bei Änderung speichern
-  Timer_File_Check.l      ; Timer für das überprüfen der Dateigröße
+  Save_File.b             ; Indicates whether to save
+  File_Date_Last.l        ; Date of last change, saves file on change.
+  Timer_File_Check.l      ; Timer for checking file size
 EndStructure
 Global Answer_Main.Answer_Main
 
 Structure Answer
-  Command.s                             ; Erwarteter Befehl
-  Operator.s [#Command_Operators_Max]   ; Erwartete Operatoren
-  Answer.s                              ; Antwort
+  Command.s                             ; Expected command
+  Operator.s [#Command_Operators_Max]   ; Expected operators
+  Answer.s                              ; Reply
 EndStructure
 Global NewList Answer.Answer()
 
@@ -18,7 +18,7 @@ Global NewList Answer.Answer()
 
 ; ########################################## Declares ############################################
 
-; ########################################## Proceduren ##########################################
+; ########################################## Procedures ##########################################
 
 Procedure Answer_Load(Filename.s)
   If OpenPreferences(Filename)
@@ -101,11 +101,11 @@ Procedure Answer_Main()
     EndIf
   EndIf
 EndProcedure
-; IDE Options = PureBasic 4.51 (Windows - x86)
-; CursorPosition = 96
-; FirstLine = 55
-; Folding = -
+; IDE Options = PureBasic 5.00 (Windows - x64)
+; CursorPosition = 18
+; Folding = --
 ; EnableXP
 ; DisableDebugger
+; CompileSourceDirectory
 ; EnableCompileCount = 0
 ; EnableBuildCount = 0

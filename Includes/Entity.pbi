@@ -304,7 +304,7 @@ Procedure Entity_Position_Set(ID, Map_ID, X.f, Y.f, Z.f, Rotation.f, Look.f, Pri
       
       If Plugin_Event_Entity_Position_Set(Entity(), Map_ID, X.f, Y.f, Z.f, Rotation.f, Look.f, Priority.a, Send_Own_Client.a)
         
-        If Entity()\Map_ID <> Map_ID ; ############## Wenn Kartenwechsel, dann: Neue ID_Client, Texte senden, Rang prüfen
+        If Entity()\Map_ID <> Map_ID ; ############## When switching maps, then: New ID_Client, send texts, check rank
           If Map_Select_ID(Map_ID)
             If Entity()\Player_List = 0 Or Entity()\Player_List\Rank >= Map_Data()\Rank_Join
               System_Message_Network_Send_2_All(Entity()\Map_ID, Lang_Get("", "Ingame: Entity '[Field_0]' changes to map '[Field_1]'", Entity_Displayname_Get(ID), Map_Data()\Name))
@@ -333,7 +333,7 @@ Procedure Entity_Position_Set(ID, Map_ID, X.f, Y.f, Z.f, Rotation.f, Look.f, Pri
                       NameID = Network_Client()\Player\NameID
                       ;Map change event!
                       Plugin_Event_Entity_Map_Change(Network_Client()\ID, Map_ID, Old_Map_ID)
-                      break
+                      Break
                   EndIf
                 EndIf
               Next
@@ -379,7 +379,7 @@ Procedure Entity_Position_Set(ID, Map_ID, X.f, Y.f, Z.f, Rotation.f, Look.f, Pri
           
         EndIf
         
-      Else ; Wenn Bewegen blockiert, alte Position zum Client senden
+      Else ; When moving blocked, send old position to the client
         Entity()\Send_Pos_Own = #True
         ProcedureReturn #False
       EndIf
@@ -391,7 +391,7 @@ EndProcedure
 
 ;-
 
-Procedure Entity_Send() ; Verwaltet das Bewegen, Erstellen und Löschen von Entities der Klienten
+Procedure Entity_Send() ; Maintained moving, creating and deleting entities of the client
   
   ForEach Network_Client()
     If Network_Client()\Logged_In
@@ -497,9 +497,9 @@ Procedure Entity_Main()
     Entity_Send()
   EndIf
 EndProcedure
-; IDE Options = PureBasic 5.00 (Windows - x86)
-; CursorPosition = 335
-; FirstLine = 300
+; IDE Options = PureBasic 5.00 (Windows - x64)
+; CursorPosition = 393
+; FirstLine = 378
 ; Folding = ---
 ; EnableXP
 ; DisableDebugger

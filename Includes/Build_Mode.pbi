@@ -7,22 +7,25 @@ Structure Build_Mode_Main
   File_Date_Last.l        ; Datum letzter Änderung, bei Änderung speichern
   Timer_File_Check.l      ; Timer für das überprüfen der Dateigröße
 EndStructure
+
 Global Build_Mode_Main.Build_Mode_Main
 
 Structure Build_Mode
   ID.s
   Name.s
-  Plugin.s                ; Plugin-Funktion
+  Plugin.s                ; Plugin function
 EndStructure
+
 Global NewList Build_Mode.Build_Mode()
 
-Structure Build_Mode_Blocks_To_Resend ; Blöcke welche nach dem Umschalten des Buildmodes zurückgesendet werden
+Structure Build_Mode_Blocks_To_Resend ; Block to be resent after changing buildmodes.
   Client_ID.i
   Map_ID.l
   X.u
   Y.u
   Z.u
 EndStructure
+
 Global NewList Build_Mode_Blocks_To_Resend.Build_Mode_Blocks_To_Resend()
 
 ; ########################################## Ladekram ############################################
@@ -57,7 +60,8 @@ Procedure Build_Mode_Load(Filename.s)
 EndProcedure
 
 Procedure Build_Mode_Save(Filename.s)
-  File_ID = CreateFile(#PB_Any, Filename)
+    File_ID = CreateFile(#PB_Any, Filename)
+    
   If IsFile(File_ID)
     
     ForEach Build_Mode()
@@ -146,7 +150,6 @@ Procedure Build_Mode_Set(Client_ID, Build_Mode.s)
   If Network_Client_Select(Client_ID)
     If Network_Client()\Player\Entity
       Network_Client()\Player\Entity\Build_Mode = Build_Mode
-      
       Build_Mode_Blocks_Resend(Client_ID)
     EndIf
   EndIf
@@ -289,8 +292,9 @@ Procedure Build_Mode_Main()
   Wend
 EndProcedure
 ; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 90
-; FirstLine = 76
+; CursorPosition = 151
+; FirstLine = 251
 ; Folding = ----
 ; EnableXP
 ; DisableDebugger
+; CompileSourceDirectory

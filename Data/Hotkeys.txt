@@ -1,0 +1,4 @@
+[Test]
+Action = /box
+Keycode = 46
+Modifier = 1

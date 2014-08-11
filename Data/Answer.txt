@@ -21,7 +21,7 @@ Operator[1] =
 Operator[2] = 
 Operator[3] = 
 Operator[4] = 
-Answer = &eRules:<br>&e 1) No Spam<br>&e 2) No Griefing<br>&e 3) No swastikas or inappropriate symbols<br>&e 4) No mindless tunneling<br>&e 5) Be careful with /box and /line, I can see who used it!<br>&e 6) Do not ask for a Promotion or Points!<br>&e 7) Don't ask for Premium!<br>&e 8) Respect others and their creations!<br>&e 9) Do not try to bypass a punishment. You will be kicked.<br>&e 10) &cListen to the staff!
+Answer = &eRules:<br>&e {*} No Spam<br>&e {*} No Griefing<br>&e {*} No swastikas or inappropriate symbols<br>&e {*} No mindless tunneling<br>&e {*} Be careful with /box and /line, I can see who used it!<br>&e {*} Do not ask for a Promotion or Points!<br>&e {*} Don't ask for Premium!<br>&e {*} Respect others and their creations!<br>&e {*} Do not try to bypass a punishment. You will be kicked.<br>&e {*} &cListen to the staff!
 [7]
 Command = faq
 Operator[0] = 

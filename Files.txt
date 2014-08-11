@@ -60,6 +60,7 @@ Heartbeat_Interface = [Main][Heartbeat]Interface.txt
 
 Error_HTML = [Main][HTML]Error_[i].html
 Heartbeat_HTML = [Main][HTML]Heartbeat.html
+Heartbeat_HTML_MC = [Main][HTML]Heartbeat_MC.html
 Map_HTML = [Main][HTML]Map.html
 Mem_HTML = [Main][HTML]Memory.html
 Network_HTML = [Main][HTML]Network.html
@@ -67,3 +68,5 @@ Watchdog_HTML = [Main][HTML]Watchdog.html
 
 Map_Send_Temp = [Main][Temp]Send.gz
 Map_Save_Temp = [Main][Temp]Save.gz
+
+Hotkeys = [Main][Data]Hotkeys.txt

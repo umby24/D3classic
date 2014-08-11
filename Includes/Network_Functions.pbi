@@ -13,7 +13,7 @@ Procedure System_Login_Screen(Client_ID, Message_0.s, Message_1.s, Op_Mode)
   Text_1.s = LSet(Message_1, 64, " ")
   
   If Text_0 <> LSet("", 64, " ") And Text_1 <> LSet("", 64, " ")
-    If Network_Client_Select(Client_ID)
+    If Network_Client_Select(Client_ID) And Network_Client()\Logged_In = #True
       Network_Client_Output_Write_Byte(Network_Client()\ID, 0)
       Network_Client_Output_Write_Byte(Network_Client()\ID, 7)
       Network_Client_Output_Write_String(Network_Client()\ID, Text_0, 64)
@@ -38,7 +38,7 @@ Procedure System_Red_Screen(Client_ID, Message.s)
   Text.s = LSet(Message, 64, " ")
   
   If Text <> LSet("", 64, " ")
-    If Network_Client_Select(Client_ID)
+    If Network_Client_Select(Client_ID) And Network_Client()\Logged_In = #True
       Network_Client_Output_Write_Byte(Network_Client()\ID, 14)
       Network_Client_Output_Write_String(Network_Client()\ID, Text, 64)
     EndIf
@@ -73,7 +73,7 @@ Procedure System_Message_Network_Send(Client_ID, Message.s) ; Sendet eine Nachri
     EndIf
     Text = LSet(Text, 64, " ")
     If Text <> LSet("", 64, " ") And Text <> ""
-      If Network_Client_Select(Client_ID)
+      If Network_Client_Select(Client_ID) And Network_Client()\Logged_In = #True
         Network_Client_Output_Write_Byte(Network_Client()\ID, 13)
         Network_Client_Output_Write_Byte(Network_Client()\ID, 0)
         Network_Client_Output_Write_String(Network_Client()\ID, Text, 64)
@@ -152,7 +152,7 @@ Procedure System_Message_Status1_Send(Client_ID, Message.s)
     EndIf
     Text = LSet(Text, 64, " ")
     If Text <> LSet("", 64, " ") And Text <> ""
-      If Network_Client_Select(Client_ID)
+      If Network_Client_Select(Client_ID) And Network_Client()\Logged_In = #True
         Network_Client_Output_Write_Byte(Network_Client()\ID, 13)
         Network_Client_Output_Write_Byte(Network_Client()\ID, 1)
         Network_Client_Output_Write_String(Network_Client()\ID, Text, 64)
@@ -231,7 +231,7 @@ Procedure System_Message_Status2_Send(Client_ID, Message.s)
     EndIf
     Text = LSet(Text, 64, " ")
     If Text <> LSet("", 64, " ") And Text <> ""
-      If Network_Client_Select(Client_ID)
+      If Network_Client_Select(Client_ID) And Network_Client()\Logged_In = #True
         Network_Client_Output_Write_Byte(Network_Client()\ID, 13)
         Network_Client_Output_Write_Byte(Network_Client()\ID, 2)
         Network_Client_Output_Write_String(Network_Client()\ID, Text, 64)
@@ -310,7 +310,7 @@ Procedure System_Message_Status3_Send(Client_ID, Message.s)
     EndIf
     Text = LSet(Text, 64, " ")
     If Text <> LSet("", 64, " ") And Text <> ""
-      If Network_Client_Select(Client_ID)
+      If Network_Client_Select(Client_ID) And Network_Client()\Logged_In = #True
         Network_Client_Output_Write_Byte(Network_Client()\ID, 13)
         Network_Client_Output_Write_Byte(Network_Client()\ID, 3)
         Network_Client_Output_Write_String(Network_Client()\ID, Text, 64)
@@ -390,7 +390,7 @@ Procedure System_Message_BR1_Send(Client_ID, Message.s)
     EndIf
     Text = LSet(Text, 64, " ")
     If Text <> LSet("", 64, " ") And Text <> ""
-      If Network_Client_Select(Client_ID)
+      If Network_Client_Select(Client_ID) And Network_Client()\Logged_In = #True
         Network_Client_Output_Write_Byte(Network_Client()\ID, 13)
         Network_Client_Output_Write_Byte(Network_Client()\ID, 11)
         Network_Client_Output_Write_String(Network_Client()\ID, Text, 64)
@@ -470,7 +470,7 @@ Procedure System_Message_BR2_Send(Client_ID, Message.s)
     EndIf
     Text = LSet(Text, 64, " ")
     If Text <> LSet("", 64, " ") And Text <> ""
-      If Network_Client_Select(Client_ID)
+      If Network_Client_Select(Client_ID) And Network_Client()\Logged_In = #True
         Network_Client_Output_Write_Byte(Network_Client()\ID, 13)
         Network_Client_Output_Write_Byte(Network_Client()\ID, 12)
         Network_Client_Output_Write_String(Network_Client()\ID, Text, 64)
@@ -550,7 +550,7 @@ Procedure System_Message_BR3_Send(Client_ID, Message.s)
     EndIf
     Text = LSet(Text, 64, " ")
     If Text <> LSet("", 64, " ") And Text <> ""
-      If Network_Client_Select(Client_ID)
+      If Network_Client_Select(Client_ID) And Network_Client()\Logged_In = #True
         Network_Client_Output_Write_Byte(Network_Client()\ID, 13)
         Network_Client_Output_Write_Byte(Network_Client()\ID, 13)
         Network_Client_Output_Write_String(Network_Client()\ID, Text, 64)
@@ -630,7 +630,7 @@ Procedure System_Message_TopLeft_Send(Client_ID, Message.s)
     EndIf
     Text = LSet(Text, 64, " ")
     If Text <> LSet("", 64, " ") And Text <> ""
-      If Network_Client_Select(Client_ID)
+      If Network_Client_Select(Client_ID) And Network_Client()\Logged_In = #True
         Network_Client_Output_Write_Byte(Network_Client()\ID, 13)
         Network_Client_Output_Write_Byte(Network_Client()\ID, 21)
         Network_Client_Output_Write_String(Network_Client()\ID, Text, 64)
@@ -710,7 +710,7 @@ Procedure System_Message_Announcement_Send(Client_ID, Message.s)
     EndIf
     Text = LSet(Text, 64, " ")
     If Text <> LSet("", 64, " ") And Text <> ""
-      If Network_Client_Select(Client_ID)
+      If Network_Client_Select(Client_ID) And Network_Client()\Logged_In = #True
         Network_Client_Output_Write_Byte(Network_Client()\ID, 13)
         Network_Client_Output_Write_Byte(Network_Client()\ID, 100)
         Network_Client_Output_Write_String(Network_Client()\ID, Text, 64)
@@ -883,10 +883,10 @@ EndProcedure
 Procedure Network_Functions_Main() ; Verwaltet Spieler, verschickt änderungen
   
 EndProcedure
-; IDE Options = PureBasic 5.00 (Windows - x86)
-; CursorPosition = 183
-; FirstLine = 157
-; Folding = --fA+
+; IDE Options = PureBasic 5.00 (Windows - x64)
+; CursorPosition = 859
+; FirstLine = 725
+; Folding = --fV-
 ; EnableXP
 ; DisableDebugger
 ; CompileSourceDirectory

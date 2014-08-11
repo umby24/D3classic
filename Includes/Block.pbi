@@ -1,23 +1,23 @@
-; ########################################## Dokumentation ##########################################
+; ########################################## Documentation ##########################################
 
 ; Physikalische Eigenschaften:
-; 0 = Keine Physik
-; 10 = Fällt gerade herunter
-; 11 = Lässt maximal 45° Schrägen zu (Bildet Pyramiden)
-; 20 = Minecraft original Fluidphysik (Block dupliziert sich seitlich und nach unten)
-; 21 = Realistischeres Fluid (Block Fällt nach unten und füllt flächen aus)
+; 0 = No physics
+; 10 = Falls straight down
+; 11 = Falls in 45 degree bevels (Builds a pyramid)
+; 20 = Minecraft original fluid physics (Block duplicates itself laterally and downwardly)
+; 21 = More realistic fluid (Block Fällt nach unten und füllt flächen aus)
 
-; ########################################## Variablen ##########################################
+; ########################################## Variables ##########################################
 
 Structure Block_Main
-  Save_File.b             ; Zeigt an, ob gespeichert werden soll
-  File_Date_Last.l        ; Datum letzter Änderung, bei Änderung speichern
-  Timer_File_Check.l      ; Timer für das überprüfen der Dateigröße
+  Save_File.b             ; Indicates when to save the file
+  File_Date_Last.l        ; Date of last change, save on change.
+  Timer_File_Check.l      ; Timer for checking for file changes.
 EndStructure
 Global Block_Main.Block_Main
 
 ; #################################################################
-; !!! Struktur mit Blöcken befindet sich in Main_Structures.pbi !!!
+; !!! Structure defined in Main_Structures.pbi !!!
 ; #################################################################
 Global Dim Block.Block(255)
 
@@ -63,7 +63,8 @@ Procedure Block_Load(Filename.s)
 EndProcedure
 
 Procedure Block_Save(Filename.s)
-  File_ID = CreateFile(#PB_Any, Filename)
+    File_ID = CreateFile(#PB_Any, Filename)
+    
   If IsFile(File_ID)
     
     WriteStringN(File_ID, "; Physic: 0  = Physic Off")
@@ -74,7 +75,8 @@ Procedure Block_Save(Filename.s)
     WriteStringN(File_ID, "")
     
     For i = 0 To 255
-      WriteStringN(File_ID, "["+Str(i)+"]")
+        WriteStringN(File_ID, "["+Str(i)+"]")
+        
       If Block(i)\Name <> ""
         WriteStringN(File_ID, "Name = "+Block(i)\Name)
         WriteStringN(File_ID, "On_Client = "+Str(Block(i)\On_Client))
@@ -110,7 +112,7 @@ EndProcedure
 
 ;-######################################################################################
 
-Procedure Block_Get_Pointer(Number) ; Gibt den Pointer zum Element zurück
+Procedure Block_Get_Pointer(Number) ; Specifices a pointer back to the element.
   If Number >= 0 And Number <= 255
     ProcedureReturn @Block(Number)
   EndIf
@@ -129,16 +131,18 @@ Procedure Block_Main()
   If Block_Main\Timer_File_Check < Milliseconds()
     Block_Main\Timer_File_Check = Milliseconds() + 1000
     File_Date = GetFileDate(Files_File_Get("Block"), #PB_Date_Modified)
+    
     If Block_Main\File_Date_Last <> File_Date
       Block_Load(Files_File_Get("Block"))
     EndIf
   EndIf
 EndProcedure
 ; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 95
-; FirstLine = 59
+; CursorPosition = 133
+; FirstLine = 95
 ; Folding = -
 ; EnableXP
 ; DisableDebugger
+; CompileSourceDirectory
 ; EnableCompileCount = 0
 ; EnableBuildCount = 0

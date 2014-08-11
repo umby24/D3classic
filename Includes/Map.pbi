@@ -1009,6 +1009,113 @@ Procedure Map_Send(Client_ID, Map_ID)        ; Komprimiert und sendet die Karte 
   ProcedureReturn ProcedureResult
 EndProcedure
 
+; Procedure Map_Send(Client_ID, Map_ID)        ; Komprimiert und sendet die Karte an Client / Compresses and sends the map to the client
+;   ProcedureResult = 0
+;   
+;   If Network_Client_Select(Client_ID)
+;     
+;     If Map_Select_ID(Map_ID)
+;       *Map_Data.Map_Data = Map_Data()
+; 
+;       ; Anzahl Blöcke
+;       Map_Size_X = *Map_Data\Size_X
+;       Map_Size_Y = *Map_Data\Size_Y
+;       Map_Size_Z = *Map_Data\Size_Z
+;       Map_Size = Map_Size_X * Map_Size_Y * Map_Size_Z
+;       
+;       ;*Temp_Buffer = AllocateMemory(Map_Size+10)
+;       *Temp_Buffer = Mem_Allocate(Map_Size+10, #PB_Compiler_File, #PB_Compiler_Line, "Temp")
+;       
+;       If *Temp_Buffer
+;         
+;         Temp_Buffer_Offset = 0
+;         
+;         PokeB(*Temp_Buffer+Temp_Buffer_Offset, Map_Size/16777216) : Temp_Buffer_Offset + 1
+;         PokeB(*Temp_Buffer+Temp_Buffer_Offset, Map_Size/65536) : Temp_Buffer_Offset + 1
+;         PokeB(*Temp_Buffer+Temp_Buffer_Offset, Map_Size/256) : Temp_Buffer_Offset + 1
+;         PokeB(*Temp_Buffer+Temp_Buffer_Offset, Map_Size) : Temp_Buffer_Offset + 1
+;         
+;         For i = 0 To Map_Size_X*Map_Size_Y*Map_Size_Z-1
+;           *Pointer.Map_Block = *Map_Data\Data + i * #Map_Block_Element_Size
+; 
+;           If Block(*Pointer\Type)\CPE_Level > Network_Client()\CustomBlocks_Level
+;             PokeB(*Temp_Buffer+Temp_Buffer_Offset, Block(*Pointer\Type)\CPE_Replace) : Temp_Buffer_Offset + 1
+;           Else
+;             PokeB(*Temp_Buffer+Temp_Buffer_Offset, Block(*Pointer\Type)\On_Client) : Temp_Buffer_Offset + 1
+;           EndIf
+;         Next
+;         
+;         Temp_Buffer_2_Size = GZip_CompressBound(Temp_Buffer_Offset) + 1024 + 512
+;         *Temp_Buffer_2 = Mem_Allocate(Temp_Buffer_2_Size, #PB_Compiler_File, #PB_Compiler_Line, "Temp")
+;         
+;         If *Temp_Buffer_2
+;           
+;           *Map_Data\Blockchange_Stopped = 1
+;           UnlockMutex(Main\Mutex)
+;           
+;           ;GZip_Compress_2_File(*Temp_Buffer, Temp_Buffer_Offset, "Temp/Send.gz")
+;           
+;           Compressed_Size = GZip_Compress(*Temp_Buffer_2, Temp_Buffer_2_Size, *Temp_Buffer, Temp_Buffer_Offset)
+;           
+;           Mem_Free(*Temp_Buffer)
+;           
+;           LockMutex(Main\Mutex)
+;           If Map_Select_ID(Map_ID)
+;             *Map_Data.Map_Data = Map_Data()
+;             *Map_Data\Blockchange_Stopped = 0
+;           EndIf
+;           If Compressed_Size <> -1
+;             If Network_Client_Select(Client_ID)
+;               
+;               Compressed_Size + (1024 - (Compressed_Size % 1024))
+;               Network_Client_Output_Write_Byte(Network_Client()\ID, 02)
+;               
+;               Bytes_2_Send = Compressed_Size
+;               Bytes_Sent = 0
+;               
+;               While Bytes_2_Send > 0
+;                 Bytes_In_Block = Bytes_2_Send
+;                 If Bytes_In_Block > 1024 : Bytes_In_Block = 1024 : EndIf
+;                 Network_Client_Output_Write_Byte(Network_Client()\ID, 03)
+;                 Network_Client_Output_Write_Word(Network_Client()\ID, Bytes_In_Block) ; Menge der Bytes
+;                 Network_Client_Output_Write_Buffer(Network_Client()\ID, *Temp_Buffer_2 + Bytes_Sent, Bytes_In_Block)
+;                 Bytes_Sent + Bytes_In_Block
+;                 Network_Client_Output_Write_Byte(Network_Client()\ID, Bytes_Sent*100/Compressed_Size)
+;                 Bytes_2_Send - Bytes_In_Block
+;                 
+;               Wend
+;               
+;               Network_Client_Output_Write_Byte(Network_Client()\ID, 4)
+;               Network_Client_Output_Write_Word(Network_Client()\ID, Map_Size_X)
+;               Network_Client_Output_Write_Word(Network_Client()\ID, Map_Size_Z)
+;               Network_Client_Output_Write_Word(Network_Client()\ID, Map_Size_Y)
+;               CPE_Aftermap_Actions(Network_Client()\ID, *Map_Data)
+;               
+;               ProcedureResult = 1
+;             EndIf
+;             Mem_Free(*Temp_Buffer_2)
+;           Else ; Wenn die Datei nicht komprimiert wurde
+;             Log_Add("Map", Lang_Get("", "Can't send the map: GZip-error"), 10, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
+;             Network_Client_Kick(Client_ID, Lang_Get("", "Mapsending error"), 0)
+;             Mem_Free(*Temp_Buffer_2)
+;           EndIf
+;         Else ; Wenn der Speicher nicht allokiert wurde
+;           Log_Add("Map", Lang_Get("", "Can't send the map: Memory-error"), 10, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
+;           Network_Client_Kick(Client_ID, Lang_Get("", "Mapsending error"), 0)
+;           Mem_Free(*Temp_Buffer)
+;         EndIf
+;       Else ; Wenn der Speicher nicht allokiert wurde
+;         Log_Add("Map", Lang_Get("", "Can't send the map: Memory-error"), 10, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
+;         Network_Client_Kick(Client_ID, Lang_Get("", "Mapsending error"), 0)
+;       EndIf
+;       
+;     EndIf
+;     
+;   EndIf
+;   
+;   ProcedureReturn ProcedureResult
+; EndProcedure
+
 Procedure Map_Export(Map_ID, X_0, Y_0, Z_0, X_1, Y_1, Z_1, Filename.s)
   
   *Pointer.Map_Block
@@ -2104,8 +2211,8 @@ Procedure Map_Main()
     
   EndIf
 EndProcedure
-; IDE Options = PureBasic 5.00 (Linux - x86)
-; CursorPosition = 988
+; IDE Options = PureBasic 5.00 (Windows - x64)
+; CursorPosition = 1009
 ; FirstLine = 973
 ; Folding = ---4----
 ; EnableThread

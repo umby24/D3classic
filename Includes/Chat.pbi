@@ -11,7 +11,7 @@ Global Chat_Main.Chat_Main
 
 ; ########################################## Proceduren ##########################################
 
-Procedure Chat_Message_Network_Send_2_Map(Entity_ID, Message.s) ; Sendet eine Nachricht eines Entities zu allen Clienten auf einer Karte
+Procedure Chat_Message_Network_Send_2_Map(Entity_ID, Message.s) ; Sends a message to all clients of an entity on a map.
   List_Store(*Pointer, Entity())
   
   If Entity_Select_ID(Entity_ID)
@@ -55,7 +55,7 @@ Procedure Chat_Message_Network_Send_2_Map(Entity_ID, Message.s) ; Sendet eine Na
   List_Restore(*Pointer, Entity())
 EndProcedure
 
-Procedure Chat_Message_Network_Send_2_All(Entity_ID, Message.s) ; Sendet eine Nachricht eines Entities zu allen Clienten (Globalchat)
+Procedure Chat_Message_Network_Send_2_All(Entity_ID, Message.s) ; Sends a message to all clients of a map (Global Chat)
   List_Store(*Pointer, Entity())
   
   If Entity_Select_ID(Entity_ID)
@@ -100,7 +100,7 @@ Procedure Chat_Message_Network_Send_2_All(Entity_ID, Message.s) ; Sendet eine Na
   List_Restore(*Pointer, Entity())
 EndProcedure
 
-Procedure Chat_Message_Network_Send(Entity_ID, Player_Name.s, Message.s) ; Sendet eine Nachricht eines Entities zu einem anderen Entity's Client
+Procedure Chat_Message_Network_Send(Entity_ID, Player_Name.s, Message.s) ; Sends a message from one entity to another.
   List_Store(*Pointer, Entity())
   List_Store(*Pointer_2, Network_Client())
   
@@ -168,8 +168,9 @@ Procedure Chat_Message_Network_Send(Entity_ID, Player_Name.s, Message.s) ; Sende
   List_Restore(*Pointer_2, Network_Client())
 EndProcedure
 ; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 127
+; CursorPosition = 102
 ; FirstLine = 78
 ; Folding = -
 ; EnableXP
 ; DisableDebugger
+; CompileSourceDirectory

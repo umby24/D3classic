@@ -4,18 +4,21 @@ Structure Files_Main
   Save_File.b                     ; Pfad-Datei soll gespeichert werden
   Mutex_ID.i                      ; Mutex, um doppelte Zugriffe zu verhindern.
 EndStructure
+
 Global Files_Main.Files_Main
 
 Structure Files_File
   Name.s
   File.s
 EndStructure
+
 Global NewList Files_File.Files_File()
 
 Structure Files_Folder
   Name.s
   Folder.s
 EndStructure
+
 Global NewList Files_Folder.Files_Folder()
 
 ; ########################################## Declares ############################################
@@ -40,6 +43,7 @@ Files_Load(Files_File_Get("Files"))
 
 Procedure Files_Save(Filename.s)
   File_ID = CreateFile(#PB_Any, Filename)
+  
   If IsFile(File_ID)
     
     WriteStringN(File_ID, "; You have to restart if you change the file.")
@@ -65,6 +69,7 @@ Procedure Files_Save(Filename.s)
     WriteStringN(File_ID, "")
     
     WriteStringN(File_ID, "[Folder]")
+    
     ForEach Files_Folder()
       WriteStringN(File_ID, Files_Folder()\Name+" = "+Files_Folder()\Folder)
     Next
@@ -72,6 +77,7 @@ Procedure Files_Save(Filename.s)
     WriteStringN(File_ID, "")
     
     WriteStringN(File_ID, "[Files]")
+    
     ForEach Files_Folder()
       If Files_File()\Name <> "Files"
         WriteStringN(File_ID, Files_File()\Name+" = "+Files_File()\File)
@@ -90,6 +96,7 @@ Procedure Files_Load(Filename.s)
   ClearList(Files_Folder())
   
   PreferenceGroup("Folder")
+  
   If ExaminePreferenceKeys()
     While NextPreferenceKey()
       AddElement(Files_Folder())
@@ -102,6 +109,7 @@ Procedure Files_Load(Filename.s)
   ClearList(Files_File())
   
   PreferenceGroup("Files")
+  
   If ExaminePreferenceKeys()
     While NextPreferenceKey()
       AddElement(Files_File())
@@ -118,6 +126,7 @@ Procedure Files_Load(Filename.s)
 EndProcedure
 
 Threaded Files_File_Get_Return_String.s = ""
+
 Procedure.s Files_File_Get(Name.s)
   LockMutex(Files_Main\Mutex_ID)
   
@@ -146,6 +155,7 @@ Procedure.s Files_File_Get(Name.s)
 EndProcedure
 
 Threaded Files_Folder_Get_Return_String.s = ""
+
 Procedure.s Files_Folder_Get(Name.s)
   LockMutex(Files_Main\Mutex_ID)
   
@@ -175,10 +185,10 @@ Procedure Files_Main()
     Files_Save(Files_File_Get("Files"))
   EndIf
 EndProcedure
-; IDE Options = PureBasic 5.00 (Windows - x86)
-; CursorPosition = 119
-; FirstLine = 114
-; Folding = -
+; IDE Options = PureBasic 5.00 (Windows - x64)
+; CursorPosition = 158
+; FirstLine = 144
+; Folding = --
 ; EnableXP
 ; Executable = ..\Minecraft-Server.x86.exe
 ; DisableDebugger

@@ -2,7 +2,7 @@ local Cannon_Material_Base = 49
 local Cannon_Material_Front = 42
 local Cannon_Material_Glass = 20
 local Cannon_Material_Stair = 44
-local Cannon_Material_Fire = 51
+local Cannon_Material_Fire = 88
 
 function Physic_Cannon_Shoot(Player_Number, Map_ID, X, Y, Z, Rot, Look)
 	local M_X, M_Y, M_Z = math.cos(math.rad(Rot-90))*math.cos(math.rad(Look)), math.sin(math.rad(Rot-90))*math.cos(math.rad(Look)), -math.sin(math.rad(Look))

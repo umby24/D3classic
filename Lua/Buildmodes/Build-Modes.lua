@@ -34,7 +34,7 @@ end
 
 function Command_Build_Mode_Box(Client_ID, Command, Text_0, Text_1, Arg_0, Arg_1, Arg_2, Arg_3, Arg_4)
 	if (Arg_0 == "--preview" or Arg_0 == "-p") then
-		if Client_Get_Extension(Client_ID, "SelectionCuboid") then
+		if Client_Get_Extension(Client_ID, "SelectionCuboid") > 0 then
 			Build_Mode_String_Set(Client_ID, 0, "preview")
 			Text_0 = ""
 			Arg_0 = ""
@@ -43,7 +43,7 @@ function Command_Build_Mode_Box(Client_ID, Command, Text_0, Text_1, Arg_0, Arg_1
 		end
 	end
 	if (Arg_1 == "-p" or Arg_1 == "--preview") then -- Incase the player is replacing.
-		if Client_Get_Extension(Client_ID, "SelectionCuboid") then
+		if Client_Get_Extension(Client_ID, "SelectionCuboid")  > 0 then
 			Build_Mode_String_Set(Client_ID, 0, "preview")
 			Text_1 = ""
 			Arg_1 = ""

@@ -574,7 +574,7 @@ EndProcedure
 ProcedureC Lua_CMD_Build_Mode_Float_Set(Lua_State)
   Client_ID = lua_tointeger(Lua_State, 1)
   Index = lua_tointeger(Lua_State, 2)
-  Value.d = lua_tonumber(Lua_State, 3)
+  Value.d = lua_tointeger(Lua_State, 3)
   CompilerIf #PB_Compiler_OS = #PB_OS_Windows And #PB_Compiler_Processor = #PB_Processor_x64
     EnableASM
     MOVQ Value, XMM0
@@ -670,7 +670,7 @@ ProcedureC Lua_CMD_Build_Sphere_Player(Lua_State)
   X = lua_tointeger(Lua_State, 3)
   Y = lua_tointeger(Lua_State, 4)
   Z = lua_tointeger(Lua_State, 5)
-  R.d = lua_tonumber(Lua_State, 6)
+  R.d = lua_tointeger(Lua_State, 6)
   CompilerIf #PB_Compiler_OS = #PB_OS_Windows And #PB_Compiler_Processor = #PB_Processor_x64
     EnableASM
     MOVQ R, XMM0
@@ -713,13 +713,13 @@ ProcedureC Lua_CMD_Font_Draw_Text(Lua_State)
   X = lua_tointeger(Lua_State, 4)
   Y = lua_tointeger(Lua_State, 5)
   Z = lua_tointeger(Lua_State, 6)
-  V_X.d = lua_tonumber(Lua_State, 7)
+  V_X.d = lua_tointeger(Lua_State, 7)
   CompilerIf #PB_Compiler_OS = #PB_OS_Windows And #PB_Compiler_Processor = #PB_Processor_x64
     EnableASM
     MOVQ V_X, XMM0
     DisableASM
   CompilerEndIf
-  V_Y.d = lua_tonumber(Lua_State, 8)
+  V_Y.d = lua_tointeger(Lua_State, 8)
   CompilerIf #PB_Compiler_OS = #PB_OS_Windows And #PB_Compiler_Processor = #PB_Processor_x64
     EnableASM
     MOVQ V_Y, XMM0
@@ -741,13 +741,13 @@ ProcedureC Lua_CMD_Font_Draw_Text_Player(Lua_State)
   X = lua_tointeger(Lua_State, 4)
   Y = lua_tointeger(Lua_State, 5)
   Z = lua_tointeger(Lua_State, 6)
-  V_X.d = lua_tonumber(Lua_State, 7)
+  V_X.d = lua_tointeger(Lua_State, 7)
   CompilerIf #PB_Compiler_OS = #PB_OS_Windows And #PB_Compiler_Processor = #PB_Processor_x64
     EnableASM
     MOVQ V_X, XMM0
     DisableASM
   CompilerEndIf
-  V_Y.d = lua_tonumber(Lua_State, 8)
+  V_Y.d = lua_tointeger(Lua_State, 8)
   CompilerIf #PB_Compiler_OS = #PB_OS_Windows And #PB_Compiler_Processor = #PB_Processor_x64
     EnableASM
     MOVQ V_Y, XMM0
@@ -790,31 +790,31 @@ EndProcedure
 ProcedureC Lua_CMD_Entity_Add(Lua_State)
   lua_tostring(Name.s, Lua_State, 1) ;Name.s = PeekS(lua_tolstring(Lua_State, 1, #Null))
   Map_ID  = lua_tointeger(Lua_State, 2)
-  X.d = lua_tonumber(Lua_State, 3)
+  X.d = lua_tointeger(Lua_State, 3)
   CompilerIf #PB_Compiler_OS = #PB_OS_Windows And #PB_Compiler_Processor = #PB_Processor_x64
     EnableASM
     MOVQ X, XMM0
     DisableASM
   CompilerEndIf
-  Y.d = lua_tonumber(Lua_State, 4)
+  Y.d = lua_tointeger(Lua_State, 4)
   CompilerIf #PB_Compiler_OS = #PB_OS_Windows And #PB_Compiler_Processor = #PB_Processor_x64
     EnableASM
     MOVQ Y, XMM0
     DisableASM
   CompilerEndIf
-  Z.d = lua_tonumber(Lua_State, 5)
+  Z.d = lua_tointeger(Lua_State, 5)
   CompilerIf #PB_Compiler_OS = #PB_OS_Windows And #PB_Compiler_Processor = #PB_Processor_x64
     EnableASM
     MOVQ Z, XMM0
     DisableASM
   CompilerEndIf
-  Rotation.d = lua_tonumber(Lua_State, 6)
+  Rotation.d = lua_tointeger(Lua_State, 6)
   CompilerIf #PB_Compiler_OS = #PB_OS_Windows And #PB_Compiler_Processor = #PB_Processor_x64
     EnableASM
     MOVQ Rotation, XMM0
     DisableASM
   CompilerEndIf
-  Look.d = lua_tonumber(Lua_State, 7)
+  Look.d = lua_tointeger(Lua_State, 7)
   CompilerIf #PB_Compiler_OS = #PB_OS_Windows And #PB_Compiler_Processor = #PB_Processor_x64
     EnableASM
     MOVQ Look, XMM0
@@ -995,31 +995,31 @@ EndProcedure
 ProcedureC Lua_CMD_Entity_Position_Set(Lua_State)
   Entity_ID = lua_tointeger(Lua_State, 1)
   Map_ID = lua_tointeger(Lua_State, 2)
-  X.d = lua_tonumber(Lua_State, 3)
+  X.d = lua_tointeger(Lua_State, 3)
   CompilerIf #PB_Compiler_OS = #PB_OS_Windows And #PB_Compiler_Processor = #PB_Processor_x64
     EnableASM
     MOVQ X, XMM0
     DisableASM
   CompilerEndIf
-  Y.d = lua_tonumber(Lua_State, 4)
+  Y.d = lua_tointeger(Lua_State, 4)
   CompilerIf #PB_Compiler_OS = #PB_OS_Windows And #PB_Compiler_Processor = #PB_Processor_x64
     EnableASM
     MOVQ Y, XMM0
     DisableASM
   CompilerEndIf
-  Z.d = lua_tonumber(Lua_State, 5)
+  Z.d = lua_tointeger(Lua_State, 5)
   CompilerIf #PB_Compiler_OS = #PB_OS_Windows And #PB_Compiler_Processor = #PB_Processor_x64
     EnableASM
     MOVQ Z, XMM0
     DisableASM
   CompilerEndIf
-  Rotation.d = lua_tonumber(Lua_State, 6)
+  Rotation.d = lua_tointeger(Lua_State, 6)
   CompilerIf #PB_Compiler_OS = #PB_OS_Windows And #PB_Compiler_Processor = #PB_Processor_x64
     EnableASM
     MOVQ Rotation, XMM0
     DisableASM
   CompilerEndIf
-  Look.d = lua_tonumber(Lua_State, 7)
+  Look.d = lua_tointeger(Lua_State, 7)
   CompilerIf #PB_Compiler_OS = #PB_OS_Windows And #PB_Compiler_Processor = #PB_Processor_x64
     EnableASM
     MOVQ Look, XMM0
@@ -1691,31 +1691,31 @@ EndProcedure
 
 ProcedureC Lua_CMD_Map_Set_Spawn(Lua_State)
   Map_ID = lua_tointeger(Lua_State, 1)
-  Input_X.d = lua_tonumber(Lua_State, 2)
+  Input_X.d = lua_tointeger(Lua_State, 2)
   CompilerIf #PB_Compiler_OS = #PB_OS_Windows And #PB_Compiler_Processor = #PB_Processor_x64
     EnableASM
     MOVQ Input_X, XMM0
     DisableASM
   CompilerEndIf
-  Input_Y.d = lua_tonumber(Lua_State, 3)
+  Input_Y.d = lua_tointeger(Lua_State, 3)
   CompilerIf #PB_Compiler_OS = #PB_OS_Windows And #PB_Compiler_Processor = #PB_Processor_x64
     EnableASM
     MOVQ Input_Y, XMM0
     DisableASM
   CompilerEndIf
-  Input_Z.d = lua_tonumber(Lua_State, 4)
+  Input_Z.d = lua_tointeger(Lua_State, 4)
   CompilerIf #PB_Compiler_OS = #PB_OS_Windows And #PB_Compiler_Processor = #PB_Processor_x64
     EnableASM
     MOVQ Input_Z, XMM0
     DisableASM
   CompilerEndIf
-  Input_Rot.d = lua_tonumber(Lua_State, 5)
+  Input_Rot.d = lua_tointeger(Lua_State, 5)
   CompilerIf #PB_Compiler_OS = #PB_OS_Windows And #PB_Compiler_Processor = #PB_Processor_x64
     EnableASM
     MOVQ Input_Rot, XMM0
     DisableASM
   CompilerEndIf
-  Input_Look.d = lua_tonumber(Lua_State, 6)
+  Input_Look.d = lua_tointeger(Lua_State, 6)
   CompilerIf #PB_Compiler_OS = #PB_OS_Windows And #PB_Compiler_Processor = #PB_Processor_x64
     EnableASM
     MOVQ Input_Look, XMM0
@@ -2170,31 +2170,31 @@ ProcedureC Lua_CMD_Teleporter_Add(Lua_State)
   Z_1 = lua_tointeger(Lua_State, 8)
   lua_tostring(Dest_Map_Unique_ID.s, Lua_State, 9)
   Dest_Map_ID = lua_tointeger(Lua_State, 10)
-  X.d = lua_tonumber(Lua_State, 11)
+  X.d = lua_tointeger(Lua_State, 11)
   CompilerIf #PB_Compiler_OS = #PB_OS_Windows And #PB_Compiler_Processor = #PB_Processor_x64
     EnableASM
     MOVQ X, XMM0
     DisableASM
   CompilerEndIf
-  Y.d = lua_tonumber(Lua_State, 12)
+  Y.d = lua_tointeger(Lua_State, 12)
   CompilerIf #PB_Compiler_OS = #PB_OS_Windows And #PB_Compiler_Processor = #PB_Processor_x64
     EnableASM
     MOVQ Y, XMM0
     DisableASM
   CompilerEndIf
-  Z.d = lua_tonumber(Lua_State, 13)
+  Z.d = lua_tointeger(Lua_State, 13)
   CompilerIf #PB_Compiler_OS = #PB_OS_Windows And #PB_Compiler_Processor = #PB_Processor_x64
     EnableASM
     MOVQ Z, XMM0
     DisableASM
   CompilerEndIf
-  Rot.d = lua_tonumber(Lua_State, 14)
+  Rot.d = lua_tointeger(Lua_State, 14)
   CompilerIf #PB_Compiler_OS = #PB_OS_Windows And #PB_Compiler_Processor = #PB_Processor_x64
     EnableASM
     MOVQ Rot, XMM0
     DisableASM
   CompilerEndIf
-  Look.d = lua_tonumber(Lua_State, 15)
+  Look.d = lua_tointeger(Lua_State, 15)
   CompilerIf #PB_Compiler_OS = #PB_OS_Windows And #PB_Compiler_Processor = #PB_Processor_x64
     EnableASM
     MOVQ Look, XMM0
@@ -3604,10 +3604,10 @@ Procedure Lua_Check_New_Files(Directory.s)
   EndIf
   
 EndProcedure
-; IDE Options = PureBasic 5.00 (Windows - x86)
+; IDE Options = PureBasic 5.00 (Windows - x64)
 ; ExecutableFormat = Shared Dll
-; CursorPosition = 2638
-; FirstLine = 2566
+; CursorPosition = 181
+; FirstLine = 156
 ; Folding = ----------------------6------------
 ; EnableThread
 ; EnableXP

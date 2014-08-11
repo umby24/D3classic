@@ -5,16 +5,18 @@ Structure Font_Main
   File_Date_Last.l        ; Datum letzter Änderung, bei Änderung speichern
   Timer_File_Check.l      ; Timer für das überprüfen der Dateigröße
 EndStructure
+
 Global Font_Main.Font_Main
 
 Structure Font
   ID.s                      ; Font-ID
-  Char_Width_Ind.a [256]    ; Breite eines Zeichens (für jedes individuell)
-  Char_Width.a              ; Breite eines Zeichens
-  Char_Height.a             ; Höhe eines Zeichens
-  Image_File.s              ; Datei des Font-Sprites
-  *Buffer                   ; Speicher für die Schriftart
+  Char_Width_Ind.a [256]    ; Width of a character (for each individual)
+  Char_Width.a              ; Width of a character
+  Char_Height.a             ; Height of a character
+  Image_File.s              ; File of the font sprites
+  *Buffer                   ; Memory for the font
 EndStructure
+
 Global NewList Font.Font()
 
 ; ########################################## Ladekram ############################################
@@ -66,7 +68,7 @@ Procedure Font_Load(Filename.s)
                 Next
               Next
               
-              ; ######## Leerzeichen
+              ; ######## Spaces
               Font()\Char_Width_Ind[32] = Font()\Char_Width
               
               StopDrawing()
@@ -225,11 +227,14 @@ Procedure Font_Main()
     i + 10
     
     LockMutex(Watchdog_Main\Mutex_ID)
+    
     ForEach Watchdog_Module()
       Font_Draw_Text(-1, "minecraft" , 0, 2, 0, i, 1, 0, Watchdog_Module()\Name + ": " + StrF(Watchdog_Module()\CPU_Usage,2) + "%   ", 42, 49)
       i + 10
-    Next
-    UnlockMutex(Watchdog_Main\Mutex_ID)
+  Next
+  
+  UnlockMutex(Watchdog_Main\Mutex_ID)
+  
     Font_Draw_Text(-1, "minecraft" , 0, 2, 0, i, 1, 0, "Time: "+Str(Milliseconds()/1000)+"s   ", 41, 49)
     i + 10
     Font_Draw_Text(-1, "minecraft" , 0, 2, 0, i, 1, 0, "Upload: "+StrD(Network_Main\Upload_Rate/1000, 3)+"kB/s   ", 41, 49)
@@ -239,11 +244,12 @@ Procedure Font_Main()
   EndIf
   ; ##############################
 EndProcedure
-; IDE Options = PureBasic 4.51 (Windows - x86)
-; CursorPosition = 223
-; FirstLine = 193
+; IDE Options = PureBasic 5.00 (Windows - x64)
+; CursorPosition = 236
+; FirstLine = 204
 ; Folding = --
 ; EnableXP
 ; DisableDebugger
+; CompileSourceDirectory
 ; EnableCompileCount = 0
 ; EnableBuildCount = 0

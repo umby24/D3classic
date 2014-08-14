@@ -330,7 +330,6 @@ Procedure Entity_Position_Set(ID, Map_ID, X.f, Y.f, Z.f, Rotation.f, Look.f, Pri
               Entity()\ID_Client = Entity_Get_Free_ID_Client(Map_ID)
               
               
-              
               ;CPEEEEE
               NameID.w = 0
               PlayerName.s = Entity()\Name
@@ -374,18 +373,22 @@ Procedure Entity_Position_Set(ID, Map_ID, X.f, Y.f, Z.f, Rotation.f, Look.f, Pri
           EndIf
         Else
           If Map_Select_ID(Entity()\Map_ID) ; ###### Wenn aktuelle Karte vorhanden
-            Entity()\X = X
-            Entity()\Y = Y
-            Entity()\Z = Z
-            Entity()\Rotation = Rotation
-            Entity()\Look = Look
-            Entity()\Send_Pos = Priority
-            If Send_Own_Client
-              Entity()\Send_Pos_Own = #True
+            If Send_Own_Client Or Not Entity()\Send_Pos_Own
+              Entity()\X = X
+              Entity()\Y = Y
+              Entity()\Z = Z
+              Entity()\Rotation = Rotation
+              Entity()\Look = Look
+              Entity()\Send_Pos = Priority
+              
+              If Send_Own_Client
+                Entity()\Send_Pos_Own = #True
+              EndIf
             EndIf
             ProcedureReturn #True
+          Else
+            ProcedureReturn #False
           EndIf
-          
         EndIf
         
       Else ; When moving blocked, send old position to the client
@@ -509,9 +512,9 @@ EndProcedure
 
 RegisterCore("Entity", 100, #Null, #Null, @Entity_Main())
 ; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 188
-; FirstLine = 176
-; Folding = --0
+; CursorPosition = 496
+; FirstLine = 455
+; Folding = ---
 ; EnableXP
 ; DisableDebugger
 ; CompileSourceDirectory

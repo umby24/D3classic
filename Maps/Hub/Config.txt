@@ -2,7 +2,7 @@
 ; Save_Intervall: in minutes (0 = Disabled)
 ; Jumpheight: -1 = Default
 ;
-Server_Version = 1009
+Server_Version = 1015
 Unique_ID = GDSLIJWBKERTMTZU
 Name = Hub
 Rank_Build = 0
@@ -15,11 +15,11 @@ Overview_Type = 2
 Size_X = 384
 Size_Y = 384
 Size_Z = 128
-Spawn_X = 122.2500000000
-Spawn_Y = 28.4687500000
-Spawn_Z = 8.0000000000
-Spawn_Rot = 177.1875000000
-Spawn_Look = -12.6562500000
+Spawn_X = 122.25
+Spawn_Y = 28.46875
+Spawn_Z = 8
+Spawn_Rot = 177.1875
+Spawn_Look = -12.65625
 Colors_Set = 1
 Sky_Color = -1
 Cloud_Color = -1

@@ -2,7 +2,7 @@
 ; Save_Intervall: in minutes (0 = Disabled)
 ; Jumpheight: -1 = Default
 ;
-Server_Version = 1009
+Server_Version = 1015
 Unique_ID = HWLCAIHFQBEPYDPF
 Name = temp
 Rank_Build = 0
@@ -15,11 +15,11 @@ Overview_Type = 2
 Size_X = 256
 Size_Y = 256
 Size_Z = 256
-Spawn_X = 32.0000000000
-Spawn_Y = 32.0000000000
+Spawn_X = 32
+Spawn_Y = 32
 Spawn_Z = 42.6666679382
-Spawn_Rot = 0.0000000000
-Spawn_Look = 0.0000000000
+Spawn_Rot = 0
+Spawn_Look = 0
 Colors_Set = 0
 Sky_Color = 0
 Cloud_Color = 0

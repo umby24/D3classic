@@ -107,7 +107,7 @@ Structure Plugin_Result_Element
   ID.l
 EndStructure
 
-XIncludeFile "Shared Includes/Plugin_Functions.pbi"
+XIncludeFile "../Shared Includes/Plugin_Functions.pbi"
 Global Plugin_Function.Plugin_Function
 
 ; ########################################## Ladekram ############################################
@@ -1165,10 +1165,10 @@ Procedure Plugin_Thread(*Dummy)
         Delay(100)
     ForEver
 EndProcedure
-; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 514
-; FirstLine = 504
-; Folding = ----------
+; IDE Options = PureBasic 5.30 (Windows - x64)
+; CursorPosition = 109
+; FirstLine = 105
+; Folding = -----------
 ; EnableXP
 ; DisableDebugger
 ; CompileSourceDirectory

@@ -115,34 +115,34 @@ Procedure Client_Login(Client_ID, Name.s, MPPass.s, Version) ; A new player has 
               EndIf
               
               ForEach Network_Client()
-                If Network_Client()\ExtPlayerList = #True
-                  ;Send the new player to everyone..
-                  If Network_Client()\ID <> tempClient ;If it is not the new player..
-                    
+                ;Send the new player to everyone..
+                If Network_Client()\ID <> tempClient ;If it is not the new player..
+                  If Network_Client()\ExtPlayerList = #True
                     Network_Client_Output_Write_Byte(Network_Client()\ID, 22) ; - Send the new player's information to the client
                     Network_Client_Output_Write_Word(Network_Client()\ID, tempID)
                     Network_Client_Output_Write_String(Network_Client()\ID, LSet(loginName,64," "),64)
                     Network_Client_Output_Write_String(Network_Client()\ID, LSet(namePrefix + loginName + nameSuffix, 64, " "),64)
                     Network_Client_Output_Write_String(Network_Client()\ID, LSet(mapName, 64, " "), 64)
                     Network_Client_Output_Write_Byte(Network_Client()\ID, 0)
-                    If CPE = #True
-                      Map_Select_ID(Network_Client()\Player\Map_ID)
-                      Network_Client_Output_Write_Byte(tempClient, 22) ; - And send the new player the client's information.
-                      Network_Client_Output_Write_Word(tempClient, Network_Client()\Player\NameID)
-                      Network_Client_Output_Write_String(tempClient, LSet(Network_Client()\Player\Login_Name,64," "),64)
-                      Network_Client_Output_Write_String(tempClient, LSet(Network_Client()\Player\Entity\Prefix + Network_Client()\Player\Login_Name + Network_Client()\Player\Entity\Suffix, 64, " "), 64)
-                      Network_Client_Output_Write_String(tempClient, LSet(Map_Data()\Name, 64, " "),64)
-                      Network_Client_Output_Write_Byte(tempClient, 0)    
-                    EndIf
-                  Else
-                    If CPE = #True
-                      Network_Client_Output_Write_Byte(tempClient, 22)
-                      Network_Client_Output_Write_Word(tempClient, tempID)
-                      Network_Client_Output_Write_String(tempClient, LSet(loginName,64," "),64)
-                      Network_Client_Output_Write_String(tempClient, LSet(namePrefix + loginName + nameSuffix, 64, " "), 64)
-                      Network_Client_Output_Write_String(tempClient, LSet(mapName, 64, " "),64)
-                      Network_Client_Output_Write_Byte(tempClient, 0)   
-                    EndIf
+                  EndIf
+                  
+                  If CPE = #True
+                    Map_Select_ID(Network_Client()\Player\Map_ID)
+                    Network_Client_Output_Write_Byte(tempClient, 22) ; - And send the new player the client's information.
+                    Network_Client_Output_Write_Word(tempClient, Network_Client()\Player\NameID)
+                    Network_Client_Output_Write_String(tempClient, LSet(Network_Client()\Player\Login_Name,64," "),64)
+                    Network_Client_Output_Write_String(tempClient, LSet(Network_Client()\Player\Entity\Prefix + Network_Client()\Player\Login_Name + Network_Client()\Player\Entity\Suffix, 64, " "), 64)
+                    Network_Client_Output_Write_String(tempClient, LSet(Map_Data()\Name, 64, " "),64)
+                    Network_Client_Output_Write_Byte(tempClient, 0)    
+                  EndIf
+                Else
+                  If CPE = #True
+                    Network_Client_Output_Write_Byte(tempClient, 22)
+                    Network_Client_Output_Write_Word(tempClient, tempID)
+                    Network_Client_Output_Write_String(tempClient, LSet(loginName,64," "),64)
+                    Network_Client_Output_Write_String(tempClient, LSet(namePrefix + loginName + nameSuffix, 64, " "), 64)
+                    Network_Client_Output_Write_String(tempClient, LSet(mapName, 64, " "),64)
+                    Network_Client_Output_Write_Byte(tempClient, 0)   
                   EndIf
                 EndIf
               Next
@@ -275,6 +275,8 @@ Procedure Client_Login_Thread(*Dummy) ; In this thread, all logins are processed
   ForEver
 EndProcedure
 ; IDE Options = PureBasic 5.00 (Windows - x64)
+; CursorPosition = 126
+; FirstLine = 109
 ; Folding = -
 ; EnableXP
 ; DisableDebugger

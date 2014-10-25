@@ -141,13 +141,13 @@ Global FreeID.w = 0 ; For CPE stuff.
 Global NextID.w = 0
 ; ########################################## Ladekram / Loading ############################################
 
-Main\Version = 1014 ;#PB_Editor_CompileCount*0.4 + #PB_Editor_BuildCount*4.9
+Main\Version = 1015 ;#PB_Editor_CompileCount*0.4 + #PB_Editor_BuildCount*4.9
 
 Main\Running_Time = Date()
 
 ; ########################################## Declares ############################################
 
-Declare Log_Add(Module.s, Message.s, Type, PB_File.s, PB_Line, PB_Procedure.s)
+Declare Log_Add(LModule.s, Message.s, Type, PB_File.s, PB_Line, PB_Procedure.s)
 
 Declare.s Lang_Get(Language.s, Input.s, Field_0.s = "", Field_1.s = "", Field_2.s = "", Field_3.s = "")
 
@@ -337,7 +337,9 @@ XIncludeFile "Includes/Watchdog.pbi"
 XIncludeFile "Includes/Log.pbi"
 XIncludeFile "Includes/String.pbi"
 XIncludeFile "Includes/Language.pbi"
+
 XIncludeFile "Includes/Network.pbi"
+XIncludeFile "Network/Packets.pbi" ; - New
 XIncludeFile "Includes/Error.pbi"
 XIncludeFile "Includes/System.pbi"
 XIncludeFile "Includes/Block.pbi"
@@ -360,7 +362,6 @@ XIncludeFile "Includes/Answer.pbi"
 XIncludeFile "Includes/TMessage.pbi"
 XIncludeFile "Includes/Font.pbi"
 XIncludeFile "Includes/Undo.pbi"
-;XIncludeFile "Includes/View_3D.pbi"
 XIncludeFile "Includes/Network_Functions.pbi"
 XIncludeFile "Includes/Entity.pbi"
 XIncludeFile "Includes/Hotkey.pbi"
@@ -371,6 +372,7 @@ XIncludeFile "Includes/CPE.pbi"
 ; ########################################## Initkram / Init ##########################################
 
 OpenConsole()
+ConsoleTitle("D3 Server " + Version)
 
 Main\Mutex = CreateMutex()
 
@@ -424,9 +426,10 @@ Repeat
 ForEver
 
 ; ########################################## Ende / End ##########################################
-; IDE Options = PureBasic 5.00 (Windows - x64)
+; IDE Options = PureBasic 5.30 (Windows - x64)
 ; ExecutableFormat = Console
-; CursorPosition = 6
+; CursorPosition = 375
+; FirstLine = 338
 ; Folding = -
 ; EnableThread
 ; EnableXP

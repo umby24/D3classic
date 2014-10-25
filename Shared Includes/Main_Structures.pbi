@@ -197,31 +197,31 @@ Structure Build_Variable
 EndStructure
 
 Structure Entity
-  ID.l                        ; ID des Entities
-  Prefix.s                    ; Vor dem Namen (z.B. Farbcode)
-  Name.s                      ; Angezeigter Name
-  Suffix.s                    ; Nach dem Namen
-  ID_Client.a                 ; ID für den Client (0 - 254)
-  *Player_List.Player_List    ; Spielerelement aus der "Player_List"
-  Resend.a                    ; Sendet das Entity neu
+  ID.l                        ; Entity's ID
+  Prefix.s                    ; Before the name (Color code, name tag, ect)
+  Name.s                      ; Display name (May be different from actual name)
+  Suffix.s                    ; After the name
+  ID_Client.a                 ; ID for the client (0-254)
+  *Player_List.Player_List    ; Players element from the "Player_List"
+  Resend.a                    ; Sends the new entity
   ; ---------------------------
-  Map_ID.l                    ; Aktuelle Karte des Entities (-1 Existiert nicht)
-  X.f                         ; Aktuelle X-Position des Entities in Blöcken
-  Y.f                         ; Aktuelle Y-Position des Entities in Blöcken
-  Z.f                         ; Aktuelle Z-Position des Entities in Blöcken
+  Map_ID.l                    ; Current map of Entity (-1 does not exist)
+  X.f                         ; Current X position of the entities in blocks
+  Y.f                         ; Current Y position of the entities in blocks
+  Z.f                         ; Current Z position of the entities in blocks
   Rotation.f                  ; Rotation in Grad
-  Look.f                      ; Vertikale Rotation in Grad
-  Send_Pos.a                  ; Position senden (Priorität | 0=Aus)
-  Send_Pos_Own.a              ; Position an die "Mutterclienten" senden.
+  Look.f                      ; Verticle Rotation in Grad
+  Send_Pos.a                  ; Send Position (Priority | 0=Aus)
+  Send_Pos_Own.a              ; Send position to the "Mother Client"
   ; ---------------------------
-  Time_Message_Death.l        ; Zeit, ab welcher eine Nachricht ausgegeben wird (Verhindern von Chatspam)
-  Time_Message_Other.l        ; Zeit, ab welcher eine Nachricht ausgegeben wird (Verhindern von Chatspam)
-  Last_Private_Message.s      ; Zu wem die letzte private Nachricht gesendet wurde
+  Time_Message_Death.l        ; Time at which a message is output (Preventing chat spam)
+  Time_Message_Other.l        ; Time at which a message is output (Preventing chat spam)
+  Last_Private_Message.s      ; To whom the last private message has been sent
   ; ---------------------------
   Held_Block.a                ; ID of held block (As per CPE HeldBlock)
   Model.s                     ; The current player model.
   
-  Last_Material.a             ; Letzter gebauter Blocktyp
+  Last_Material.a             ; Last built block type
   Build_Material.w            ; Blocktyp, mit welchem gebaut wird. -1 = Normal bauen
   Build_Mode.s                ; Modus, bei dem die Aktion durch Bauen beschrieben wird. (0: Normal >0: Box, Sphere...)
   Build_State.a               ; Status beim Bauen... (Welcher Punkt...)
@@ -345,8 +345,8 @@ Structure EventStruct
     Time.i
 EndStructure
 ; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 296
-; FirstLine = 246
+; CursorPosition = 222
+; FirstLine = 190
 ; EnableXP
 ; DisableDebugger
 ; CompileSourceDirectory

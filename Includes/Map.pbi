@@ -2067,7 +2067,7 @@ Procedure Map_Physic_Thread(*Dummy) ; Thread, für Physik
     
     ForEach Map_Data()
       If Map_Data()\Physic_Stopped = 0
-        SortStructuredList(Map_Data()\Map_Block_Do(), #PB_Sort_Ascending, OffsetOf(Map_Block_Do\Time), #PB_Long)
+        SortStructuredList(Map_Data()\Map_Block_Do(), #PB_Sort_Ascending, OffsetOf(Map_Block_Do\Time), #PB_Sort_Long)
         
         Watchdog_Watch("Map_Physic", "After: SortStructuredList(Map_Block_Do())", 1)
         
@@ -2230,9 +2230,9 @@ Procedure Map_Main()
 EndProcedure
 
 RegisterCore("Map", 1000, #Null, #Null, @Map_Main())
-; IDE Options = PureBasic 5.30 (Windows - x64)
-; CursorPosition = 2069
-; FirstLine = 872
+; IDE Options = PureBasic 5.00 (Windows - x64)
+; CursorPosition = 280
+; FirstLine = 241
 ; Folding = f79PAeQA-
 ; EnableThread
 ; EnableXP

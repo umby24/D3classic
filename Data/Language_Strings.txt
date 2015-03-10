@@ -399,8 +399,8 @@ en: &eCan't find the Player '[Field_0]'.
 [Ingame: Can't find Plugin()\Plugin_Info\Name = [Field_0]]1
 en: &eCan't find the Plugin '[Field_0]'
 
-[Ingame: Can't find command]0
-en: &eUnknown command.
+[Ingame: Can't find command '[Field_0]']0
+en: &eUnknown command '[Field_0]'.
 
 [Ingame: Can't kick [Field_0]<c> (A <= B)]1
 en: &eYou can't kick '[Field_0]&e'. Your rank is <= than the player.
@@ -705,6 +705,8 @@ en: &c[Field_0] died
 
 [Kick Reason]2
 en: [Field_0]&e: [Field_1]
+
+[Konnte Element '[Field_0]' (ID) in 'Map_Data()' nicht finden.]1
 
 [Login failed: Invalid name (IP=[Field_0], Name='[Field_1]')]2
 

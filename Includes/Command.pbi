@@ -2114,13 +2114,14 @@ Procedure Command_Plugins()
     
     System_Message_Network_Send(Command_Main\Command_Client_ID, Lang_Get("", "Ingame: Plugins:"))
     
-    ForEach Plugin()
-      If Plugin()\Library_ID
+    ForEach Plugins()
+      If Plugins()\Loaded
         Text.s = "&a"
       Else
         Text.s = "&4"
-      EndIf
-      Text.s + Plugin()\Plugin_Info\Name + " &f(Auth.:" + Plugin()\Plugin_Info\Author + ")"
+    EndIf
+    
+      Text.s + Plugins()\Plugin_Info\Name + " &f(Auth.:" + Plugins()\Plugin_Info\Author + ")"
       System_Message_Network_Send(Command_Main\Command_Client_ID, Text)
     Next
   EndIf
@@ -2129,32 +2130,21 @@ EndProcedure
 Procedure Command_Plugin_Load()
   If Network_Client_Select(Command_Main\Command_Client_ID)
     
-    Plugin.s = Command_Main\Parsed_Text_0
+    Plugin.s = LCase(Command_Main\Parsed_Text_0)
     
     Found = 0
-    ForEach Plugin()
-      If LCase(Plugin()\Plugin_Info\Name) = LCase(Plugin)
-        Found = 1
-        If Plugin_Load(Plugin()\Filename)
-          System_Message_Network_Send(Command_Main\Command_Client_ID, Lang_Get("", "Ingame: Plugin '[Field_0]' loaded", Plugin()\Filename))
-        Else
-          System_Message_Network_Send(Command_Main\Command_Client_ID, Lang_Get("", "Ingame: Plugin '[Field_0]' not loaded", Plugin()\Filename))
+    ForEach Plugins()
+        If LCase(Plugins()\Plugin_Info\Name) <> Plugin
+            Continue
         EndIf
-      EndIf
-    Next
-    
-    ForEach UnloadedPlugins()
-      If LCase(UnloadedPlugins()\PluginName) = LCase(Plugin)
-        Found = 1
-        pFilename.s = UnloadedPlugins()\Filename
         
-        If Plugin_Load(UnloadedPlugins()\Filename)
-          System_Message_Network_Send(Command_Main\Command_Client_ID, Lang_Get("", "Ingame: Plugin '[Field_0]' loaded", pFilename))
+        Found = 1
+        If Plugin_Load(Plugins()\Filename)
+          System_Message_Network_Send(Command_Main\Command_Client_ID, Lang_Get("", "Ingame: Plugin '[Field_0]' loaded", Plugins()\Filename))
         Else
-          System_Message_Network_Send(Command_Main\Command_Client_ID, Lang_Get("", "Ingame: Plugin '[Field_0]' not loaded", pFilename))
-        EndIf
+          System_Message_Network_Send(Command_Main\Command_Client_ID, Lang_Get("", "Ingame: Plugin '[Field_0]' not loaded", Plugins()\Filename))
       EndIf
-      
+      Break
     Next
     
     If Found = 0
@@ -2166,20 +2156,25 @@ EndProcedure
 Procedure Command_Plugin_Unload()
   If Network_Client_Select(Command_Main\Command_Client_ID)
     
-    Plugin.s = Command_Main\Parsed_Text_0
+    Plugin.s = LCase(Command_Main\Parsed_Text_0)
     
     Found = 0
-    ForEach Plugin()
-      If LCase(Plugin()\Plugin_Info\Name) = LCase(Plugin)
-        Found = 1
-        If Plugin_Unload(Plugin()\Filename)
-          System_Message_Network_Send(Command_Main\Command_Client_ID, Lang_Get("", "Ingame: Plugin '[Field_0]' unloaded", Plugin()\Filename))
-          Plugin()\Library_ID = 0 ; For good measure..
-        Else
-          System_Message_Network_Send(Command_Main\Command_Client_ID, Lang_Get("", "Ingame: Plugin '[Field_0]' not unloaded", Plugin()\Filename))
+    ForEach Plugins()
+        If LCase(Plugins()\Plugin_Info\Name) <> Plugin
+            Continue
         EndIf
-      EndIf
-    Next
+        
+        Found = 1
+        
+        If Plugin_Unload(Plugins()\Filename)
+          System_Message_Network_Send(Command_Main\Command_Client_ID, Lang_Get("", "Ingame: Plugin '[Field_0]' unloaded", Plugins()\Filename))
+          Plugins()\Library_ID = 0 ; For good measure..
+          Plugins()\Loaded = #False
+        Else
+          System_Message_Network_Send(Command_Main\Command_Client_ID, Lang_Get("", "Ingame: Plugin '[Field_0]' not unloaded", Plugins()\Filename))
+        EndIf
+  Next
+  
     If Found = 0
       System_Message_Network_Send(Command_Main\Command_Client_ID, Lang_Get("", "Ingame: Can't find Plugin()\Plugin_Info\Name = [Field_0]", Plugin))
     EndIf
@@ -2278,8 +2273,8 @@ Procedure Command_Main()
   
   RegisterCore("Command", 1000, #Null, #Null, @Command_Main())
 ; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 552
-; FirstLine = 531
+; CursorPosition = 2167
+; FirstLine = 2142
 ; Folding = 0-----------
 ; EnableXP
 ; DisableDebugger

@@ -6,22 +6,6 @@ Plugin =
 Group = OP
 Description = &eKicks a player.<br>&eUsage: /kick [Name] <Reason>
 
-[Accept]
-Name = accept
-Rank = 50
-Rank_Show = 0
-Plugin = Lua:Command_Build_Mode_Accept
-Group = Build
-Description = Accepts a buildmode change.
-
-[Say]
-Name = say
-Rank = 255
-Rank_Show = 0
-Plugin = 
-Group = OP
-Description = 
-
 [Ban]
 Name = ban
 Rank = 150
@@ -820,6 +804,30 @@ Rank = 252
 Rank_Show = 0
 Plugin = 
 Group = Server
+Description = 
+
+[Global-Chat]
+Name = Global
+Rank = 0
+Rank_Show = 0
+Plugin = 
+Group = 
+Description = 
+
+[Accept]
+Name = accept
+Rank = 50
+Rank_Show = 0
+Plugin = Lua:Command_Build_Mode_Accept
+Group = Build
+Description = Accepts a buildmode change.
+
+[Say]
+Name = say
+Rank = 255
+Rank_Show = 0
+Plugin = 
+Group = OP
 Description = 
 
 [Crash-Server]

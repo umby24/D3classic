@@ -28,8 +28,10 @@ Global Dim Block.Block(255)
 ; ########################################## Proceduren ##########################################
 
 Procedure Block_Load(Filename.s)
-  If OpenPreferences(Filename.s)
-    
+  If Not OpenPreferences(Filename.s)
+      ProcedureReturn
+  EndIf
+  
     For i = 0 To 255
       PreferenceGroup(Str(i))
       Block(i)\Name = ReadPreferenceString("Name", "")
@@ -59,14 +61,15 @@ Procedure Block_Load(Filename.s)
     Log_Add("Block", Lang_Get("", "File loaded", Filename), 0, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
     
     ClosePreferences()
-  EndIf
 EndProcedure
 
 Procedure Block_Save(Filename.s)
   File_ID = CreateFile(#PB_Any, Filename)
     
-  If IsFile(File_ID)
-    
+  If Not IsFile(File_ID)
+      ProcedureReturn
+  EndIf
+  
     WriteStringN(File_ID, "; Physic: 0  = Physic Off")
     WriteStringN(File_ID, ";         10 = Original Sand (Falling)")
     WriteStringN(File_ID, ";         11 = New Sand")
@@ -77,7 +80,10 @@ Procedure Block_Save(Filename.s)
     For i = 0 To 255
         WriteStringN(File_ID, "["+Str(i)+"]")
         
-      If Block(i)\Name <> ""
+        If Block(i)\Name = ""
+            Continue
+        EndIf
+        
         WriteStringN(File_ID, "Name = "+Block(i)\Name)
         WriteStringN(File_ID, "On_Client = "+Str(Block(i)\On_Client))
         WriteStringN(File_ID, "Physic = "+Str(Block(i)\Physic))
@@ -96,7 +102,6 @@ Procedure Block_Save(Filename.s)
         WriteStringN(File_ID, "Color_Overview = "+Str(Block(i)\Color_Overview))
         WriteStringN(File_ID, "CPE_Level = " + Str(Block(i)\CPE_Level))
         WriteStringN(File_ID, "CPE_Replace = " + Str(Block(i)\CPE_Replace))
-      EndIf
       
       If Block(i)\Replace_By_Load <> -1
         WriteStringN(File_ID, "Replace_By_Load = "+Str(Block(i)\Replace_By_Load))
@@ -109,7 +114,6 @@ Procedure Block_Save(Filename.s)
     Log_Add("Block", Lang_Get("", "File saved", Filename), 0, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
     
     CloseFile(File_ID)
-  EndIf
 EndProcedure
 
 ;-######################################################################################
@@ -138,9 +142,9 @@ Procedure Block_Main()
 EndProcedure
 
 RegisterCore("Block", 1000, #Null, #Null, @Block_Main())
-; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 139
-; FirstLine = 80
+; IDE Options = PureBasic 5.00 (Windows - x86)
+; CursorPosition = 103
+; FirstLine = 79
 ; Folding = -
 ; EnableXP
 ; DisableDebugger

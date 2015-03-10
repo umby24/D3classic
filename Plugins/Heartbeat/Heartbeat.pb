@@ -199,9 +199,9 @@ ProcedureCDLL Main()
     Heartbeat_Save(PeekS(Files_File_Get("Heartbeat")))
   EndIf
 EndProcedure
-; IDE Options = PureBasic 5.00 (Windows - x86)
+; IDE Options = PureBasic 5.00 (Windows - x64)
 ; ExecutableFormat = Shared Dll
-; CursorPosition = 148
+; CursorPosition = 139
 ; FirstLine = 125
 ; Folding = --
 ; EnableThread
@@ -210,4 +210,4 @@ EndProcedure
 ; Executable = Heartbeat.x86.dll
 ; DisableDebugger
 ; CompileSourceDirectory
-; Compiler = PureBasic 5.00 (Windows - x86)
+; Compiler = PureBasic 5.00 (Windows - x64)

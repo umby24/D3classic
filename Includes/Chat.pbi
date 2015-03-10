@@ -8,92 +8,92 @@
 ; ########################################## Proceduren ##########################################
 
 Procedure Chat_Message_Network_Send_2_Map(Entity_ID, Message.s) ; Sends a message to all clients of an entity on a map.
-    List_Store(*Pointer, Entity())
+  List_Store(*Pointer, Entity())
+  
+  If Entity_Select_ID(Entity_ID)
     
-    If Entity_Select_ID(Entity_ID)
+    If Entity()\Player_List
+      If Entity()\Player_List\Time_Muted < Date()
         
-        If Entity()\Player_List
-            If Entity()\Player_List\Time_Muted < Date()
-                
-                Map_ID = Entity()\Map_ID
-                Text.s = Message
-                
-                Text = ReplaceString(Text, "%%", "§")
-                
-                For i = 0 To 9
-                    Text.s = ReplaceString(Text, "%"+Str(i), "&"+Str(i))
-                Next
-                
-                For i = 97 To 102
-                    Text.s = ReplaceString(Text, "%"+Chr(i), "&"+Chr(i))
-                Next
-                
-                Text = ReplaceString(Text, "§", "%")
-                
-                Text = ReplaceString(Text, "<br>", Chr(10))
-                Text = ReplaceString(Text, Chr(10), Chr(10)+Entity_Displayname_Get(Entity_ID)+"&f: ")
-                
-                If Plugin_Event_Chat_Map(Entity(), Message.s)
-                    Log_Add("Chat", Entity()\Name+": "+Message, 1, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
-                    
-                    Text.s = Entity_Displayname_Get(Entity_ID)+"&f: "+Text
-                    System_Message_Network_Send_2_All(Map_ID, Text)
-                EndIf
-                
-            Else
-                Entity_Message_2_Clients(Entity_ID, Lang_Get("", "Ingame: You are muted"))
-            EndIf
-            
+        Map_ID = Entity()\Map_ID
+        Text.s = Message
+        
+        Text = ReplaceString(Text, "%%", "§")
+        
+        For i = 0 To 9
+          Text.s = ReplaceString(Text, "%"+Str(i), "&"+Str(i))
+        Next
+        
+        For i = 97 To 102
+          Text.s = ReplaceString(Text, "%"+Chr(i), "&"+Chr(i))
+        Next
+        
+        Text = ReplaceString(Text, "§", "%")
+        
+        Text = ReplaceString(Text, "<br>", Chr(10))
+        Text = ReplaceString(Text, Chr(10), Chr(10)+Entity_Displayname_Get(Entity_ID)+"&f: ")
+        
+        If Plugin_Event_Chat_Map(Entity(), Message.s)
+          Log_Add("Chat", Entity()\Name+": "+Message, 1, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
+          
+          Text.s = Entity_Displayname_Get(Entity_ID)+"&f: "+Text
+          System_Message_Network_Send_2_All(Map_ID, Text)
         EndIf
+        
+      Else
+        Entity_Message_2_Clients(Entity_ID, Lang_Get("", "Ingame: You are muted"))
+      EndIf
+      
     EndIf
-    
-    List_Restore(*Pointer, Entity())
+  EndIf
+  
+  List_Restore(*Pointer, Entity())
 EndProcedure
 
 Procedure Chat_Message_Network_Send_2_All(Entity_ID, Message.s) ; Sends a message to all clients of a map (Global Chat)
-    List_Store(*Pointer, Entity())
+  List_Store(*Pointer, Entity())
+  
+  If Entity_Select_ID(Entity_ID)
     
-    If Entity_Select_ID(Entity_ID)
+    If Entity()\Player_List
+      If Entity()\Player_List\Time_Muted < Date()
         
-        If Entity()\Player_List
-            If Entity()\Player_List\Time_Muted < Date()
+        Map_ID = Entity()\Map_ID
+        Text.s = Message
+        
+        Text = ReplaceString(Text, "%%", "§")     
+        
+        For i = 0 To 9
+          Text.s = ReplaceString(Text, "%"+Str(i), "&"+Str(i))
+        Next
+        
+        For i = 97 To 102
+          Text.s = ReplaceString(Text, "%"+Chr(i), "&"+Chr(i))
+        Next
+        
+        Text = ReplaceString(Text, "§", "%")
+        
                 
-                Map_ID = Entity()\Map_ID
-                Text.s = Message
-                
-                Text = ReplaceString(Text, "%%", "§")     
-                
-                For i = 0 To 9
-                    Text.s = ReplaceString(Text, "%"+Str(i), "&"+Str(i))
-                Next
-                
-                For i = 97 To 102
-                    Text.s = ReplaceString(Text, "%"+Chr(i), "&"+Chr(i))
-                Next
-                
-                Text = ReplaceString(Text, "§", "%")
-                
-                
-                Text = ReplaceString(Text, "<br>", Chr(10))
-                Text = ReplaceString(Text, Chr(10), Chr(10)+Lang_Get("", "Ingame: Global_Message")+" "+Entity_Displayname_Get(Entity_ID)+"&f: ")
-                
-                If Plugin_Event_Chat_All(Entity(), Message.s)
-                    
-                    Log_Add("Chat", "# "+Entity()\Name+": "+Message, 1, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
-                    
-                    Text.s = Lang_Get("", "Ingame: Global_Message")+" "+Entity_Displayname_Get(Entity_ID)+"&f: "+Text
-                    System_Message_Network_Send_2_All(-1, Text)
-                    
-                EndIf
-                
-            Else
-                Entity_Message_2_Clients(Entity_ID, Lang_Get("", "Ingame: You are muted"))
-            EndIf
-            
+        Text = ReplaceString(Text, "<br>", Chr(10))
+        Text = ReplaceString(Text, Chr(10), Chr(10)+Lang_Get("", "Ingame: Global_Message")+" "+Entity_Displayname_Get(Entity_ID)+"&f: ")
+        
+        If Plugin_Event_Chat_All(Entity(), Message.s)
+          
+          Log_Add("Chat", "# "+Entity()\Name+": "+Message, 1, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
+          
+          Text.s = Lang_Get("", "Ingame: Global_Message")+" "+Entity_Displayname_Get(Entity_ID)+"&f: "+Text
+          System_Message_Network_Send_2_All(-1, Text)
+          
         EndIf
+        
+      Else
+        Entity_Message_2_Clients(Entity_ID, Lang_Get("", "Ingame: You are muted"))
+      EndIf
+      
     EndIf
-    
-    List_Restore(*Pointer, Entity())
+  EndIf
+  
+  List_Restore(*Pointer, Entity())
 EndProcedure
 
 Procedure Chat_Message_Network_Send(Entity_ID, Player_Name.s, Message.s) ; Sends a message from one entity to another.
@@ -143,9 +143,9 @@ Procedure Chat_Message_Network_Send(Entity_ID, Player_Name.s, Message.s) ; Sends
     List_Restore(*Pointer, Entity())
     List_Restore(*Pointer_2, Network_Client())
 EndProcedure
-; IDE Options = PureBasic 5.30 (Windows - x64)
-; CursorPosition = 125
-; FirstLine = 78
+; IDE Options = PureBasic 5.00 (Windows - x64)
+; CursorPosition = 134
+; FirstLine = 84
 ; Folding = -
 ; EnableXP
 ; DisableDebugger

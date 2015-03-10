@@ -1,23 +1,55 @@
 ; ########################################## Variablen ##########################################
 
-Structure Z_Stream ; SizeOf(Z_Stream) = 56
-  *Next_In
-  Avail_In.i
-  Total_In.l
+; Structure Z_Stream ; SizeOf(Z_Stream) = 56
+;   *Next_In
+;   Avail_In.i
+;   Total_In.l
+;   
+;   *Next_Out
+;   Avail_Out.i
+;   Total_Out.l
+;   
+;   MSG.i
+;   Placeholder.l
+;   Zalloc.l
+;   ZFree.l
+;   Opaque.l
+;   
+;   Data_Type.l
+;   Adler.l
+;   Reserved.l
+; EndStructure
+Prototype.i z_alloc_func(*opaque, items.i, size.i)
+Prototype.i z_free_func(*opaque, *address)
+
+Macro InsertPadding(nr)
+     CompilerIf   #PB_Compiler_Processor = #PB_Processor_x64
+        padding#nr.l
+     CompilerEndIf
+  EndMacro
   
-  *Next_Out
-  Avail_Out.i
-  Total_Out.l
+  Structure z_stream
+    *next_in;         /* next input byte */
+    avail_in.l;       /* number of bytes available at next_in */
+    InsertPadding(1)
+    total_in.i;       /* total nb of input bytes read so far */
   
-  MSG.i
-  Placeholder.l
-  Zalloc.l
-  ZFree.l
-  Opaque.l
+    *next_out;        /* next output byte should be put there */
+    avail_out.l;      /* remaining free space at next_out */
+     InsertPadding(2)
+    total_out.i;      /* total nb of bytes output so far */
   
-  Data_Type.l
-  Adler.l
-  Reserved.l
+    *msg;             /* last error message, NULL if no error */
+    *state;           /* not visible by applications */
+  
+    zalloc.z_alloc_func;  /* used to allocate the internal state */
+    zfree.z_free_func;   /* used to free the internal state */
+    *opaque;          /* private data object passed to zalloc and zfree */
+  
+    data_type.l;      /* best guess about the data type: binary or text */
+    InsertPadding(3)
+    adler.i;          /* adler32 value of the uncompressed data */
+    reserved.i;       /* reserved for future use */
 EndStructure
 
 
@@ -246,8 +278,8 @@ Procedure GZip_Decompress_From_File(Filename.s, *Output, Output_Len)
   EndIf
 EndProcedure
 ; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 187
-; FirstLine = 204
+; CursorPosition = 23
+; FirstLine = 6
 ; Folding = --
 ; EnableXP
 ; DisableDebugger

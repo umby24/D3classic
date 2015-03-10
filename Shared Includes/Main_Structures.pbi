@@ -84,49 +84,6 @@ Structure Map_Teleporter_Element
   Dest_Look.f
 EndStructure
 
-Structure CWMap
-    FormatVersion.b
-    MapName.s
-    *UUID
-    Size_X.u
-    Size_Y.u
-    Size_Z.u
-    Creator_Service.s
-    Creator_Username.s
-    Mapgen_Software.s
-    Mapgen_Name.s
-    CreationTime.l
-    AccessTime.l
-    ModifyTime.l
-    Spawn_X.w
-    Spawn_Y.w
-    Spawn_Z.w
-    Spawn_Rot.b
-    Spawn_Look.b
-    *Blocks
-    *OtherMetadata
-    ;CPE Metadata
-    ClickDistanceVersion.l   ; Click-distance
-    Distance.w
-    
-    CustomBlocksVersion.l    ; CustomBlocks
-    CBLevel.w
-    *Fallback
-    
-    EnvColorsVersion.l       ; Enviroment Colors.
-    SkyColor.l
-    CloudColor.l
-    FogColor.l
-    AmbientColor.l
-    SunlightColor.l
-    
-    EnvAppearanceVersion.l   ; Enviroment Appearance
-    TextureURL.s
-    SideBlock.b
-    EdgeBlock.b
-    SideLevel.b
-EndStructure
-
 Structure Map_Data
   ID.l                      ; ID der Karte (Identifikation Intern) (-1 Gibt es nicht)
   Unique_ID.s               ; Einmalige ID der Karte
@@ -345,8 +302,8 @@ Structure EventStruct
     Time.i
 EndStructure
 ; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 222
-; FirstLine = 190
+; CursorPosition = 189
+; Folding = AA5
 ; EnableXP
 ; DisableDebugger
 ; CompileSourceDirectory

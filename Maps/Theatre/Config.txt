@@ -2,7 +2,7 @@
 ; Save_Intervall: in minutes (0 = Disabled)
 ; Jumpheight: -1 = Default
 ;
-Server_Version = 1015
+Server_Version = 10141
 Unique_ID = NWHXTAJLJGJNBTYT
 Name = Theatre
 Rank_Build = 0
@@ -15,11 +15,11 @@ Overview_Type = 2
 Size_X = 256
 Size_Y = 256
 Size_Z = 256
-Spawn_X = 100.3125
-Spawn_Y = 254.4375
-Spawn_Z = 55
-Spawn_Rot = 2.8125
-Spawn_Look = 1.40625
+Spawn_X = 100.3125000000
+Spawn_Y = 254.4375000000
+Spawn_Z = 55.0000000000
+Spawn_Rot = 2.8125000000
+Spawn_Look = 1.4062500000
 Colors_Set = 0
 Sky_Color = -1
 Cloud_Color = -1

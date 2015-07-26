@@ -847,7 +847,6 @@ Procedure Map_Load(Map_ID, Directory.s) ; Dekomprimiert und lädt die Information
           Log_Add("Map", Lang_Get("", "Map loaded", Filename_Data, Str(Map_Data()\Size_X), Str(Map_Data()\Size_Y), Str(Map_Data()\Size_Z)), 0, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
           ProcedureResult = 1
       Else
-          Log_Add("DEBUG", Str(dSize) + ":" + Str(Map_Size*#Map_Block_Element_Size), 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
           Log_Add("Map", Lang_Get("", "Map not loaded: Filesize is wrong", Filename_Data), 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
         EndIf
       EndIf
@@ -1589,7 +1588,7 @@ Procedure Map_Env_Colors_Change(*Map_Data.Map_Data, Red, Green, Blue, Type)
     If Not *Map_Data
         ProcedureReturn
     EndIf
-    PrintN(Str(Red))
+
     *Map_Data\ColorsSet = #True
     
     Select Type
@@ -2234,8 +2233,8 @@ EndProcedure
 
 RegisterCore("Map", 1000, #Null, #Null, @Map_Main())
 ; IDE Options = PureBasic 5.30 (Linux - x64)
-; CursorPosition = 1591
-; FirstLine = 1196
+; CursorPosition = 776
+; FirstLine = 718
 ; Folding = f79fAeQQ-
 ; EnableThread
 ; EnableXP

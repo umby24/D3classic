@@ -47,7 +47,7 @@ Procedure Rank_Save(Filename.s)
   File_ID = CreateFile(#PB_Any, Filename)
   If IsFile(File_ID)
     
-    SortStructuredList(Rank(), #PB_Sort_Ascending, OffsetOf(Rank\Rank), #PB_Sort_Word)
+    SortStructuredList(Rank(), #PB_Sort_Ascending, OffsetOf(Rank\Rank), #PB_Word)
     
     ForEach Rank()
       WriteStringN(File_ID, "["+Str(Rank()\Rank)+"]")
@@ -181,9 +181,9 @@ Procedure Rank_Main()
 EndProcedure
 
 RegisterCore("Rank", 1000, #Null, #Null, @Rank_Main())
-; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 182
-; FirstLine = 123
+; IDE Options = PureBasic 5.30 (Linux - x64)
+; CursorPosition = 49
+; FirstLine = 45
 ; Folding = --
 ; EnableXP
 ; DisableDebugger

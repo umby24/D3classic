@@ -277,9 +277,9 @@ Procedure GZip_Decompress_From_File(Filename.s, *Output, Output_Len)
     ProcedureReturn Result
   EndIf
 EndProcedure
-; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 23
-; FirstLine = 6
+; IDE Options = PureBasic 5.30 (Windows - x64)
+; CursorPosition = 273
+; FirstLine = 246
 ; Folding = --
 ; EnableXP
 ; DisableDebugger

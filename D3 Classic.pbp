@@ -1,179 +1,187 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project xmlns="http://www.purebasic.com/namespace" version="1.0" creator="PureBasic 5.30 (Windows - x64)">
+<project xmlns="http://www.purebasic.com/namespace" version="1.0" creator="PureBasic 5.30 (Linux - x64)">
   <section name="config">
     <options closefiles="1" openmode="0" name="D3 Classic"/>
   </section>
   <section name="data">
     <explorer view="" pattern="0"/>
     <log show="1"/>
-    <lastopen date="2015-03-09 19:02" user="Wandering" host="UNKNOWN-LAPTOP"/>
+    <lastopen date="2015-07-22 22:32" user="unknown" host="unknown-Q502LA"/>
   </section>
   <section name="files">
-    <file name="Includes\Answer.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
-      <fingerprint md5="f87c3ff95d1d1238165e000c14d3f823"/>
-    </file>
-    <file name="Includes\Block.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+    <file name="Includes/Block.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="+-"/>
       <fingerprint md5="8896f2ba6dd0ed8302fc334a3807d55a"/>
     </file>
-    <file name="Includes\Build.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+    <file name="Includes/Build.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="+-"/>
       <fingerprint md5="8a22fecabfde3d95df9764aef3d59af2"/>
     </file>
-    <file name="Includes\Build_Mode.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+    <file name="Includes/Build_Mode.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="+-"/>
       <fingerprint md5="2127a295b47257d03a4dda982109bf3f"/>
     </file>
-    <file name="Includes\Chat.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+    <file name="Includes/Chat.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="+-"/>
       <fingerprint md5="b6a768e711c9e9c92f55f3f580c95e16"/>
     </file>
-    <file name="Includes\Client.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+    <file name="Includes/ClassicWorld.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="+-"/>
+      <fingerprint md5="c8cfa74ce55a8de4ed6204b14f995a14"/>
+    </file>
+    <file name="Includes/Client.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="+-"/>
       <fingerprint md5="eec3774271c3804d9e98b1dd9a078536"/>
     </file>
-    <file name="Includes\Command.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
-      <fingerprint md5="d9d977e830ce6e2244640264dbd7d1c7"/>
+    <file name="Includes/Command.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="+-"/>
+      <fingerprint md5="91fd7a363b20a47f5a9789233e7170f7"/>
     </file>
-    <file name="Includes\CPE.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
-      <fingerprint md5="bb0a525e0b111ef4822f0ddd4d85f390"/>
+    <file name="Includes/CPE.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+-"/>
+      <fingerprint md5="bf46161c46b81f47571737305da145f8"/>
     </file>
-    <file name="Includes\Entity.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+    <file name="Includes/Entity.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="+-"/>
       <fingerprint md5="37abd1e0c56540ce7814a4ae609d01ba"/>
     </file>
-    <file name="Includes\Error.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
-      <fingerprint md5="212c41e2f3b1400c6454ec05b1e40f74"/>
+    <file name="Includes/Error.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+-"/>
+      <fingerprint md5="f4a127aa1639822113c8c66bbdd6cc18"/>
     </file>
-    <file name="Includes\Events.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
-      <fingerprint md5="deb9112038de80a067e0cea7af44e2b3"/>
+    <file name="Includes/Events.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+-"/>
+      <fingerprint md5="417b109c835a604f453c218665376763"/>
     </file>
-    <file name="Includes\Files.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
-      <fingerprint md5="3be2cf10b1b36c48963b2807d6b418e4"/>
+    <file name="Includes/Files.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+-"/>
+      <fingerprint md5="87d0034d2a87895a216d211fabcff4c2"/>
     </file>
-    <file name="Includes\Font.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+    <file name="Includes/Font.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="+-"/>
       <fingerprint md5="02840c47262e4d86b465c1dfd494cc89"/>
     </file>
-    <file name="Includes\GZip.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
-      <fingerprint md5="b1b7671f27d811673a751f5377ac3a6a"/>
+    <file name="Includes/GZip.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="+-"/>
+      <fingerprint md5="1ff39939862983c24a60e10544a119db"/>
     </file>
-    <file name="Includes\Hotkey.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+    <file name="Includes/Hotkey.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="+-"/>
       <fingerprint md5="044a20ca9fb0ade8774a7bc387fc2e39"/>
     </file>
-    <file name="Includes\Language.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
-      <fingerprint md5="b62f203560288fc1ce15c0f99a44e0cb"/>
+    <file name="Includes/Language.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+-"/>
+      <fingerprint md5="825c4a2f5eafec2fa2a8f29582e09077"/>
     </file>
-    <file name="Includes\Location.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+    <file name="Includes/Location.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="+-"/>
       <fingerprint md5="72a052f7c4ce1669651c5f56895a47eb"/>
     </file>
-    <file name="Includes\Log.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
-      <fingerprint md5="ea687b6f1c065be6e530688c59ef9bf0"/>
+    <file name="Includes/Log.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+-"/>
+      <fingerprint md5="c1287410b580ea9358ed1eaf198a2254"/>
     </file>
-    <file name="Includes\Map.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
-      <fingerprint md5="da4f5a41c0b34f2949617c6a77fe38da"/>
+    <file name="Includes/Map.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+-"/>
+      <fingerprint md5="b594ced0b974e2a01f794c9edb106db9"/>
     </file>
-    <file name="Includes\Map_Overview.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+    <file name="Includes/Map_Overview.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="+-"/>
       <fingerprint md5="8a91a7d126a046a6be673fc221868601"/>
     </file>
-    <file name="Includes\Math.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+    <file name="Includes/Math.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="+-"/>
       <fingerprint md5="85b9ee75162494d76748e573a5ddec6a"/>
     </file>
-    <file name="Includes\Mem.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
-      <fingerprint md5="d5e8cef47b16391ef5f2b208e963b636"/>
+    <file name="Includes/Mem.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+-"/>
+      <fingerprint md5="a722acb04cb2dacaf85514a2d1539035"/>
     </file>
-    <file name="Includes\Network.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+    <file name="Includes/NBT.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+-"/>
+      <fingerprint md5="bc85e6b9cffaf2db7da9f3619ba9a230"/>
+    </file>
+    <file name="Includes/Network.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+-"/>
       <fingerprint md5="728846c8e457631aee430c730bc9c3b1"/>
     </file>
-    <file name="Includes\Network_Functions.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+    <file name="Includes/Network_Functions.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+-"/>
       <fingerprint md5="058639962ffb11b108c0130253e136aa"/>
     </file>
-    <file name="Includes\Physic.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+    <file name="Includes/Physic.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="+-"/>
       <fingerprint md5="a901ef04889517237476ecac02f433f2"/>
     </file>
-    <file name="Includes\Player.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+    <file name="Includes/Player.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="+-"/>
       <fingerprint md5="e50b287dfdf436e6e23eafa55c3da6f1"/>
     </file>
-    <file name="Includes\Player_List.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+    <file name="Includes/Player_List.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="+-"/>
       <fingerprint md5="f0f2c7071a5d7a91891a72891eaadbbc"/>
     </file>
-    <file name="Includes\Plugin.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
-      <fingerprint md5="27669a82d6fa9c5f05aa648100a9f901"/>
+    <file name="Includes/Plugin.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+-"/>
+      <fingerprint md5="ea4fcabb5c2c44f670a96761319f6c43"/>
     </file>
-    <file name="Includes\Rank.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
-      <fingerprint md5="f8d50c2d41e3bc344a52ba8b490a5952"/>
+    <file name="Includes/Rank.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+-"/>
+      <fingerprint md5="2ca9cfc8bb5eec0f61ccc062856924ca"/>
     </file>
-    <file name="Includes\String.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+    <file name="Includes/String.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="+-"/>
       <fingerprint md5="12b77f68649906a213aa87350b7633e4"/>
     </file>
-    <file name="Includes\System.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+    <file name="Includes/System.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+-"/>
       <fingerprint md5="1202da91766f738bfc256e876d2e8df7"/>
     </file>
-    <file name="Includes\Teleporter.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+    <file name="Includes/Teleporter.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="+-"/>
       <fingerprint md5="c4e84edeb98d32343b05d3453ecde595"/>
     </file>
-    <file name="Includes\TMessage.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+    <file name="Includes/TMessage.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+-"/>
       <fingerprint md5="51f839724dd81cba2d8425ce17e41a45"/>
     </file>
-    <file name="Includes\Undo.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+    <file name="Includes/Undo.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="+-"/>
       <fingerprint md5="40424aba1d57c2ad9d493e5a7c393480"/>
     </file>
-    <file name="Includes\Watchdog.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
-      <fingerprint md5="196aec5b0fd5f67de30aede559bebac5"/>
+    <file name="Includes/Watchdog.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+-"/>
+      <fingerprint md5="19bf88603e8294ac1eabb19de9039286"/>
+    </file>
+    <file name="Includes/ZLib.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+-"/>
+      <fingerprint md5="40a53d016cc13a6fcd2b22fcdfa7d05f"/>
     </file>
     <file name="Minecraft-Server.pb">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="+"/>
-      <fingerprint md5="eeb5bc6c6aa5aa690d9a509bd818a846"/>
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+"/>
+      <fingerprint md5="074611beca75b7920d30b5b6f4dfe705"/>
     </file>
-    <file name="Shared Includes\Main_Structures.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+    <file name="Shared Includes/Main_Structures.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="1" panelstate="+-"/>
       <fingerprint md5="94306482da71088528a261d396f8501e"/>
     </file>
-    <file name="Shared Includes\Plugin_Functions.pbi">
-      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="++"/>
+    <file name="Shared Includes/Plugin_Functions.pbi">
+      <config load="0" scan="1" panel="1" warn="1" lastopen="0" panelstate="+-"/>
       <fingerprint md5="e16f00d1acedc46396aa504473da96a5"/>
     </file>
   </section>
   <section name="targets">
     <target name="Default Target" enabled="1" default="1">
       <inputfile value="Minecraft-Server.pb"/>
-      <outputfile value="Minecraft-Server.x64.exe"/>
-      <compiler version="PureBasic 5.00 (Windows - x86)"/>
-      <executable value="Minecraft-Server.x86.exe"/>
+      <outputfile value="Minecraft-Server.x86.exe"/>
+      <compiler version="PureBasic 5.30 (Linux - x64)"/>
+      <executable value="MS"/>
       <options thread="1" xpskin="1" onerror="1" debug="1"/>
       <temporaryexe value="source"/>
       <format exe="console" cpu="0"/>
-      <compilecount enable="1" value="175"/>
-      <buildcount enable="1" value="35"/>
+      <compilecount enable="1" value="272"/>
+      <buildcount enable="1" value="37"/>
     </target>
   </section>
 </project>

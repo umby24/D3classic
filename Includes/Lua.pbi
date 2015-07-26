@@ -2610,20 +2610,51 @@ EndProcedure
 ;-############################################################
 
 ProcedureC Lua_CMD_System_Message_Network_Send_2_All(Lua_State)
-  Map_ID = Lua_lua_tointeger(Lua_State, 1)
+  Map_ID = lua_tointeger(Lua_State, 1)
+  lua_tostring(Message.s, Lua_State, 2) ;Message.s = PeekS(lua_tolstring(Lua_State, 2, #Null))
   
-  Message.s = PeekS(Lua_lua_tolstring(Lua_State, 2, #Null))
+  If lua_isnumber(Lua_State, 3)
+    MessageType = lua_tointeger(Lua_State, 3)
+  EndIf
   
-  System_Message_Network_Send_2_All(Map_ID, Message.s)
+  If MessageType
+    System_Message_Network_Send_2_All(Map_ID, Message.s, MessageType)
+  Else
+    System_Message_Network_Send_2_All(Map_ID, Message.s)
+  EndIf
+  
+  
   
   ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_System_Message_Network_Send(Lua_State)
-  Client_ID = Lua_lua_tointeger(Lua_State, 1)
-  Message.s = PeekS(Lua_lua_tolstring(Lua_State, 2, #Null))
+  Client_ID = lua_tointeger(Lua_State, 1)
+  lua_tostring(Message.s, Lua_State, 2) ;Message.s = PeekS(lua_tolstring(Lua_State, 2, #Null))
   
-  System_Message_Network_Send(Client_ID, Message.s)
+  If lua_isnumber(Lua_State, 3)
+    MessageType = lua_tointeger(Lua_State, 3)
+  EndIf
+  
+  If MessageType
+    System_Message_Network_Send(Client_ID, Message.s, MessageType)
+  Else
+    System_Message_Network_Send(Client_ID, Message.s)
+  EndIf
+
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
+EndProcedure
+
+;-############################################################
+
+ProcedureC Lua_CMD_Network_Out_Block_Set(Lua_State)
+  Client_ID = lua_tointeger(Lua_State, 1)
+  X = lua_tointeger(Lua_State, 2)
+  Y = lua_tointeger(Lua_State, 3)
+  Z = lua_tointeger(Lua_State, 4)
+  Type = lua_tointeger(Lua_State, 5)
+  
+  Network_Out_Block_Set(Client_ID, X, Y, Z, Type)
   
   ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
@@ -2631,20 +2662,24 @@ EndProcedure
 ;-############################################################
 
 ProcedureC Lua_CMD_Language_Get(Lua_State)
-  Language.s = PeekS(Lua_lua_tolstring(Lua_State, 1, #Null))
-  Input.s = PeekS(Lua_lua_tolstring(Lua_State, 2, #Null))
-  *String_0 = Lua_lua_tolstring(Lua_State, 3, #Null)
-  If *String_0 : Field_0.s = PeekS(*String_0) : EndIf
-  *String_1 = Lua_lua_tolstring(Lua_State, 4, #Null)
-  If *String_0 : Field_1.s = PeekS(*String_1) : EndIf
-  *String_2 = Lua_lua_tolstring(Lua_State, 5, #Null)
-  If *String_2 : Field_2.s = PeekS(*String_2) : EndIf
-  *String_3 = Lua_lua_tolstring(Lua_State, 6, #Null)
-  If *String_3 : Field_3.s = PeekS(*String_3) : EndIf
+  lua_tostring(Language.s, Lua_State, 1) ;Language.s = PeekS(lua_tolstring(Lua_State, 1, #Null))
+  lua_tostring(Input.s, Lua_State, 2) ;Input.s = PeekS(lua_tolstring(Lua_State, 2, #Null))
+  lua_tostring(Field_0.s, Lua_State, 3) ;
+  lua_tostring(Field_1.s, Lua_State, 4) ;
+  lua_tostring(Field_2.s, Lua_State, 5) ;
+  lua_tostring(Field_3.s, Lua_State, 6) ;
+  ;*String_0 = lua_tolstring(Lua_State, 3, #Null)
+  ;If *String_0 : Field_0.s = PeekS(*String_0) : EndIf
+  ;*String_1 = lua_tolstring(Lua_State, 4, #Null)
+  ;If *String_0 : Field_1.s = PeekS(*String_1) : EndIf
+  ;*String_2 = lua_tolstring(Lua_State, 5, #Null)
+  ;If *String_2 : Field_2.s = PeekS(*String_2) : EndIf
+  ;*String_3 = lua_tolstring(Lua_State, 6, #Null)
+  ;If *String_3 : Field_3.s = PeekS(*String_3) : EndIf
   
-  Result.s = Lang_Get(Language, Input, Field_0, Field_1, Field_2, Field_3)
+  Result.s = PeekS(Lang_Get(Language, Input, Field_0, Field_1, Field_2, Field_3))
   
-  Lua_lua_pushstring(Lua_State, Result)
+  lua_pushstring(Lua_State, Result)
   
   ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
@@ -2652,167 +2687,1087 @@ EndProcedure
 ;-############################################################
 
 ProcedureC Lua_CMD_Files_File_Get(Lua_State)
-  File.s = PeekS(Lua_lua_tolstring(Lua_State, 1, #Null))
+  lua_tostring(File.s, Lua_State, 1) ;File.s = PeekS(lua_tolstring(Lua_State, 1, #Null))
   
-  Result.s = Files_File_Get(File.s)
+  Result.s = PeekS(Files_File_Get(File.s))
   
-  Lua_lua_pushstring(Lua_State, Result)
+  lua_pushstring(Lua_State, Result)
   
   ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Files_Folder_Get(Lua_State)
-  Name.s = PeekS(Lua_lua_tolstring(Lua_State, 1, #Null))
+  lua_tostring(Name.s, Lua_State, 1) ;Name.s = PeekS(lua_tolstring(Lua_State, 1, #Null))
   
-  Result.s = Files_Folder_Get(Name.s)
+  Result.s = PeekS(Files_Folder_Get(Name.s))
   
-  Lua_lua_pushstring(Lua_State, Result)
+  lua_pushstring(Lua_State, Result)
   
   ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
+;-############################################################
+
+ProcedureC Lua_CMD_Event_Add(Lua_State)
+  lua_tostring(ID.s, Lua_State, 1) ;ID.s = PeekS(lua_tolstring(Lua_State, 1, #Null))
+  lua_tostring(Function.s, Lua_State, 2) ;Function.s = PeekS(lua_tolstring(Lua_State, 2, #Null))
+  lua_tostring(Type.s, Lua_State, 3) ;Type.s = PeekS(lua_tolstring(Lua_State, 3, #Null))
+  Set_Or_Check.a = lua_tointeger(Lua_State, 4)
+  Time.l = lua_tointeger(Lua_State, 5)
+  Map_ID.l = lua_tointeger(Lua_State, 6)
+  
+  Result = Lua_Event_Add(ID.s, Function.s, Type.s, Set_Or_Check.a, Time.l, Map_ID.l)
+  
+  lua_pushinteger(Lua_State, Result)
+  
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
+EndProcedure
+
+ProcedureC Lua_CMD_Event_Delete(Lua_State)
+  lua_tostring(ID.s, Lua_State, 1) ;ID.s = PeekS(lua_tolstring(Lua_State, 1, #Null))
+  
+  Lua_Event_Delete(ID.s)
+  
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
+EndProcedure
+;-###########################################################
+; CPE Extensions
+
+ProcedureC Lua_CMD_Server_Get_Extensions(Lua_State)
+  lua_newtable(Lua_State)
+  
+    Elements = 11
+  
+    ;lua_pushinteger(Lua_State, 1)
+    lua_pushstring(Lua_State, "CustomBlocks")
+    lua_pushinteger(Lua_State, 1)
+    lua_rawset(Lua_State, -3)
+    
+    ;lua_pushinteger(Lua_State, 2)
+    lua_pushstring(Lua_State, "EmoteFix")
+    lua_pushinteger(Lua_State, 1)
+    lua_rawset(Lua_State, -3)
+    
+    ;lua_pushinteger(Lua_State, 3)
+    lua_pushstring(Lua_State, "HeldBlock")
+    lua_pushinteger(Lua_State, 1)
+    lua_rawset(Lua_State, -3)
+    
+    lua_pushstring(Lua_State, "ClickDistance")
+    lua_pushinteger(Lua_State, 1)
+    lua_rawset(Lua_State, -3)
+    
+    lua_pushstring(Lua_State, "ChangeModel")
+    lua_pushinteger(Lua_State, 1)
+    lua_rawset(Lua_State, -3)
+    
+    lua_pushstring(Lua_State, "ExtPlayerList")
+    lua_pushinteger(Lua_State, 1)
+    lua_rawset(Lua_State, -3)
+    
+    lua_pushstring(Lua_State, "EnvWeatherType")
+    lua_pushinteger(Lua_State, 1)
+    lua_rawset(Lua_State, -3)
+    
+    lua_pushstring(Lua_State, "EnvMapAppearance")
+    lua_pushinteger(Lua_State, 1)
+    lua_rawset(Lua_State, -3)
+    
+    lua_pushstring(Lua_State, "MessageTypes")
+    lua_pushinteger(Lua_State, 1)
+    lua_rawset(Lua_State, -3)
+    
+    lua_pushstring(Lua_State, "BlockPermissions")
+    lua_pushinteger(Lua_State, 1)
+    lua_rawset(Lua_State, -3)
+    
+    lua_pushstring(Lua_State, "EnvMapAppearance")
+    lua_pushinteger(Lua_State, 1)
+    lua_rawset(Lua_State, -3)
+    
+    ProcedureReturn 2
+EndProcedure
+
+ProcedureC Lua_CMD_Server_Get_Extension(Lua_State)
+  lua_tostring(Extension.s, Lua_State, 1)
+  
+  result.i = 0
+  Select LCase(Extension)
+    Case "customblocks"
+      result = 1
+    Case "emotefix"
+      result = 1
+    Case "heldblock"
+        result = 1
+    Case "clickdistance"
+        result = 1
+    Case "changemodel"
+        result = 1
+    Case "extplayerlist"
+        result = 1
+    Case "envweathertype"
+        result = 1
+    Case "envmapappearance"
+        result = 1
+    Case "messagetypes"
+        result = 1
+    Case "blockpermissions"
+        result = 1
+    Case "envmapappearance"
+        result = 1
+  EndSelect
+  
+  lua_pushinteger(Lua_State, result)
+  
+  ProcedureReturn result
+EndProcedure
+
+ProcedureC Lua_CMD_Client_Get_Extensions(Lua_State)
+  Client_ID = lua_tointeger(Lua_State, 1)
+  
+  Elements = 0
+  
+  *Pointer.Network_Client = Client_Get_Pointer(Client_ID)
+  If *Pointer
+    If *Pointer\CPE = #True
+      lua_newtable(Lua_State)
+      
+      Elements = ListSize(*Pointer\Extensions())
+      
+      ResetList(*Pointer\Extensions())
+      ResetList(*Pointer\ExtensionVersions())
+      
+      While NextElement(*Pointer\Extensions()) And NextElement(*Pointer\ExtensionVersions())
+        lua_pushstring(Lua_State, *Pointer\Extensions())
+        lua_pushinteger(Lua_State, *Pointer\ExtensionVersions())
+        lua_rawset(Lua_State, -3)
+      Wend
+      
+    EndIf
+    
+  EndIf
+  
+  lua_pushinteger(Lua_State, Elements)
+  
+  ProcedureReturn 2
+EndProcedure
+
+ProcedureC Lua_CMD_Client_Get_Extension(Lua_State)
+  Client_ID = lua_tointeger(Lua_State, 1)
+  lua_tostring(Extension.s, Lua_State, 2)
+  
+  Result.i = 0
+  
+  *Pointer.Network_Client = Client_Get_Pointer(Client_ID)
+  If *Pointer
+    If *Pointer\CPE = #True
+      ResetList(*Pointer\Extensions())
+      ResetList(*Pointer\ExtensionVersions())
+      
+      While NextElement(*Pointer\Extensions()) And NextElement(*Pointer\ExtensionVersions())
+        If *Pointer\Extensions() = Extension
+          result = *Pointer\ExtensionVersions()
+        EndIf
+      Wend
+    EndIf
+    
+  EndIf
+  
+  lua_pushinteger(Lua_State, Result)
+  
+  ProcedureReturn 1
+EndProcedure
+
+;################################
+
+ProcedureC Lua_CMD_CPE_Selection_Cuboid_Add(Lua_State)
+  Client_ID = lua_tointeger(Lua_State, 1)
+  Selection_ID = lua_tointeger(Lua_State, 2)
+  lua_tostring(Label.s, Lua_State, 3)
+  Start_X = lua_tointeger(Lua_State, 4)
+  Start_Y = lua_tointeger(Lua_State, 5)
+  Start_Z = lua_tointeger(Lua_State, 6)
+  End_X = lua_tointeger(Lua_State, 7)
+  End_Y = lua_tointeger(Lua_State, 8)
+  End_Z = lua_tointeger(Lua_State, 9)
+  Red = lua_tointeger(Lua_State, 10)
+  Green = lua_tointeger(Lua_State, 11)
+  Blue = lua_tointeger(Lua_State, 12)
+  Opacity = lua_tointeger(Lua_State, 13)
+  
+  CPE_Selection_Cuboid_Add(Client_ID, Selection_ID, Label, Start_X, Start_Y, Start_Z, End_X, End_Y, End_Z, Red, Green, Blue, Opacity)
+  
+  ProcedureReturn 1
+EndProcedure
+
+ProcedureC Lua_CMD_CPE_Selection_Cuboid_Delete(Lua_State)
+  Client_ID = lua_tointeger(Lua_State, 1)
+  Selection_ID = lua_tointeger(Lua_State, 2)
+  
+  CPE_Selection_Cuboid_Delete(Client_ID, Selection_ID)
+    
+  ProcedureReturn 1
+EndProcedure
+
+ProcedureC Lua_CMD_CPE_Get_Held_Block(Lua_State)
+  Client_ID = lua_tointeger(Lua_state, 1)
+  
+  *Pointer.Network_Client = Client_Get_Pointer(Client_ID)
+  If *Pointer
+    If *Pointer\CPE = #True
+      If *Pointer\Player\Entity
+        lua_pushinteger(Lua_State, *Pointer\Player\Entity\Held_Block)
+      EndIf
+    EndIf
+  EndIf
+EndProcedure
+
+ProcedureC Lua_CMD_CPE_Set_Held_Block(Lua_State)
+  Client_ID = lua_tointeger(Lua_State, 1)
+  Block_ID = lua_tointeger(Lua_State, 2)
+  Can_Change = lua_tointeger(Lua_State, 3)
+  
+  *Pointer.Network_Client = Client_Get_Pointer(Client_ID)
+  If *Pointer
+    If *Pointer\CPE = #True
+      If *Pointer\Player\Entity
+        CPE_HoldThis(Client_ID, Block_ID, Can_Change)
+      EndIf
+    EndIf
+  EndIf
+  
+  ProcedureReturn 0
+EndProcedure
+
+ProcedureC Lua_CMD_CPE_Change_Model(Lua_State)
+  Client_ID = lua_tointeger(Lua_State, 1)
+  lua_tostring(Model.s, Lua_State, 2)
+  
+  *Pointer.Network_Client = Client_Get_Pointer(Client_ID)
+  If *Pointer
+    If *Pointer\CPE = #True
+      If *Pointer\Player\Entity
+        CPE_Model_Change(Client_ID, Model)
+      EndIf
+    EndIf
+  EndIf
+  
+  ProcedureReturn 0
+EndProcedure
+
+ProcedureC Lua_CMD_CPE_Set_Weather(Lua_State)
+    Client_ID = lua_tointeger(Lua_State, 1)
+    WeatherType.b = lua_tointeger(Lua_State, 2)
+    
+    If WeatherType <> 0 And WeatherType <> 1 And WeatherType <> 2
+        ProcedureReturn 1 ; Error.    
+    EndIf
+    
+    *Pointer.Network_Client = Client_Get_Pointer(Client_ID)
+    If *Pointer
+        If *Pointer\CPE = #True
+            If *Pointer\Player\Entity
+                CPE_Set_Weather(Client_ID, WeatherType)
+            EndIf
+        EndIf
+    EndIf
+    
+    ProcedureReturn 0
+EndProcedure
+
+ProcedureC Lua_CMD_CPE_Map_Set_Env_Colors(Lua_State)
+    Map_ID.i = lua_tointeger(Lua_State, 1)
+    Red.b = lua_tointeger(Lua_State, 2)
+    Green.b = lua_tointeger(Lua_State, 3)
+    Blue.b = lua_tointeger(Lua_State, 4)
+    Type.b = lua_tointeger(Lua_State, 5)
+    
+    *ThisMap = Map_Get_Pointer(Map_ID)
+    If *ThisMap
+        Map_Env_Colors_Change(*ThisMap, Red, Green, Blue, Type)
+    EndIf
+    
+    ProcedureReturn 0
+EndProcedure
+ProcedureC Lua_CMD_CPE_Client_Set_Block_Permissions(Lua_State)
+    Client_ID = lua_tointeger(Lua_State, 1)
+    Block_ID = lua_tointeger(Lua_State, 2)
+    Can_Place = lua_tointeger(Lua_State, 3)
+    Can_Delete = lua_tointeger(Lua_State, 4)
+    
+    CPE_Client_Set_Block_Permissions(Client_ID, Block_ID, Can_Place, Can_Delete)
+    
+    ProcedureReturn 0    
+EndProcedure
+ProcedureC Lua_CMD_Map_Env_Apperance_Set(Lua_State)
+    Map_ID = lua_tointeger(Lua_State, 1)
+    lua_tostring(CustomURL.s, Lua_State, 2)
+    Side_Block = lua_tointeger(Lua_State, 3)
+    Edge_Block = lua_tointeger(Lua_State, 4)
+    Side_Level = lua_tointeger(Lua_State, 5)
+    
+    *ThisMap = Map_Get_Pointer(Map_ID)
+    If *ThisMap
+        Map_Env_Appearance_Set(*ThisMap, CustomURL, Side_Block, Edge_Block, Side_Level)
+    EndIf
+    
+    ProcedureReturn 0
+EndProcedure ; 
+ProcedureC Lua_CMD_Client_Send_Map_Appearence(Lua_State)
+    Client_ID = lua_tointeger(Lua_State, 1)
+    lua_tostring(CustomURL.s, Lua_State, 2)
+    Side_Block = lua_tointeger(Lua_State, 3)
+    Edge_Block = lua_tointeger(Lua_State, 4)
+    Side_Level = lua_tointeger(Lua_State, 5)
+    
+    
+    CPE_Client_Send_Map_Appearence(Client_ID, CustomURL, Side_Block, Edge_Block, Side_Level)
+    
+    ProcedureReturn 0
+EndProcedure
+ProcedureC Lua_CMD_CPE_Client_Hackcontrol_Send(Lua_State)
+    Client_ID = lua_tointeger(Lua_State, 1)
+    Flying = lua_tointeger(Lua_State, 2)
+    Noclip = lua_tointeger(Lua_State, 3)
+    Speeding = lua_tointeger(Lua_State, 4)
+    SpawnControl = lua_tointeger(Lua_State, 5)
+    ThirdPerson = lua_tointeger(Lua_State, 6)
+    WeatherControl = lua_tointeger(Lua_State, 7)
+    Jumpheight.w = lua_tointeger(Lua_State, 8)
+    
+    CPE_Client_Hackcontrol_Send(Client_ID, Flying, Noclip, Speeding, SpawnControl, ThirdPerson, WeatherControl, Jumpheight)
+    ProcedureReturn 0
+EndProcedure
+ProcedureC Lua_CMD_Hotkey_Add(Lua_State)
+    lua_tostring(Label.s, Lua_State, 1)
+    lua_tostring(Action.s, Lua_State, 2)
+    Keycode.l = lua_tointeger(Lua_State, 3)
+    Keymods = lua_tointeger(Lua_State, 4)
+    
+    Hotkey_Add(Label, Action, Keycode, Keymods)
+    ProcedureReturn 0
+EndProcedure
+ProcedureC Lua_CMD_Hotkey_Remove(Lua_State)
+    lua_tostring(Label.s, Lua_State, 1)
+    
+    Hotkey_Remove(Label)
+    ProcedureReturn 0
+EndProcedure
+ProcedureC Lua_CMD_Map_Hackcontrol_Set(Lua_State)
+    Map_ID = lua_tointeger(Lua_State, 1)
+    Flying = lua_tointeger(Lua_State, 2)
+    Noclip = lua_tointeger(Lua_State, 3)
+    Speeding = lua_tointeger(Lua_State, 4)
+    SpawnControl = lua_tointeger(Lua_State, 5)
+    ThirdPerson = lua_tointeger(Lua_State, 6)
+    WeatherControl = lua_tointeger(Lua_State, 7)
+    Jumpheight.w = lua_tointeger(Lua_State, 8)
+    
+    *MapData = Map_Get_Pointer(Map_ID)
+    If *MapData
+        Map_HackControl_Set(*MapData, Flying, Noclip, Speeding, SpawnControl, ThirdPerson, WeatherControl, Jumpheight)
+    EndIf
+    
+    ProcedureReturn 0
+EndProcedure
+
+;-########################################## Event-Proceduren ####################################
+
+Procedure Lua_Event_Select(ID.s, Log.a=0)
+  If ListIndex(Lua_Event()) <> -1 And Lua_Event()\ID = ID
+    ProcedureReturn #True
+  Else
+    ForEach Lua_Event()
+      If Lua_Event()\ID = ID
+        ProcedureReturn #True
+      EndIf
+    Next
+  EndIf
+  
+  If Log
+    Temp.s = PeekS(Lang_Get("", "Can't find Lua_Event()\ID = '[Field_0]'", ID))
+    Log_Add("Lua_Event", Temp.s, 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
+  EndIf
+  
+  ProcedureReturn #False
+EndProcedure
+
+Procedure Lua_Event_Add(ID.s, Function.s, Type.s, Set_Or_Check.a, Time.l, Map_ID.l)
+  If ID <> ""
+    
+    Select LCase(Type)
+      Case "timer"                    : Type_Enumeration = #Lua_Event_Timer
+      Case "client_add"               : Type_Enumeration = #Lua_Event_Client_Add
+      Case "client_delete"            : Type_Enumeration = #Lua_Event_Client_Delete
+      Case "client_login"             : Type_Enumeration = #Lua_Event_Client_Login
+      Case "client_logout"            : Type_Enumeration = #Lua_Event_Client_Logout
+      Case "entity_add"               : Type_Enumeration = #Lua_Event_Entity_Add
+      Case "entity_delete"            : Type_Enumeration = #Lua_Event_Entity_Delete
+      Case "entity_position_set"      : Type_Enumeration = #Lua_Event_Entity_Position_Set
+      Case "entity_die"               : Type_Enumeration = #Lua_Event_Entity_Die
+      Case "map_add"                  : Type_Enumeration = #Lua_Event_Map_Add
+      Case "map_action_delete"        : Type_Enumeration = #Lua_Event_Map_Action_Delete
+      Case "map_action_resize"        : Type_Enumeration = #Lua_Event_Map_Action_Resize
+      Case "map_action_fill"          : Type_Enumeration = #Lua_Event_Map_Action_Fill
+      Case "map_action_save"          : Type_Enumeration = #Lua_Event_Map_Action_Save
+      Case "map_action_load"          : Type_Enumeration = #Lua_Event_Map_Action_Load
+      Case "map_block_change"         : Type_Enumeration = #Lua_Event_Map_Block_Change
+      Case "map_block_change_client"  : Type_Enumeration = #Lua_Event_Map_Block_Change_Client
+      Case "map_block_change_player"  : Type_Enumeration = #Lua_Event_Map_Block_Change_Player
+      Case "chat_map"                 : Type_Enumeration = #Lua_Event_Chat_Map
+      Case "chat_all"                 : Type_Enumeration = #Lua_Event_Chat_All
+      Case "chat_private"             : Type_Enumeration = #Lua_Event_Chat_Private
+      Case "entity_map_change"        : Type_Enumeration = #Lua_Event_Entity_Map_Change
+      Default                         : ProcedureReturn #False
+    EndSelect
+    
+    If Lua_Event_Select(ID.s)
+      Lua_Event()\Function = Function
+      Lua_Event()\Type = Type_Enumeration
+      
+      Lua_Event()\Time = Time
+      Lua_Event()\Map_ID = Map_ID
+      ProcedureReturn #True
+    Else
+      If Set_Or_Check = 0
+        FirstElement(Lua_Event())
+        If InsertElement(Lua_Event())
+          Lua_Event()\ID = ID
+          Lua_Event()\Function = Function
+          Lua_Event()\Type = Type_Enumeration
+          
+          Lua_Event()\Time = Time
+          Lua_Event()\Map_ID = Map_ID
+          ProcedureReturn #True
+        EndIf
+      Else
+        LastElement(Lua_Event())
+        If AddElement(Lua_Event())
+          Lua_Event()\ID = ID
+          Lua_Event()\Function = Function
+          Lua_Event()\Type = Type_Enumeration
+          
+          Lua_Event()\Time = Time
+          Lua_Event()\Map_ID = Map_ID
+          ProcedureReturn #True
+        EndIf
+      EndIf
+      
+    EndIf
+    
+  EndIf
+  ProcedureReturn #False
+EndProcedure
+
+Procedure Lua_Event_Delete(ID.s)
+  If Lua_Event_Select(ID.s)
+    DeleteElement(Lua_Event())
+  EndIf
+EndProcedure
+
+; ################
+
+Procedure Lua_Do_Function_Event_Timer(Function_Name.s, Map_ID)
+  If Lua_Main\State
+    lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
+    lua_pushinteger(Lua_Main\State, Map_ID)
+    Lua_Do_Function(Function_Name, 1, 0)
+  EndIf
+EndProcedure
+
+Procedure Lua_Do_Function_Event_Client_Add(Result, Function_Name.s, Client_ID)
+  If Lua_Main\State
+    lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
+    lua_pushinteger(Lua_Main\State, Result)
+    lua_pushinteger(Lua_Main\State, Client_ID)
+    Lua_Do_Function(Function_Name, 2, 1)
+    Result = lua_tointeger(Lua_Main\State, -1)
+    lua_pop(Lua_Main\State, 1)
+  EndIf
+  ProcedureReturn Result
+EndProcedure
+
+Procedure Lua_Do_Function_Event_Client_Delete(Result, Function_Name.s, Client_ID)
+  If Lua_Main\State
+    lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
+    lua_pushinteger(Lua_Main\State, Result)
+    lua_pushinteger(Lua_Main\State, Client_ID)
+    Lua_Do_Function(Function_Name, 2, 1)
+    Result = lua_tointeger(Lua_Main\State, -1)
+    lua_pop(Lua_Main\State, 1)
+  EndIf
+  ProcedureReturn Result
+EndProcedure
+
+Procedure Lua_Do_Function_Event_Client_Login(Result, Function_Name.s, Client_ID)
+  If Lua_Main\State
+    lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
+    lua_pushinteger(Lua_Main\State, Result)
+    lua_pushinteger(Lua_Main\State, Client_ID)
+    Lua_Do_Function(Function_Name, 2, 1)
+    Result = lua_tointeger(Lua_Main\State, -1)
+    lua_pop(Lua_Main\State, 1)
+  EndIf
+  ProcedureReturn Result
+EndProcedure
+
+Procedure Lua_Do_Function_Event_Client_Logout(Result, Function_Name.s, Client_ID)
+  If Lua_Main\State
+    lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
+    lua_pushinteger(Lua_Main\State, Result)
+    lua_pushinteger(Lua_Main\State, Client_ID)
+    Lua_Do_Function(Function_Name, 2, 1)
+    Result = lua_tointeger(Lua_Main\State, -1)
+    lua_pop(Lua_Main\State, 1)
+  EndIf
+  ProcedureReturn Result
+EndProcedure
+
+Procedure Lua_Do_Function_Event_Entity_Add(Result, Function_Name.s, Entity_ID)
+  If Lua_Main\State
+    lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
+    lua_pushinteger(Lua_Main\State, Result)
+    lua_pushinteger(Lua_Main\State, Entity_ID)
+    Lua_Do_Function(Function_Name, 2, 1)
+    Result = lua_tointeger(Lua_Main\State, -1)
+    lua_pop(Lua_Main\State, 1)
+  EndIf
+  ProcedureReturn Result
+EndProcedure
+
+Procedure Lua_Do_Function_Event_Entity_Delete(Result, Function_Name.s, Entity_ID)
+  If Lua_Main\State
+    lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
+    lua_pushinteger(Lua_Main\State, Result)
+    lua_pushinteger(Lua_Main\State, Entity_ID)
+    Lua_Do_Function(Function_Name, 2, 1)
+    Result = lua_tointeger(Lua_Main\State, -1)
+    lua_pop(Lua_Main\State, 1)
+  EndIf
+  ProcedureReturn Result
+EndProcedure
+
+Procedure Lua_Do_Function_Event_Entity_Position_Set(Result, Function_Name.s, Entity_ID, Map_ID, X.f, Y.f, Z.f, Rotation.f, Look.f, Priority.a, Send_Own_Client.a)
+  If Lua_Main\State
+    lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
+    lua_pushinteger(Lua_Main\State, Result)
+    lua_pushinteger(Lua_Main\State, Entity_ID)
+    lua_pushinteger(Lua_Main\State, Map_ID)
+    lua_pushnumber(Lua_Main\State, X)
+    lua_pushnumber(Lua_Main\State, Y)
+    lua_pushnumber(Lua_Main\State, Z)
+    lua_pushnumber(Lua_Main\State, Rotation)
+    lua_pushnumber(Lua_Main\State, Look)
+    lua_pushinteger(Lua_Main\State, Priority)
+    lua_pushinteger(Lua_Main\State, Send_Own_Client)
+    Lua_Do_Function(Function_Name, 10, 1)
+    Result = lua_tointeger(Lua_Main\State, -1)
+    lua_pop(Lua_Main\State, 1)
+  EndIf
+  ProcedureReturn Result
+EndProcedure
+
+Procedure Lua_Do_Function_Event_Entity_Die(Result, Function_Name.s, Entity_ID)
+  If Lua_Main\State
+    lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
+    lua_pushinteger(Lua_Main\State, Result)
+    lua_pushinteger(Lua_Main\State, Entity_ID)
+    Lua_Do_Function(Function_Name, 2, 1)
+    Result = lua_tointeger(Lua_Main\State, -1)
+    lua_pop(Lua_Main\State, 1)
+  EndIf
+  ProcedureReturn Result
+EndProcedure
+
+Procedure Lua_Do_Function_Event_Map_Add(Result, Function_Name.s, Map_ID)
+  If Lua_Main\State
+    lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
+    lua_pushinteger(Lua_Main\State, Result)
+    lua_pushinteger(Lua_Main\State, Map_ID)
+    Lua_Do_Function(Function_Name, 2, 1)
+    Result = lua_tointeger(Lua_Main\State, -1)
+    lua_pop(Lua_Main\State, 1)
+  EndIf
+  ProcedureReturn Result
+EndProcedure
+
+Procedure Lua_Do_Function_Event_Map_Action_Delete(Result, Function_Name.s, Action_ID, Map_ID)
+  If Lua_Main\State
+    lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
+    lua_pushinteger(Lua_Main\State, Result)
+    lua_pushinteger(Lua_Main\State, Action_ID)
+    lua_pushinteger(Lua_Main\State, Map_ID)
+    Lua_Do_Function(Function_Name, 3, 1)
+    Result = lua_tointeger(Lua_Main\State, -1)
+    lua_pop(Lua_Main\State, 1)
+  EndIf
+  ProcedureReturn Result
+EndProcedure
+
+Procedure Lua_Do_Function_Event_Map_Action_Resize(Result, Function_Name.s, Action_ID, Map_ID)
+  If Lua_Main\State
+    lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
+    lua_pushinteger(Lua_Main\State, Result)
+    lua_pushinteger(Lua_Main\State, Action_ID)
+    lua_pushinteger(Lua_Main\State, Map_ID)
+    Lua_Do_Function(Function_Name, 3, 1)
+    Result = lua_tointeger(Lua_Main\State, -1)
+    lua_pop(Lua_Main\State, 1)
+  EndIf
+  ProcedureReturn Result
+EndProcedure
+
+Procedure Lua_Do_Function_Event_Map_Action_Fill(Result, Function_Name.s, Action_ID, Map_ID)
+  If Lua_Main\State
+    lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
+    lua_pushinteger(Lua_Main\State, Result)
+    lua_pushinteger(Lua_Main\State, Action_ID)
+    lua_pushinteger(Lua_Main\State, Map_ID)
+    Lua_Do_Function(Function_Name, 3, 1)
+    Result = lua_tointeger(Lua_Main\State, -1)
+    lua_pop(Lua_Main\State, 1)
+  EndIf
+  ProcedureReturn Result
+EndProcedure
+
+Procedure Lua_Do_Function_Event_Map_Action_Save(Result, Function_Name.s, Action_ID, Map_ID)
+  If Lua_Main\State
+    lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
+    lua_pushinteger(Lua_Main\State, Result)
+    lua_pushinteger(Lua_Main\State, Action_ID)
+    lua_pushinteger(Lua_Main\State, Map_ID)
+    Lua_Do_Function(Function_Name, 3, 1)
+    Result = lua_tointeger(Lua_Main\State, -1)
+    lua_pop(Lua_Main\State, 1)
+  EndIf
+  ProcedureReturn Result
+EndProcedure
+
+Procedure Lua_Do_Function_Event_Map_Action_Load(Result, Function_Name.s, Action_ID, Map_ID)
+  If Lua_Main\State
+    lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
+    lua_pushinteger(Lua_Main\State, Result)
+    lua_pushinteger(Lua_Main\State, Action_ID)
+    lua_pushinteger(Lua_Main\State, Map_ID)
+    Lua_Do_Function(Function_Name, 3, 1)
+    Result = lua_tointeger(Lua_Main\State, -1)
+    lua_pop(Lua_Main\State, 1)
+  EndIf
+  ProcedureReturn Result
+EndProcedure
+
+Procedure Lua_Do_Function_Event_Map_Block_Change(Result, Function_Name.s, Player_Number, Map_ID, X, Y, Z, Type.a, Undo.a, Physic.a, Send.a, Send_Priority.a)
+  If Lua_Main\State
+    lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
+    lua_pushinteger(Lua_Main\State, Result)
+    lua_pushinteger(Lua_Main\State, Player_Number)
+    lua_pushinteger(Lua_Main\State, Map_ID)
+    lua_pushinteger(Lua_Main\State, X)
+    lua_pushinteger(Lua_Main\State, Y)
+    lua_pushinteger(Lua_Main\State, Z)
+    lua_pushinteger(Lua_Main\State, Type)
+    lua_pushinteger(Lua_Main\State, Undo)
+    lua_pushinteger(Lua_Main\State, Physic)
+    lua_pushinteger(Lua_Main\State, Send)
+    lua_pushinteger(Lua_Main\State, Send_Priority)
+    Lua_Do_Function(Function_Name, 11, 1)
+    Result = lua_tointeger(Lua_Main\State, -1)
+    lua_pop(Lua_Main\State, 1)
+  EndIf
+  ProcedureReturn Result
+EndProcedure
+
+Procedure Lua_Do_Function_Event_Map_Block_Change_Client(Result, Function_Name.s, Client_ID, Map_ID, X, Y, Z, Mode.a, Type.a)
+  If Lua_Main\State
+    lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
+    lua_pushinteger(Lua_Main\State, Result)
+    lua_pushinteger(Lua_Main\State, Client_ID)
+    lua_pushinteger(Lua_Main\State, Map_ID)
+    lua_pushinteger(Lua_Main\State, X)
+    lua_pushinteger(Lua_Main\State, Y)
+    lua_pushinteger(Lua_Main\State, Z)
+    lua_pushinteger(Lua_Main\State, Mode)
+    lua_pushinteger(Lua_Main\State, Type)
+    Lua_Do_Function(Function_Name, 8, 1)
+    Result = lua_tointeger(Lua_Main\State, -1)
+    lua_pop(Lua_Main\State, 1)
+  EndIf
+  ProcedureReturn Result
+EndProcedure
+
+Procedure Lua_Do_Function_Event_Map_Block_Change_Player(Result, Function_Name.s, Player_Number, Map_ID, X, Y, Z, Type.a, Undo.a, Physic.a, Send.a, Send_Priority.a)
+  If Lua_Main\State
+    lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
+    lua_pushinteger(Lua_Main\State, Result)
+    lua_pushinteger(Lua_Main\State, Player_Number)
+    lua_pushinteger(Lua_Main\State, Map_ID)
+    lua_pushinteger(Lua_Main\State, X)
+    lua_pushinteger(Lua_Main\State, Y)
+    lua_pushinteger(Lua_Main\State, Z)
+    lua_pushinteger(Lua_Main\State, Type)
+    lua_pushinteger(Lua_Main\State, Undo)
+    lua_pushinteger(Lua_Main\State, Physic)
+    lua_pushinteger(Lua_Main\State, Send)
+    lua_pushinteger(Lua_Main\State, Send_Priority)
+    Lua_Do_Function(Function_Name, 11, 1)
+    Result = lua_tointeger(Lua_Main\State, -1)
+    lua_pop(Lua_Main\State, 1)
+  EndIf
+  ProcedureReturn Result
+EndProcedure
+
+Procedure Lua_Do_Function_Event_Chat_Map(Result, Function_Name.s, Entity_ID, Message.s)
+  If Lua_Main\State
+    lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
+    lua_pushinteger(Lua_Main\State, Result)
+    lua_pushinteger(Lua_Main\State, Entity_ID)
+    lua_pushstring(Lua_Main\State, Message)
+    Lua_Do_Function(Function_Name, 3, 1)
+    Result = lua_tointeger(Lua_Main\State, -1)
+    lua_pop(Lua_Main\State, 1)
+  EndIf
+  ProcedureReturn Result
+EndProcedure
+
+Procedure Lua_Do_Function_Event_Chat_All(Result, Function_Name.s, Entity_ID, Message.s)
+  If Lua_Main\State
+    lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
+    lua_pushinteger(Lua_Main\State, Result)
+    lua_pushinteger(Lua_Main\State, Entity_ID)
+    lua_pushstring(Lua_Main\State, Message)
+    Lua_Do_Function(Function_Name, 3, 1)
+    Result = lua_tointeger(Lua_Main\State, -1)
+    lua_pop(Lua_Main\State, 1)
+  EndIf
+  ProcedureReturn Result
+EndProcedure
+
+Procedure Lua_Do_Function_Event_Chat_Private(Result, Function_Name.s, Entity_ID, Player_Name.s, Message.s)
+  If Lua_Main\State
+    lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
+    lua_pushinteger(Lua_Main\State, Result)
+    lua_pushinteger(Lua_Main\State, Entity_ID)
+    lua_pushstring(Lua_Main\State, Player_Name)
+    lua_pushstring(Lua_Main\State, Message)
+    Lua_Do_Function(Function_Name, 4, 1)
+    Result = lua_tointeger(Lua_Main\State, -1)
+    lua_pop(Lua_Main\State, 1)
+  EndIf
+  ProcedureReturn Result
+EndProcedure
+
+Procedure Lua_Do_Function_Command(Function_Name.s, Client_ID, Command.s, Text_0.s, Text_1.s, Arg_0.s, Arg_1.s, Arg_2.s, Arg_3.s, Arg_4.s)
+  If Lua_Main\State
+    lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
+    lua_pushinteger(Lua_Main\State, Client_ID)
+    lua_pushstring(Lua_Main\State, Command)
+    lua_pushstring(Lua_Main\State, Text_0)
+    lua_pushstring(Lua_Main\State, Text_1)
+    lua_pushstring(Lua_Main\State, Arg_0)
+    lua_pushstring(Lua_Main\State, Arg_1)
+    lua_pushstring(Lua_Main\State, Arg_2)
+    lua_pushstring(Lua_Main\State, Arg_3)
+    lua_pushstring(Lua_Main\State, Arg_4)
+    Lua_Do_Function(Function_Name, 9, 0)
+  EndIf
+EndProcedure
+
+Procedure Lua_Do_Function_Event_Entity_Map_Change(Result, Function_Name.s, Entity_ID, New_Map_ID, Old_Map_ID)
+    If Lua_Main\State
+        lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
+        lua_pushinteger(Lua_Main\State, Entity_ID)
+        lua_pushinteger(Lua_Main\State, New_Map_ID)
+        lua_pushinteger(Lua_Main\State, Old_Map_ID)
+        Lua_Do_Function(Function_Name, 3, 1)
+        Result = lua_tointeger(Lua_Main\State, -1)
+        lua_pop(Lua_Main\State, 1)
+    EndIf
+    
+    ProcedureReturn Result
+EndProcedure
+
+
+Procedure Lua_Do_Function_Map_Block_Physics(Function_Name.s, Map_ID, X, Y, Z)
+  If Lua_Main\State
+    lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
+    lua_pushinteger(Lua_Main\State, Map_ID)
+    lua_pushinteger(Lua_Main\State, X)
+    lua_pushinteger(Lua_Main\State, Y)
+    lua_pushinteger(Lua_Main\State, Z)
+    Lua_Do_Function(Function_Name, 4, 0)
+  EndIf
+EndProcedure
+
+Procedure Lua_Do_Function_Map_Block_Create(Function_Name.s, Map_ID, X, Y, Z, Old_Block.a, Client_ID)
+  If Lua_Main\State
+    lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
+    lua_pushinteger(Lua_Main\State, Map_ID)
+    lua_pushinteger(Lua_Main\State, X)
+    lua_pushinteger(Lua_Main\State, Y)
+    lua_pushinteger(Lua_Main\State, Z)
+    lua_pushinteger(Lua_Main\State, Old_Block)
+    lua_pushinteger(Lua_Main\State, Client_ID)
+    Lua_Do_Function(Function_Name, 6, 0)
+  EndIf
+EndProcedure
+
+Procedure Lua_Do_Function_Map_Block_Delete(Function_Name.s, Map_ID, X, Y, Z, Old_Block.a, Client_ID)
+  If Lua_Main\State
+    lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
+    lua_pushinteger(Lua_Main\State, Map_ID)
+    lua_pushinteger(Lua_Main\State, X)
+    lua_pushinteger(Lua_Main\State, Y)
+    lua_pushinteger(Lua_Main\State, Z)
+    lua_pushinteger(Lua_Main\State, Old_Block)
+    lua_pushinteger(Lua_Main\State, Client_ID)
+    Lua_Do_Function(Function_Name, 6, 0)
+  EndIf
+EndProcedure
+
+Procedure Lua_Do_Function_Map_Fill(Function_Name.s, Map_ID, Size_X, Size_Y, Size_Z, Argument_String.s)
+  If Lua_Main\State
+    lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
+    lua_pushinteger(Lua_Main\State, Map_ID)
+    lua_pushinteger(Lua_Main\State, Size_X)
+    lua_pushinteger(Lua_Main\State, Size_Y)
+    lua_pushinteger(Lua_Main\State, Size_Z)
+    lua_pushstring(Lua_Main\State, Argument_String)
+    Lua_Do_Function(Function_Name, 5, 0)
+  EndIf
+EndProcedure
+
+Procedure Lua_Do_Function_Build_Mode(Function_Name.s, Client_ID, Map_ID, X, Y, Z, Mode, Block_Type)
+  If Lua_Main\State
+    lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
+    lua_pushinteger(Lua_Main\State, Client_ID)
+    lua_pushinteger(Lua_Main\State, Map_ID)
+    lua_pushinteger(Lua_Main\State, X)
+    lua_pushinteger(Lua_Main\State, Y)
+    lua_pushinteger(Lua_Main\State, Z)
+    lua_pushinteger(Lua_Main\State, Mode)
+    lua_pushinteger(Lua_Main\State, Block_Type)
+    Lua_Do_Function(Function_Name, 7, 0)
+  EndIf
+EndProcedure
+
 ;-########################################## Proceduren ##########################################
+
+Procedure Lua_Init()
+  Lua_Main\State = luaL_newstate()
+  
+  If Lua_Main\State
+    luaopen_base(Lua_Main\State)
+    luaopen_table(Lua_Main\State)
+    
+  	;luaopen_io(Lua_Main\State)
+  	lua_pushcclosure(Lua_Main\State, @luaopen_io(), 0)
+    lua_call(Lua_Main\State, 0, 0)
+    
+  	luaopen_os(Lua_Main\State)
+  	luaopen_string(Lua_Main\State)
+  	luaopen_math(Lua_Main\State)
+  	;luaopen_debug(Lua_Main\State)
+  	;luaopen_package(Lua_Main\State)
+  	lua_pushcclosure(Lua_Main\State, @luaopen_package(), 0)
+    lua_call(Lua_Main\State, 0, 0)
+    
+    
+    Lua_Register_All()
+    
+    Log_Add("Lua-Plugin", "Lua loaded", 0, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
+  Else
+    Log_Add("Lua-Plugin", "Lua-State = 0", 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
+  EndIf
+  
+EndProcedure
 
 Procedure Lua_Register_All()
   If Lua_Main\State
-    Lua_lua_register(Lua_Main\State, "Client_Get_Map_ID", @Lua_CMD_Client_Get_Map_ID())
-    Lua_lua_register(Lua_Main\State, "Client_Get_X", @Lua_CMD_Client_Get_X())
-    Lua_lua_register(Lua_Main\State, "Client_Get_Y", @Lua_CMD_Client_Get_Y())
-    Lua_lua_register(Lua_Main\State, "Client_Get_Z", @Lua_CMD_Client_Get_Z())
-    Lua_lua_register(Lua_Main\State, "Client_Get_Rotation", @Lua_CMD_Client_Get_Rotation())
-    Lua_lua_register(Lua_Main\State, "Client_Get_Look", @Lua_CMD_Client_Get_Look())
-    Lua_lua_register(Lua_Main\State, "Client_Get_IP", @Lua_CMD_Client_Get_IP())
-    Lua_lua_register(Lua_Main\State, "Client_Get_Name", @Lua_CMD_Client_Get_Name())
-    Lua_lua_register(Lua_Main\State, "Client_Get_Player_Number", @Lua_CMD_Client_Get_Player_Number())
-    Lua_lua_register(Lua_Main\State, "Client_Get_Logged_In", @Lua_CMD_Client_Get_Logged_In())
-    Lua_lua_register(Lua_Main\State, "Client_Examine", @Lua_CMD_Client_Examine())
-    Lua_lua_register(Lua_Main\State, "Client_Next", @Lua_CMD_Client_Next())
-    Lua_lua_register(Lua_Main\State, "Client_Get_ID", @Lua_CMD_Client_Get_ID())
-    Lua_lua_register(Lua_Main\State, "Client_Position_Set", @Lua_CMD_Client_Position_Set())
-    Lua_lua_register(Lua_Main\State, "Client_Kick", @Lua_CMD_Client_Kick())
-    Lua_lua_register(Lua_Main\State, "Client_Kill", @Lua_CMD_Client_Kill())
-    Lua_lua_register(Lua_Main\State, "Client_Fake_Add", @Lua_CMD_Client_Fake_Add())
-    Lua_lua_register(Lua_Main\State, "Client_Buildmode_Set", @Lua_CMD_Client_Buildmode_Set())
-    Lua_lua_register(Lua_Main\State, "Client_Buildmode_State_Set", @Lua_CMD_Client_Buildmode_State_Set())
-    Lua_lua_register(Lua_Main\State, "Client_Buildmode_State_Get", @Lua_CMD_Client_Buildmode_State_Get())
-    Lua_lua_register(Lua_Main\State, "Client_Buildmode_Point_Set", @Lua_CMD_Client_Buildmode_Point_Set())
-    Lua_lua_register(Lua_Main\State, "Client_Buildmode_Point_Get", @Lua_CMD_Client_Buildmode_Point_Get())
-    Lua_lua_register(Lua_Main\State, "Client_Buildmode_Long_Set", @Lua_CMD_Client_Buildmode_Long_Set())
-    Lua_lua_register(Lua_Main\State, "Client_Buildmode_Long_Get", @Lua_CMD_Client_Buildmode_Long_Get())
-    Lua_lua_register(Lua_Main\State, "Client_Buildmode_Float_Set", @Lua_CMD_Client_Buildmode_Float_Set())
-    Lua_lua_register(Lua_Main\State, "Client_Buildmode_Float_Get", @Lua_CMD_Client_Buildmode_Float_Get())
-    Lua_lua_register(Lua_Main\State, "Client_Buildmode_String_Set", @Lua_CMD_Client_Buildmode_String_Set())
-    Lua_lua_register(Lua_Main\State, "Client_Buildmode_String_Get", @Lua_CMD_Client_Buildmode_String_Get())
+    lua_register(Lua_Main\State, "Client_Get_Table", @Lua_CMD_Client_Get_Table())
+    lua_register(Lua_Main\State, "Client_Get_Map_ID", @Lua_CMD_Client_Get_Map_ID())
+    lua_register(Lua_Main\State, "Client_Get_IP", @Lua_CMD_Client_Get_IP())
+    lua_register(Lua_Main\State, "Client_Get_Login_Name", @Lua_CMD_Client_Get_Login_Name())
+    lua_register(Lua_Main\State, "Client_Get_Logged_In", @Lua_CMD_Client_Get_Logged_In())
+    lua_register(Lua_Main\State, "Client_Get_Entity", @Lua_CMD_Client_Get_Entity())
     
-    Lua_lua_register(Lua_Main\State, "Build_Client_Line", @Lua_CMD_Build_Client_Line())
-    Lua_lua_register(Lua_Main\State, "Build_Client_Box", @Lua_CMD_Build_Client_Box())
-    Lua_lua_register(Lua_Main\State, "Build_Client_Sphere", @Lua_CMD_Build_Client_Sphere())
-    Lua_lua_register(Lua_Main\State, "Build_Rank_Box", @Lua_CMD_Build_Rank_Box())
+    lua_register(Lua_Main\State, "Build_Mode_Set", @Lua_CMD_Build_Mode_Set())
+    lua_register(Lua_Main\State, "Build_Mode_Get", @Lua_CMD_Build_Mode_Get())
+    lua_register(Lua_Main\State, "Build_Mode_State_Set", @Lua_CMD_Build_Mode_State_Set())
+    lua_register(Lua_Main\State, "Build_Mode_State_Get", @Lua_CMD_Build_Mode_State_Get())
+    lua_register(Lua_Main\State, "Build_Mode_Coordinate_Set", @Lua_CMD_Build_Mode_Coordinate_Set())
+    lua_register(Lua_Main\State, "Build_Mode_Coordinate_Get", @Lua_CMD_Build_Mode_Coordinate_Get())
+    lua_register(Lua_Main\State, "Build_Mode_Long_Set", @Lua_CMD_Build_Mode_Long_Set())
+    lua_register(Lua_Main\State, "Build_Mode_Long_Get", @Lua_CMD_Build_Mode_Long_Get())
+    lua_register(Lua_Main\State, "Build_Mode_Float_Set", @Lua_CMD_Build_Mode_Float_Set())
+    lua_register(Lua_Main\State, "Build_Mode_Float_Get", @Lua_CMD_Build_Mode_Float_Get())
+    lua_register(Lua_Main\State, "Build_Mode_String_Set", @Lua_CMD_Build_Mode_String_Set())
+    lua_register(Lua_Main\State, "Build_Mode_String_Get", @Lua_CMD_Build_Mode_String_Get())
     
-    Lua_lua_register(Lua_Main\State, "Player_Get_Name", @Lua_CMD_Player_Get_Name())
-    Lua_lua_register(Lua_Main\State, "Player_Get_IP", @Lua_CMD_Player_Get_IP())
-    Lua_lua_register(Lua_Main\State, "Player_Get_Rank", @Lua_CMD_Player_Get_Rank())
-    Lua_lua_register(Lua_Main\State, "Player_Get_Online", @Lua_CMD_Player_Get_Online())
-    Lua_lua_register(Lua_Main\State, "Player_Get_Ontime", @Lua_CMD_Player_Get_Ontime())
-    Lua_lua_register(Lua_Main\State, "Player_Set_Rank", @Lua_CMD_Player_Set_Rank())
-    Lua_lua_register(Lua_Main\State, "Player_Attribute_Long_Set", @Lua_CMD_Player_Attribute_Long_Set())
-    Lua_lua_register(Lua_Main\State, "Player_Attribute_Long_Get", @Lua_CMD_Player_Attribute_Long_Get())
-    Lua_lua_register(Lua_Main\State, "Player_Attribute_String_Set", @Lua_CMD_Player_Attribute_String_Set())
-    Lua_lua_register(Lua_Main\State, "Player_Attribute_String_Get", @Lua_CMD_Player_Attribute_String_Get())
-    Lua_lua_register(Lua_Main\State, "Player_Inventory_Set", @Lua_CMD_Player_Inventory_Set())
-    Lua_lua_register(Lua_Main\State, "Player_Inventory_Get", @Lua_CMD_Player_Inventory_Get())
-    Lua_lua_register(Lua_Main\State, "Player_Examine", @Lua_CMD_Player_Examine())
-    Lua_lua_register(Lua_Main\State, "Player_Next", @Lua_CMD_Player_Next())
-    Lua_lua_register(Lua_Main\State, "Player_Get_Number", @Lua_CMD_Player_Get_Number())
-    Lua_lua_register(Lua_Main\State, "Player_Name_2_Number", @Lua_CMD_Player_Name_2_Number())
+    lua_register(Lua_Main\State, "Build_Line_Player", @Lua_CMD_Build_Line_Player())
+    lua_register(Lua_Main\State, "Build_Box_Player", @Lua_CMD_Build_Box_Player())
+    lua_register(Lua_Main\State, "Build_Sphere_Player", @Lua_CMD_Build_Sphere_Player())
+    lua_register(Lua_Main\State, "Build_Rank_Box", @Lua_CMD_Build_Rank_Box())
     
-    Lua_lua_register(Lua_Main\State, "Map_Block_Change", @Lua_CMD_Map_Block_Change())
-    Lua_lua_register(Lua_Main\State, "Map_Block_Change_Fast", @Lua_CMD_Map_Block_Change_Fast())
-    Lua_lua_register(Lua_Main\State, "Map_Block_Move", @Lua_CMD_Map_Block_Move())
-    Lua_lua_register(Lua_Main\State, "Map_Block_Send", @Lua_CMD_Map_Block_Send())
-    Lua_lua_register(Lua_Main\State, "Map_Block_Get_Type", @Lua_CMD_Map_Block_Get_Type())
-    Lua_lua_register(Lua_Main\State, "Map_Block_Get_Rank", @Lua_CMD_Map_Block_Get_Rank())
-    Lua_lua_register(Lua_Main\State, "Map_Block_Get_Player_Last", @Lua_CMD_Map_Block_Get_Player_Last())
-    Lua_lua_register(Lua_Main\State, "Map_Get_Name", @Lua_CMD_Map_Get_Name())
-    Lua_lua_register(Lua_Main\State, "Map_Get_Directory", @Lua_CMD_Map_Get_Directory())
-    Lua_lua_register(Lua_Main\State, "Map_Get_Rank_Build", @Lua_CMD_Map_Get_Rank_Build())
-    Lua_lua_register(Lua_Main\State, "Map_Get_Rank_Join", @Lua_CMD_Map_Get_Rank_Join())
-    Lua_lua_register(Lua_Main\State, "Map_Get_Rank_Show", @Lua_CMD_Map_Get_Rank_Show())
-    Lua_lua_register(Lua_Main\State, "Map_Get_Dimensions", @Lua_CMD_Map_Get_Dimensions())
-    Lua_lua_register(Lua_Main\State, "Map_Get_Spawn", @Lua_CMD_Map_Get_Spawn())
-    Lua_lua_register(Lua_Main\State, "Map_Get_Save_Intervall", @Lua_CMD_Map_Get_Save_Intervall())
-    Lua_lua_register(Lua_Main\State, "Map_Set_Name", @Lua_CMD_Map_Set_Name())
-    Lua_lua_register(Lua_Main\State, "Map_Set_Directory", @Lua_CMD_Map_Set_Directory())
-    Lua_lua_register(Lua_Main\State, "Map_Set_Rank_Build", @Lua_CMD_Map_Set_Rank_Build())
-    Lua_lua_register(Lua_Main\State, "Map_Set_Rank_Join", @Lua_CMD_Map_Set_Rank_Join())
-    Lua_lua_register(Lua_Main\State, "Map_Set_Rank_Show", @Lua_CMD_Map_Set_Rank_Show())
-    Lua_lua_register(Lua_Main\State, "Map_Set_Spawn", @Lua_CMD_Map_Set_Spawn())
-    Lua_lua_register(Lua_Main\State, "Map_Set_Save_Intervall", @Lua_CMD_Map_Set_Save_Intervall())
-    Lua_lua_register(Lua_Main\State, "Map_Add", @Lua_CMD_Map_Add())
-    Lua_lua_register(Lua_Main\State, "Map_Delete", @Lua_CMD_Map_Delete())
-    Lua_lua_register(Lua_Main\State, "Map_Resize", @Lua_CMD_Map_Resize())
-    Lua_lua_register(Lua_Main\State, "Map_Resend", @Lua_CMD_Map_Resend())
-    Lua_lua_register(Lua_Main\State, "Map_Fill", @Lua_CMD_Map_Fill())
-    Lua_lua_register(Lua_Main\State, "Map_Save", @Lua_CMD_Map_Save())
-    Lua_lua_register(Lua_Main\State, "Map_Load", @Lua_CMD_Map_Load())
-    Lua_lua_register(Lua_Main\State, "Map_Export", @Lua_CMD_Map_Export())
-    Lua_lua_register(Lua_Main\State, "Map_Client_Import", @Lua_CMD_Map_Client_Import())
-    Lua_lua_register(Lua_Main\State, "Map_Examine", @Lua_CMD_Map_Examine())
-    Lua_lua_register(Lua_Main\State, "Map_Next", @Lua_CMD_Map_Next())
-    Lua_lua_register(Lua_Main\State, "Map_Get_ID", @Lua_CMD_Map_Get_ID())
+    lua_register(Lua_Main\State, "Font_Draw_Text", @Lua_CMD_Font_Draw_Text())
+    lua_register(Lua_Main\State, "Font_Draw_Text_Player", @Lua_CMD_Font_Draw_Text_Player())
     
-    Lua_lua_register(Lua_Main\State, "Block_Get_Name", @Lua_CMD_Block_Get_Name())
-    Lua_lua_register(Lua_Main\State, "Block_Get_Rank_Place", @Lua_CMD_Block_Get_Rank_Place())
-    Lua_lua_register(Lua_Main\State, "Block_Get_Rank_Delete", @Lua_CMD_Block_Get_Rank_Delete())
-    Lua_lua_register(Lua_Main\State, "Block_Get_Client_Type", @Lua_CMD_Block_Get_Client_Type())
+    lua_register(Lua_Main\State, "Entity_Get_Table", @Lua_CMD_Entity_Get_Table())
+    lua_register(Lua_Main\State, "Entity_Add", @Lua_CMD_Entity_Add())
+    lua_register(Lua_Main\State, "Entity_Delete", @Lua_CMD_Entity_Delete())
+    lua_register(Lua_Main\State, "Entity_Get_Player", @Lua_CMD_Entity_Get_Player())
+    lua_register(Lua_Main\State, "Entity_Get_Map_ID", @Lua_CMD_Entity_Get_Map_ID())
+    lua_register(Lua_Main\State, "Entity_Get_X", @Lua_CMD_Entity_Get_X())
+    lua_register(Lua_Main\State, "Entity_Get_Y", @Lua_CMD_Entity_Get_Y())
+    lua_register(Lua_Main\State, "Entity_Get_Z", @Lua_CMD_Entity_Get_Z())
+    lua_register(Lua_Main\State, "Entity_Get_Rotation", @Lua_CMD_Entity_Get_Rotation())
+    lua_register(Lua_Main\State, "Entity_Get_Look", @Lua_CMD_Entity_Get_Look())
+    lua_register(Lua_Main\State, "Entity_Resend", @Lua_CMD_Entity_Resend())
+    lua_register(Lua_Main\State, "Entity_Message_2_Clients", @Lua_CMD_Entity_Message_2_Clients())
+    lua_register(Lua_Main\State, "Entity_Displayname_Get", @Lua_CMD_Entity_Displayname_Get())
+    lua_register(Lua_Main\State, "Entity_Displayname_Set", @Lua_CMD_Entity_Displayname_Set())
+    lua_register(Lua_Main\State, "Entity_Position_Set", @Lua_CMD_Entity_Position_Set())
+    lua_register(Lua_Main\State, "Entity_Kill", @Lua_CMD_Entity_Kill())
     
-    Lua_lua_register(Lua_Main\State, "Rank_Get_Name", @Lua_CMD_Rank_Get_Name())
-    Lua_lua_register(Lua_Main\State, "Rank_Get_Color", @Lua_CMD_Rank_Get_Color())
-    Lua_lua_register(Lua_Main\State, "Rank_Get_Root", @Lua_CMD_Rank_Get_Root())
-    Lua_lua_register(Lua_Main\State, "Rank_Add", @Lua_CMD_Rank_Add())
-    Lua_lua_register(Lua_Main\State, "Rank_Delete", @Lua_CMD_Rank_Delete())
-    Lua_lua_register(Lua_Main\State, "Rank_Examine", @Lua_CMD_Rank_Examine())
-    Lua_lua_register(Lua_Main\State, "Rank_Next", @Lua_CMD_Rank_Next())
-    Lua_lua_register(Lua_Main\State, "Rank_Get_Rank", @Lua_CMD_Rank_Get_Rank())
+    lua_register(Lua_Main\State, "Player_Get_Table", @Lua_CMD_Player_Get_Table())
+    lua_register(Lua_Main\State, "Player_Attribute_Long_Set", @Lua_CMD_Player_Attribute_Long_Set())
+    lua_register(Lua_Main\State, "Player_Attribute_Long_Get", @Lua_CMD_Player_Attribute_Long_Get())
+    lua_register(Lua_Main\State, "Player_Attribute_String_Set", @Lua_CMD_Player_Attribute_String_Set())
+    lua_register(Lua_Main\State, "Player_Attribute_String_Get", @Lua_CMD_Player_Attribute_String_Get())
+    lua_register(Lua_Main\State, "Player_Inventory_Set", @Lua_CMD_Player_Inventory_Set())
+    lua_register(Lua_Main\State, "Player_Inventory_Get", @Lua_CMD_Player_Inventory_Get())
+    lua_register(Lua_Main\State, "Player_Get_Prefix", @Lua_CMD_player_Get_Prefix())
+    lua_register(Lua_Main\State, "Player_Get_Name", @Lua_CMD_player_Get_Name())
+    lua_register(Lua_Main\State, "Player_Get_Suffix", @Lua_CMD_player_Get_Suffix())
+    lua_register(Lua_Main\State, "Player_Get_IP", @Lua_CMD_Player_Get_IP())
+    lua_register(Lua_Main\State, "Player_Get_Rank", @Lua_CMD_Player_Get_Rank())
+    lua_register(Lua_Main\State, "Player_Get_Online", @Lua_CMD_Player_Get_Online())
+    lua_register(Lua_Main\State, "Player_Get_Ontime", @Lua_CMD_Player_Get_Ontime())
+    lua_register(Lua_Main\State, "Player_Get_Mute_Time", @Lua_CMD_Player_Get_Mute_Time())
+    lua_register(Lua_Main\State, "Player_Set_Rank", @Lua_CMD_Player_Set_Rank())
+    lua_register(Lua_Main\State, "Player_Kick", @Lua_CMD_Player_Kick())
+    lua_register(Lua_Main\State, "Player_Ban", @Lua_CMD_Player_Ban())
+    lua_register(Lua_Main\State, "Player_Unban", @Lua_CMD_Player_Unban())
+    lua_register(Lua_Main\State, "Player_Stop", @Lua_CMD_Player_Stop())
+    lua_register(Lua_Main\State, "Player_Unstop", @Lua_CMD_Player_Unstop())
+    lua_register(Lua_Main\State, "Player_Mute", @Lua_CMD_Player_Mute())
+    lua_register(Lua_Main\State, "Player_Unmute", @Lua_CMD_Player_Unmute())
+
     
-    Lua_lua_register(Lua_Main\State, "Teleporter_Get_Box", @Lua_CMD_Teleporter_Get_Box())
-    Lua_lua_register(Lua_Main\State, "Teleporter_Get_Destination", @Lua_CMD_Teleporter_Get_Destination())
-    Lua_lua_register(Lua_Main\State, "Teleporter_Add", @Lua_CMD_Teleporter_Add())
-    Lua_lua_register(Lua_Main\State, "Teleporter_Delete", @Lua_CMD_Teleporter_Delete())
-    Lua_lua_register(Lua_Main\State, "Teleporter_Examine", @Lua_CMD_Teleporter_Examine())
-    Lua_lua_register(Lua_Main\State, "Teleporter_Next", @Lua_CMD_Teleporter_Next())
-    Lua_lua_register(Lua_Main\State, "Teleporter_Get_Name", @Lua_CMD_Teleporter_Get_Name())
+    lua_register(Lua_Main\State, "Map_Get_Table", @Lua_CMD_Map_Get_Table())
+    lua_register(Lua_Main\State, "Map_Block_Change", @Lua_CMD_Map_Block_Change())
+    lua_register(Lua_Main\State, "Map_Block_Change_Client", @Lua_CMD_Map_Block_Change_Client())
+    lua_register(Lua_Main\State, "Map_Block_Change_Player", @Lua_CMD_Map_Block_Change_Player())
+    lua_register(Lua_Main\State, "Map_Block_Move", @Lua_CMD_Map_Block_Move())
+    ;lua_register(Lua_Main\State, "Map_Block_Send", @Lua_CMD_Map_Block_Send())
+    lua_register(Lua_Main\State, "Map_Block_Get_Type", @Lua_CMD_Map_Block_Get_Type())
+    lua_register(Lua_Main\State, "Map_Block_Get_Rank", @Lua_CMD_Map_Block_Get_Rank())
+    lua_register(Lua_Main\State, "Map_Block_Get_Player_Last", @Lua_CMD_Map_Block_Get_Player_Last())
+    lua_register(Lua_Main\State, "Map_Get_Name", @Lua_CMD_Map_Get_Name())
+    lua_register(Lua_Main\State, "Map_Get_Unique_ID", @Lua_CMD_Map_Get_Unique_ID())
+    lua_register(Lua_Main\State, "Map_Get_Directory", @Lua_CMD_Map_Get_Directory())
+    lua_register(Lua_Main\State, "Map_Get_Rank_Build", @Lua_CMD_Map_Get_Rank_Build())
+    lua_register(Lua_Main\State, "Map_Get_Rank_Join", @Lua_CMD_Map_Get_Rank_Join())
+    lua_register(Lua_Main\State, "Map_Get_Rank_Show", @Lua_CMD_Map_Get_Rank_Show())
+    lua_register(Lua_Main\State, "Map_Get_Dimensions", @Lua_CMD_Map_Get_Dimensions())
+    lua_register(Lua_Main\State, "Map_Get_Spawn", @Lua_CMD_Map_Get_Spawn())
+    lua_register(Lua_Main\State, "Map_Get_Save_Intervall", @Lua_CMD_Map_Get_Save_Intervall())
+    lua_register(Lua_Main\State, "Map_Set_Name", @Lua_CMD_Map_Set_Name())
+    lua_register(Lua_Main\State, "Map_Set_Directory", @Lua_CMD_Map_Set_Directory())
+    lua_register(Lua_Main\State, "Map_Set_Rank_Build", @Lua_CMD_Map_Set_Rank_Build())
+    lua_register(Lua_Main\State, "Map_Set_Rank_Join", @Lua_CMD_Map_Set_Rank_Join())
+    lua_register(Lua_Main\State, "Map_Set_Rank_Show", @Lua_CMD_Map_Set_Rank_Show())
+    lua_register(Lua_Main\State, "Map_Set_Spawn", @Lua_CMD_Map_Set_Spawn())
+    lua_register(Lua_Main\State, "Map_Set_Save_Intervall", @Lua_CMD_Map_Set_Save_Intervall())
+    lua_register(Lua_Main\State, "Map_Add", @Lua_CMD_Map_Add())
+    lua_register(Lua_Main\State, "Map_Action_Add_Resize", @Lua_CMD_Map_Action_Add_Resize())
+    lua_register(Lua_Main\State, "Map_Action_Add_Fill", @Lua_CMD_Map_Action_Add_Fill())
+    lua_register(Lua_Main\State, "Map_Action_Add_Save", @Lua_CMD_Map_Action_Add_Save())
+    lua_register(Lua_Main\State, "Map_Action_Add_Load", @Lua_CMD_Map_Action_Add_Load())
+    lua_register(Lua_Main\State, "Map_Action_Add_Delete", @Lua_CMD_Map_Action_Add_Delete())
+    lua_register(Lua_Main\State, "Map_Resend", @Lua_CMD_Map_Resend())
+    lua_register(Lua_Main\State, "Map_Export", @Lua_CMD_Map_Export())
     
-    Lua_lua_register(Lua_Main\State, "System_Message_Network_Send_2_All", @Lua_CMD_System_Message_Network_Send_2_All())
-    Lua_lua_register(Lua_Main\State, "System_Message_Network_Send", @Lua_CMD_System_Message_Network_Send())
+    lua_register(Lua_Main\State, "Map_Export_Get_Size", @Lua_CMD_Map_Export_Get_Size())
     
-    Lua_lua_register(Lua_Main\State, "Lang_Get", @Lua_CMD_Language_Get())
+    lua_register(Lua_Main\State, "Map_Import_Player", @Lua_CMD_Map_Import_Player())
     
-    Lua_lua_register(Lua_Main\State, "Files_File_Get", @Lua_CMD_Files_File_Get())
-    Lua_lua_register(Lua_Main\State, "Files_Folder_Get", @Lua_CMD_Files_Folder_Get())
+    lua_register(Lua_Main\State, "Block_Get_Table", @Lua_CMD_Block_Get_Table())
+    lua_register(Lua_Main\State, "Block_Get_Name", @Lua_CMD_Block_Get_Name())
+    lua_register(Lua_Main\State, "Block_Get_Rank_Place", @Lua_CMD_Block_Get_Rank_Place())
+    lua_register(Lua_Main\State, "Block_Get_Rank_Delete", @Lua_CMD_Block_Get_Rank_Delete())
+    lua_register(Lua_Main\State, "Block_Get_Client_Type", @Lua_CMD_Block_Get_Client_Type())
+    
+    lua_register(Lua_Main\State, "Rank_Get_Table", @Lua_CMD_Rank_Get_Table())
+    lua_register(Lua_Main\State, "Rank_Add", @Lua_CMD_Rank_Add())
+    lua_register(Lua_Main\State, "Rank_Delete", @Lua_CMD_Rank_Delete())
+    lua_register(Lua_Main\State, "Rank_Get_Name", @Lua_CMD_Rank_Get_Name())
+    lua_register(Lua_Main\State, "Rank_Get_Prefix", @Lua_CMD_Rank_Get_Prefix())
+    lua_register(Lua_Main\State, "Rank_Get_Suffix", @Lua_CMD_Rank_Get_Suffix())
+    lua_register(Lua_Main\State, "Rank_Get_Root", @Lua_CMD_Rank_Get_Root())
+    
+    
+    lua_register(Lua_Main\State, "Teleporter_Get_Table", @Lua_CMD_Teleporter_Get_Table())
+    lua_register(Lua_Main\State, "Teleporter_Add", @Lua_CMD_Teleporter_Add())
+    lua_register(Lua_Main\State, "Teleporter_Delete", @Lua_CMD_Teleporter_Delete())
+    lua_register(Lua_Main\State, "Teleporter_Get_Box", @Lua_CMD_Teleporter_Get_Box())
+    lua_register(Lua_Main\State, "Teleporter_Get_Destination", @Lua_CMD_Teleporter_Get_Destination())
+    
+    lua_register(Lua_Main\State, "System_Message_Network_Send_2_All", @Lua_CMD_System_Message_Network_Send_2_All())
+    lua_register(Lua_Main\State, "System_Message_Network_Send", @Lua_CMD_System_Message_Network_Send())
+    
+    lua_register(Lua_Main\State, "Network_Out_Block_Set", @Lua_CMD_Network_Out_Block_Set())
+    
+    lua_register(Lua_Main\State, "Lang_Get", @Lua_CMD_Language_Get())
+    
+    lua_register(Lua_Main\State, "Files_File_Get", @Lua_CMD_Files_File_Get())
+    lua_register(Lua_Main\State, "Files_Folder_Get", @Lua_CMD_Files_Folder_Get())
+    
+    lua_register(Lua_Main\State, "Event_Add", @Lua_CMD_Event_Add())
+    lua_register(Lua_Main\State, "Event_Delete", @Lua_CMD_Event_Delete())
+    
+    lua_register(Lua_Main\State, "Server_Get_Extensions", @Lua_CMD_Server_Get_Extensions())
+    lua_register(Lua_Main\State, "Server_Get_Extension", @Lua_CMD_Server_Get_Extension())
+    lua_register(Lua_Main\State, "Client_Get_Extensions", @Lua_CMD_Client_Get_Extensions())
+    lua_register(Lua_Main\State, "Client_Get_Extension", @Lua_CMD_Client_Get_Extension())
+    
+    lua_register(Lua_Main\State, "CPE_Selection_Cuboid_Add",@Lua_CMD_CPE_Selection_Cuboid_Add())
+    lua_register(Lua_Main\State, "CPE_Selection_Cuboid_Delete", @Lua_CMD_CPE_Selection_Cuboid_Delete())
+    
+    lua_register(Lua_Main\State, "CPE_Get_Held_Block", @Lua_CMD_CPE_Get_Held_Block())
+    lua_register(Lua_Main\State, "CPE_Set_Held_Block", @Lua_CMD_CPE_Set_Held_Block())
+    lua_register(Lua_Main\State, "CPE_Model_Change", @Lua_CMD_CPE_Change_Model())
+    lua_register(Lua_Main\State, "CPE_Set_Weather", @Lua_CMD_CPE_Set_Weather())
+    lua_register(Lua_Main\State, "CPE_Map_Set_Env_Colors", @Lua_CMD_CPE_Map_Set_Env_Colors())
+    lua_register(Lua_Main\State, "CPE_Client_Set_Block_Permissions", @Lua_CMD_CPE_Client_Set_Block_Permissions())
+    lua_register(Lua_Main\State, "Map_Env_Apperance_Set", @Lua_CMD_Map_Env_Apperance_Set())
+    lua_register(Lua_Main\State, "Client_Send_Map_Appearence", @Lua_CMD_Client_Send_Map_Appearence())
+    lua_register(Lua_Main\State, "CPE_Client_Hackcontrol_Send", @Lua_CMD_CPE_Client_Hackcontrol_Send())
+    lua_register(Lua_Main\State, "Hotkey_Add", @Lua_CMD_Hotkey_Add())
+    lua_register(Lua_Main\State, "Hotkey_Remove", @Lua_CMD_Hotkey_Remove())
+    lua_register(Lua_Main\State, "Map_Hackcontrol_Set", @Lua_CMD_Map_Hackcontrol_Set())
   EndIf
 EndProcedure
 
 Procedure Lua_SetVariable_String(Name.s, String.s)
   If Lua_Main\State
-  	Lua_lua_pushstring(Lua_Main\State, String)
-  	Lua_lua_setglobal(Lua_Main\State, Name)
+  	lua_pushstring(Lua_Main\State, String)
+  	lua_setglobal(Lua_Main\State, Name)
 	EndIf
 EndProcedure 
 
 Procedure Lua_SetVariable_Integer(Name.s, Value)
   If Lua_Main\State
-  	Lua_lua_pushinteger(Lua_Main\State, Value)
-  	Lua_lua_setglobal(Lua_Main\State, Name)
+  	lua_pushinteger(Lua_Main\State, Value)
+  	lua_setglobal(Lua_Main\State, Name)
 	EndIf
 EndProcedure
 
 Procedure.s Lua_GetVariable_String(Name.s)
   If Lua_Main\State
-  	Lua_lua_getglobal(Lua_Main\State, Name)
-  	If Lua_lua_tolstring(Lua_Main\State, -1, #Null)
-  	  String.s = PeekS(Lua_lua_tolstring(Lua_Main\State, -1, #Null))
-  	  Lua_lua_remove(Lua_Main\State, -1)
+  	lua_getglobal(Lua_Main\State, Name)
+  	If lua_tolstring(Lua_Main\State, -1, #Null)
+  	  String.s = PeekS(lua_tolstring(Lua_Main\State, -1, #Null))
+  	  lua_pop(Lua_Main\State, 1)
   	  ProcedureReturn String
   	EndIf
 	EndIf
@@ -2820,280 +3775,31 @@ EndProcedure
 
 Procedure Lua_GetVariable_Integer(Name.s)
   If Lua_Main\State
-  	Lua_lua_getglobal(Lua_Main\State, Name)
-  	Value = Lua_lua_tointeger(Lua_Main\State, -1)
-  	Lua_lua_remove(Lua_Main\State, -1)
+  	lua_getglobal(Lua_Main\State, Name)
+  	Value = lua_tointeger(Lua_Main\State, -1)
+  	lua_pop(Lua_Main\State, 1)
   	ProcedureReturn Value
 	EndIf
-EndProcedure
-
-Procedure Lua_Do_Function_Event_Timer(Function_Name.s, Map_ID)
-  If Lua_Main\State
-    Lua_lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
-    Lua_lua_pushinteger(Lua_Main\State, Map_ID)
-    Lua_Do_Function(Function_Name, 1, 0)
-  EndIf
-EndProcedure
-
-Procedure Lua_Do_Function_Event_Client_Add(Function_Name.s, Client_ID)
-  If Lua_Main\State
-    Lua_lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
-    Lua_lua_pushinteger(Lua_Main\State, Client_ID)
-    Lua_Do_Function(Function_Name, 1, 0)
-  EndIf
-EndProcedure
-
-Procedure Lua_Do_Function_Event_Client_Delete(Function_Name.s, Client_ID)
-  If Lua_Main\State
-    Lua_lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
-    Lua_lua_pushinteger(Lua_Main\State, Client_ID)
-    Lua_Do_Function(Function_Name, 1, 0)
-  EndIf
-EndProcedure
-
-Procedure Lua_Do_Function_Event_Client_Login(Function_Name.s, Client_ID)
-  If Lua_Main\State
-    Lua_lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
-    Lua_lua_pushinteger(Lua_Main\State, Client_ID)
-    Lua_Do_Function(Function_Name, 1, 0)
-  EndIf
-EndProcedure
-
-Procedure Lua_Do_Function_Event_Client_Logout(Function_Name.s, Client_ID)
-  If Lua_Main\State
-    Lua_lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
-    Lua_lua_pushinteger(Lua_Main\State, Client_ID)
-    Lua_Do_Function(Function_Name, 1, 0)
-  EndIf
-EndProcedure
-
-Procedure Lua_Do_Function_Event_Client_Map_Join(Function_Name.s, Map_ID, Client_ID)
-  If Lua_Main\State
-    Lua_lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
-    Lua_lua_pushinteger(Lua_Main\State, Map_ID)
-    Lua_lua_pushinteger(Lua_Main\State, Client_ID)
-    Lua_Do_Function(Function_Name, 2, 0)
-  EndIf
-EndProcedure
-
-Procedure Lua_Do_Function_Event_Client_Map_Left(Function_Name.s, Map_ID, Client_ID)
-  If Lua_Main\State
-    Lua_lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
-    Lua_lua_pushinteger(Lua_Main\State, Map_ID)
-    Lua_lua_pushinteger(Lua_Main\State, Client_ID)
-    Lua_Do_Function(Function_Name, 2, 0)
-  EndIf
-EndProcedure
-
-Procedure Lua_Do_Function_Event_Client_Move(Function_Name.s, Map_ID, Client_ID)
-  If Lua_Main\State
-    Lua_lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
-    Lua_lua_pushinteger(Lua_Main\State, Map_ID)
-    Lua_lua_pushinteger(Lua_Main\State, Client_ID)
-    Lua_Do_Function(Function_Name, 2, 0)
-  EndIf
-EndProcedure
-
-Procedure Lua_Do_Function_Event_Client_Die(Function_Name.s, Map_ID, Client_ID, Player_Number)
-  If Lua_Main\State
-    Lua_lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
-    Lua_lua_pushinteger(Lua_Main\State, Map_ID)
-    Lua_lua_pushinteger(Lua_Main\State, Client_ID)
-    Lua_lua_pushinteger(Lua_Main\State, Player_Number)
-    Lua_Do_Function(Function_Name, 3, 0)
-  EndIf
-EndProcedure
-
-Procedure Lua_Do_Function_Event_Client_Chat_Map(Function_Name.s, Map_ID, Client_ID, Message.s)
-  Result = -1
-  If Lua_Main\State
-    Lua_lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
-    Lua_lua_pushinteger(Lua_Main\State, Map_ID)
-    Lua_lua_pushinteger(Lua_Main\State, Client_ID)
-    Lua_lua_pushstring(Lua_Main\State, Message)
-    Lua_Do_Function(Function_Name, 3, 1)
-    Result = Lua_lua_tointeger(Lua_Main\State, -1)
-    Lua_lua_setfield(Lua_Main\State, #LUA_GLOBALSINDEX, "tempreturn")
-  EndIf
-  ProcedureReturn Result
-EndProcedure
-
-Procedure Lua_Do_Function_Event_Client_Chat_Global(Function_Name.s, Client_ID, Message.s)
-  Result = -1
-  If Lua_Main\State
-    Lua_lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
-    Lua_lua_pushinteger(Lua_Main\State, Client_ID)
-    Lua_lua_pushstring(Lua_Main\State, Message)
-    Lua_Do_Function(Function_Name, 2, 1)
-    Result = Lua_lua_tointeger(Lua_Main\State, -1)
-    Lua_lua_setfield(Lua_Main\State, #LUA_GLOBALSINDEX, "tempreturn")
-  EndIf
-  ProcedureReturn Result
-EndProcedure
-
-Procedure Lua_Do_Function_Event_Client_Blockchange(Function_Name.s, Map_ID, Client_ID, Mode, Material, X, Y, Z, Placed_By_Client.a)
-  Result = -1
-  If Lua_Main\State
-    Lua_lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
-    Lua_lua_pushinteger(Lua_Main\State, Map_ID)
-    Lua_lua_pushinteger(Lua_Main\State, Client_ID)
-    Lua_lua_pushinteger(Lua_Main\State, Mode)
-    Lua_lua_pushinteger(Lua_Main\State, Material)
-    Lua_lua_pushinteger(Lua_Main\State, X)
-    Lua_lua_pushinteger(Lua_Main\State, Y)
-    Lua_lua_pushinteger(Lua_Main\State, Z)
-    Lua_lua_pushinteger(Lua_Main\State, Placed_By_Client)
-    Lua_Do_Function(Function_Name, 8, 1)
-    Result = Lua_lua_tointeger(Lua_Main\State, -1)
-    Lua_lua_setfield(Lua_Main\State, #LUA_GLOBALSINDEX, "tempreturn")
-  EndIf
-  ProcedureReturn Result
-EndProcedure
-
-Procedure Lua_Do_Function_Event_Map(Function_Name.s, Map_ID)
-  Result = -1
-  If Lua_Main\State
-    Lua_lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
-    Lua_lua_pushinteger(Lua_Main\State, Map_ID)
-    Lua_Do_Function(Function_Name, 1, 0)
-  EndIf
-  ProcedureReturn Result
-EndProcedure
-
-Procedure Lua_Do_Function_Event_Map_Action(Function_Name.s, Action_ID, Map_ID)
-  Result = -1
-  If Lua_Main\State
-    Lua_lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
-    Lua_lua_pushinteger(Lua_Main\State, Action_ID)
-    Lua_lua_pushinteger(Lua_Main\State, Map_ID)
-    Lua_Do_Function(Function_Name, 2, 0)
-  EndIf
-  ProcedureReturn Result
-EndProcedure
-
-Procedure Lua_Do_Function_Command(Function_Name.s, Client_ID, Command.s, Text_0.s, Text_1.s, Arg_0.s, Arg_1.s, Arg_2.s, Arg_3.s, Arg_4.s)
-  If Lua_Main\State
-    Lua_lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
-    Lua_lua_pushinteger(Lua_Main\State, Client_ID)
-    Lua_lua_pushstring(Lua_Main\State, Command)
-    Lua_lua_pushstring(Lua_Main\State, Text_0)
-    Lua_lua_pushstring(Lua_Main\State, Text_1)
-    Lua_lua_pushstring(Lua_Main\State, Arg_0)
-    Lua_lua_pushstring(Lua_Main\State, Arg_1)
-    Lua_lua_pushstring(Lua_Main\State, Arg_2)
-    Lua_lua_pushstring(Lua_Main\State, Arg_3)
-    Lua_lua_pushstring(Lua_Main\State, Arg_4)
-    Lua_Do_Function(Function_Name, 9, 0)
-  EndIf
-EndProcedure
-
-Procedure Lua_Do_Function_Map_Block(Function_Name.s, Map_ID, X, Y, Z)
-  If Lua_Main\State
-    Lua_lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
-    Lua_lua_pushinteger(Lua_Main\State, Map_ID)
-    Lua_lua_pushinteger(Lua_Main\State, X)
-    Lua_lua_pushinteger(Lua_Main\State, Y)
-    Lua_lua_pushinteger(Lua_Main\State, Z)
-    Lua_Do_Function(Function_Name, 4, 0)
-  EndIf
-EndProcedure
-
-Procedure Lua_Do_Function_Map_Block_Create(Function_Name.s, Map_ID, X, Y, Z, Old_Block.a, Client_ID)
-  If Lua_Main\State
-    Lua_lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
-    Lua_lua_pushinteger(Lua_Main\State, Map_ID)
-    Lua_lua_pushinteger(Lua_Main\State, X)
-    Lua_lua_pushinteger(Lua_Main\State, Y)
-    Lua_lua_pushinteger(Lua_Main\State, Z)
-    Lua_lua_pushinteger(Lua_Main\State, Old_Block)
-    Lua_lua_pushinteger(Lua_Main\State, Client_ID)
-    Lua_Do_Function(Function_Name, 6, 0)
-  EndIf
-EndProcedure
-
-Procedure Lua_Do_Function_Map_Block_Delete(Function_Name.s, Map_ID, X, Y, Z, Old_Block.a, Client_ID)
-  If Lua_Main\State
-    Lua_lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
-    Lua_lua_pushinteger(Lua_Main\State, Map_ID)
-    Lua_lua_pushinteger(Lua_Main\State, X)
-    Lua_lua_pushinteger(Lua_Main\State, Y)
-    Lua_lua_pushinteger(Lua_Main\State, Z)
-    Lua_lua_pushinteger(Lua_Main\State, Old_Block)
-    Lua_lua_pushinteger(Lua_Main\State, Client_ID)
-    Lua_Do_Function(Function_Name, 6, 0)
-  EndIf
-EndProcedure
-
-Procedure Lua_Do_Function_Map_Fill(Function_Name.s, Map_ID, Size_X, Size_Y, Size_Z, Argument_String.s)
-  If Lua_Main\State
-    Lua_lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
-    Lua_lua_pushinteger(Lua_Main\State, Map_ID)
-    Lua_lua_pushinteger(Lua_Main\State, Size_X)
-    Lua_lua_pushinteger(Lua_Main\State, Size_Y)
-    Lua_lua_pushinteger(Lua_Main\State, Size_Z)
-    Lua_lua_pushstring(Lua_Main\State, Argument_String)
-    Lua_Do_Function(Function_Name, 5, 0)
-  EndIf
-EndProcedure
-
-Procedure Lua_Do_Function_Build_Mode(Function_Name.s, Client_ID, Map_ID, X, Y, Z, Mode, Block_Type)
-  If Lua_Main\State
-    Lua_lua_getfield(Lua_Main\State, #LUA_GLOBALSINDEX, Function_Name)
-    Lua_lua_pushinteger(Lua_Main\State, Client_ID)
-    Lua_lua_pushinteger(Lua_Main\State, Map_ID)
-    Lua_lua_pushinteger(Lua_Main\State, X)
-    Lua_lua_pushinteger(Lua_Main\State, Y)
-    Lua_lua_pushinteger(Lua_Main\State, Z)
-    Lua_lua_pushinteger(Lua_Main\State, Mode)
-    Lua_lua_pushinteger(Lua_Main\State, Block_Type)
-    Lua_Do_Function(Function_Name, 7, 0)
-  EndIf
 EndProcedure
 
 Procedure Lua_Do_Function(Function.s, Arguments, Results)
   If Lua_Main\State
     
-    If ListIndex(Network_Client()) <> -1
-      *Network_Client_Old = Network_Client()
-    Else
-      *Network_Client_Old = 0
-    EndIf
-    
-    If ListIndex(Player_List()) <> -1
-      *Player_List_Old = Player_List()
-    Else
-      *Player_List_Old = 0
-    EndIf
-    
-    If ListIndex(Command()) <> -1
-      *Command_Old = Command()
-    Else
-      *Command_Old = 0
-    EndIf
-    
-    Result = Lua_lua_pcall(Lua_Main\State, Arguments, Results, 0)
+    Result = lua_pcall(Lua_Main\State, Arguments, Results, 0)
     
     Select Result
       Case #LUA_ERRRUN
-        Log_Add("Lua", Lang_Get("", "Laufzeitfehler in [Field_0]", Function), 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
+        Error.s = PeekS(lua_tolstring(Lua_Main\State, -1, #Null))
+        Temp.s = PeekS(Lang_Get("", "Runtimeerror in [Field_0]", Function, Error))
+        Log_Add("Lua-Plugin", Temp.s, 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
       Case #LUA_ERRMEM
-        Log_Add("Lua", Lang_Get("", "Allokationsfehler in [Field_0]", Function), 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
+        Temp.s = PeekS(Lang_Get("", "Memoryallocationerror in [Field_0]", Function))
+        Log_Add("Lua-Plugin", Temp.s, 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
       Case #LUA_ERRERR
-        Log_Add("Lua", Lang_Get("", "Fehler in [Field_0]", Function), 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
+        Temp.s = PeekS(Lang_Get("", "Error in [Field_0]", Function))
+        Log_Add("Lua-Plugin", Temp.s, 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
       
     EndSelect
-    
-    If *Network_Client_Old
-      ChangeCurrentElement(Network_Client(), *Network_Client_Old)
-    EndIf
-    
-    If *Player_List_Old
-      ChangeCurrentElement(Player_List(), *Player_List_Old)
-    EndIf
-    
-    If *Command_Old
-      ChangeCurrentElement(Command(), *Command_Old)
-    EndIf
     
   EndIf
 EndProcedure
@@ -3101,37 +3807,7 @@ EndProcedure
 Procedure Lua_Do_String(String.s)
   If Lua_Main\State
     
-    If ListIndex(Network_Client()) <> -1
-      *Network_Client_Old = Network_Client()
-    Else
-      *Network_Client_Old = 0
-    EndIf
-    
-    If ListIndex(Player_List()) <> -1
-      *Player_List_Old = Player_List()
-    Else
-      *Player_List_Old = 0
-    EndIf
-    
-    If ListIndex(Command()) <> -1
-      *Command_Old = Command()
-    Else
-      *Command_Old = 0
-    EndIf
-    
-    Lua_luaL_dostring(Lua_Main\State, String)
-    
-    If *Network_Client_Old
-      ChangeCurrentElement(Network_Client(), *Network_Client_Old)
-    EndIf
-    
-    If *Player_List_Old
-      ChangeCurrentElement(Player_List(), *Player_List_Old)
-    EndIf
-    
-    If *Command_Old
-      ChangeCurrentElement(Command(), *Command_Old)
-    EndIf
+    luaL_dostring(Lua_Main\State, String)
     
   EndIf
 EndProcedure
@@ -3139,37 +3815,7 @@ EndProcedure
 Procedure Lua_Do_File(Filename.s)
   If Lua_Main\State
     
-    If ListIndex(Network_Client()) <> -1
-      *Network_Client_Old = Network_Client()
-    Else
-      *Network_Client_Old = 0
-    EndIf
-    
-    If ListIndex(Player_List()) <> -1
-      *Player_List_Old = Player_List()
-    Else
-      *Player_List_Old = 0
-    EndIf
-    
-    If ListIndex(Command()) <> -1
-      *Command_Old = Command()
-    Else
-      *Command_Old = 0
-    EndIf
-    
-    Lua_luaL_dofile(Lua_Main\State, Filename)
-    
-    If *Network_Client_Old
-      ChangeCurrentElement(Network_Client(), *Network_Client_Old)
-    EndIf
-    
-    If *Player_List_Old
-      ChangeCurrentElement(Player_List(), *Player_List_Old)
-    EndIf
-    
-    If *Command_Old
-      ChangeCurrentElement(Command(), *Command_Old)
-    EndIf
+    luaL_dofile(Lua_Main\State, Filename)
     
   EndIf
 EndProcedure
@@ -3213,29 +3859,10 @@ Procedure Lua_Check_New_Files(Directory.s)
   EndIf
   
 EndProcedure
-
-Procedure Lua_Main()
-  ;If Lua_Main\State
-  ;  If Lua_Main\Timer_File_Check < Milliseconds()
-  ;    Lua_Main\Timer_File_Check = Milliseconds() + 1000
-  ;    
-  ;    Lua_Check_New_Files(Files_Folder_Get("Lua"))
-  ;    
-  ;    ForEach Lua_File()
-  ;      File_Date = GetFileDate(Lua_File()\Filename, #PB_Date_Modified)
-  ;      If Lua_File()\File_Date_Last <> File_Date
-  ;        Lua_File()\File_Date_Last = File_Date
-  ;        Lua_Do_File(Lua_File()\Filename)
-  ;      EndIf
-  ;    Next
-  ;    
-  ;  EndIf
-  ;EndIf
-EndProcedure
-; IDE Options = PureBasic 4.51 (Windows - x86)
-; CursorPosition = 3219
-; FirstLine = 3186
-; Folding = ------------------------
+; IDE Options = PureBasic 5.30 (Linux - x64)
+; CursorPosition = 3860
+; FirstLine = 3817
+; Folding = ------------------------------
 ; EnableXP
 ; DisableDebugger
 ; EnableCompileCount = 0

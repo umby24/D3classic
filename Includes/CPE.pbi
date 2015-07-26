@@ -88,7 +88,7 @@ Procedure CPE_Send_ExtInfo(Client_ID, Name.s, MPPass.s, Version)
     Network_Client_Output_Write_Int(Client_ID, 1)
     
     Network_Client_Output_Write_Byte(Client_ID, 17)
-    Network_Client_Output_Write_String(Client_ID, LSet("EnvMapAppearance", 64, " "), 64)
+    Network_Client_Output_Write_String(Client_ID, LSet("SelectionCuboid", 64, " "), 64)
     Network_Client_Output_Write_Int(Client_ID, 1)
     
     Network_Client_Output_Write_Byte(Client_ID, 17)
@@ -476,10 +476,9 @@ Procedure CPE_Client_Hackcontrol_Send(Client_ID, Flying, Noclip, Speeding, Spawn
     
     List_Restore(*Network_Client_Old, Network_Client())
 EndProcedure
-; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 452
-; FirstLine = 415
-; Folding = 9---
+; IDE Options = PureBasic 5.30 (Linux - x64)
+; CursorPosition = 381
+; Folding = AA+-
 ; EnableThread
 ; EnableXP
 ; EnableOnError

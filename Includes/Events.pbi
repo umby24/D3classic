@@ -31,7 +31,6 @@ Procedure CoreLoop()
                 myfun = CoreEvents()\MainFunction
                 myfun()
               EndIf
-              
             CoreEvents()\Time = ElapsedMilliseconds()
         EndIf
     Next
@@ -61,8 +60,7 @@ Procedure CoreShutdown()
     
 EndProcedure
 ; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 32
-; FirstLine = 5
+; CursorPosition = 10
 ; Folding = -
 ; EnableThread
 ; EnableXP

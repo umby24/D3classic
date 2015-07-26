@@ -1,10 +1,19 @@
 
 ; ########################################## Konstanten ########################################
 
-#Plugin_Version = 509
+#Plugin_Version = 510
 
 ; ######################################### Prototypes ##########################################
 
+Declare PluginBuildModeGet(ClientID, *Result)
+Declare PluginBuildModeStringGet(Client_ID, Index, *Result)
+Declare PluginEntityDisplaynameGet(ID, *Result)
+Declare PluginPlayerAttributeStringGet(Player_Number, Attribute.s, *Result)
+Declare PluginSystemGetServerName(*Result)
+Declare PluginLangGet(Language.s, Input.s, *Result, Field_0.s = "", Field_1.s = "", Field_2.s = "", Field_3.s = "")
+Declare PluginFilesFileGet(File.s, *Result)
+Declare PluginFilesFolderGet(Name.s, *Result)
+        
 PrototypeC   Plugin_Inside_Main()
 PrototypeC   Plugin_Inside_Event_Block_Physics(Argument.s, *Map_Data.Map_Data, X, Y, Z)
 PrototypeC   Plugin_Inside_Event_Block_Create(Argument.s, *Map_Data.Map_Data, X, Y, Z, Old_Block.a, *Client.Network_Client)
@@ -105,10 +114,10 @@ Global NewMap Plugins.Plugin()
 
 Structure Plugin_Result_Element
     *Pointer
-    ID.l
+    ID.i
 EndStructure
 
-XIncludeFile "Shared Includes/Plugin_Functions.pbi"
+XIncludeFile "../Shared Includes/Plugin_Functions.pbi"
 Global Plugin_Function.Plugin_Function
 
 ; ########################################## Ladekram ############################################
@@ -255,7 +264,7 @@ Plugin_Function\Client_Kick = @Network_Client_Kick()
 Plugin_Function\Network_Settings_Get_Port = @Network_Settings_Get_Port()
 
 Plugin_Function\Build_Mode_Set = @Build_Mode_Set()
-Plugin_Function\Build_Mode_Get = @Build_Mode_Get()
+Plugin_Function\Build_Mode_Get = @PluginBuildModeGet()
 Plugin_Function\Build_Mode_State_Set = @Build_Mode_State_Set()
 Plugin_Function\Build_Mode_State_Get = @Build_Mode_State_Get()
 Plugin_Function\Build_Mode_Coordinate_Set = @Build_Mode_Coordinate_Set()
@@ -267,7 +276,7 @@ Plugin_Function\Build_Mode_Long_Get = @Build_Mode_Long_Get()
 Plugin_Function\Build_Mode_Float_Set = @Build_Mode_Float_Set()
 Plugin_Function\Build_Mode_Float_Get = @Build_Mode_Float_Get()
 Plugin_Function\Build_Mode_String_Set = @Build_Mode_String_Set()
-Plugin_Function\Build_Mode_String_Get = @Build_Mode_String_Get()
+Plugin_Function\Build_Mode_String_Get = @PluginBuildModeStringGet()
 
 Plugin_Function\Build_Line_Player = @Build_Line_Player()
 Plugin_Function\Build_Box_Player = @Build_Box_Player()
@@ -284,7 +293,7 @@ Plugin_Function\Entity_Add = @Entity_Add()
 Plugin_Function\Entity_Delete = @Entity_Delete()
 Plugin_Function\Entity_Resend = @Entity_Resend()
 Plugin_Function\Entity_Message_2_Clients = @Entity_Message_2_Clients()
-Plugin_Function\Entity_Displayname_Get = @Entity_Displayname_Get()
+Plugin_Function\Entity_Displayname_Get = @PluginEntityDisplaynameGet()
 Plugin_Function\Entity_Displayname_Set = @Entity_Displayname_Set()
 Plugin_Function\Entity_Position_Set = @Entity_Position_Set()
 Plugin_Function\Entity_Kill = @Entity_Kill()
@@ -296,7 +305,7 @@ Plugin_Function\Player_Get_Players_Max = @Player_Get_Players_Max()
 Plugin_Function\Player_Attribute_Long_Set = @Player_Attribute_Long_Set()
 Plugin_Function\Player_Attribute_Long_Get = @Player_Attribute_Long_Get()
 Plugin_Function\Player_Attribute_String_Set = @Player_Attribute_String_Set()
-Plugin_Function\Player_Attribute_String_Get = @Player_Attribute_String_Get()
+Plugin_Function\Player_Attribute_String_Get = @PluginPlayerAttributeStringGet()
 Plugin_Function\Player_Inventory_Set = @Player_Inventory_Set()
 Plugin_Function\Player_Inventory_Get = @Player_Inventory_Get()
 Plugin_Function\Player_Rank_Set = @Player_Rank_Set()
@@ -350,17 +359,17 @@ Plugin_Function\Teleporter_Delete = @Teleporter_Delete()
 
 Plugin_Function\System_Message_Network_Send_2_All = @System_Message_Network_Send_2_All()
 Plugin_Function\System_Message_Network_Send = @System_Message_Network_Send()
-Plugin_Function\System_Get_Server_Name = @System_Get_Server_Name()
+Plugin_Function\System_Get_Server_Name = @PluginSystemGetServerName()
 
 Plugin_Function\Network_Out_Block_Set = @Network_Out_Block_Set()
 
 Plugin_Function\Main_LockMutex = @Main_LockMutex()
 Plugin_Function\Main_UnlockMutex = @Main_UnlockMutex()
 
-Plugin_Function\Lang_Get = @Lang_Get()
+Plugin_Function\Lang_Get = @PluginLangGet()
 
-Plugin_Function\Files_File_Get = @Files_File_Get()
-Plugin_Function\Files_Folder_Get = @Files_Folder_Get()
+Plugin_Function\Files_File_Get = @PluginFilesFileGet()
+Plugin_Function\Files_Folder_Get = @PluginFilesFolderGet()
 
 Plugin_Function\Log_Add = @Log_Add()
 
@@ -688,8 +697,97 @@ Procedure Plugin_Event_Build_Mode(Destination.s, *Client.Network_Client, *Map_Da
     ProcedureReturn #True
 EndProcedure
 
-;-
+;-Plugin Extention methods...
 
+Procedure PluginBuildModeGet(ClientID, *Result)
+    Protected str.s
+    str = Build_Mode_Get(ClientID)
+    
+    If *Result
+        ProcedureReturn PokeS(*Result, str)
+    EndIf
+    
+    ProcedureReturn StringByteLength(str)
+EndProcedure
+
+Procedure PluginBuildModeStringGet(Client_ID, Index, *Result)
+    Protected str.s
+    str = Build_Mode_String_Get(Client_ID, Index)
+    
+    If *Result
+        ProcedureReturn PokeS(*Result, str)
+    EndIf
+    
+    ProcedureReturn StringByteLength(str)
+EndProcedure
+
+Procedure PluginEntityDisplaynameGet(ID, *Result)
+    Protected str.s
+    str = Entity_Displayname_Get(ID)
+    
+    If *Result
+        ProcedureReturn PokeS(*Result, str)
+    EndIf
+    
+    ProcedureReturn StringByteLength(str)
+EndProcedure
+
+Procedure PluginPlayerAttributeStringGet(Player_Number, Attribute.s, *Result)
+    Protected str.s
+    str = Player_Attribute_String_Get(Player_Number, Attribute)
+    
+    If *Result
+        ProcedureReturn PokeS(*Result, str)
+    EndIf
+    
+    ProcedureReturn StringByteLength(str)
+EndProcedure
+
+Procedure PluginSystemGetServerName(*Result)
+    Protected str.s
+    Str = System_Get_Server_Name()
+    
+    If *Result
+        ProcedureReturn PokeS(*Result, str)
+    EndIf
+    
+    ProcedureReturn StringByteLength(str)
+EndProcedure
+
+Procedure PluginLangGet(Language.s, Input.s, *Result, Field_0.s = "", Field_1.s = "", Field_2.s = "", Field_3.s = "")
+    Protected str.s
+    str = Lang_Get(Language, Input, Field_0, Field_1, Field_2, Field_3)
+    
+    If *Result
+        ProcedureReturn PokeS(*Result, str)
+    EndIf
+    
+    ProcedureReturn StringByteLength(str)
+EndProcedure
+
+Procedure PluginFilesFileGet(File.s, *Result)
+    Protected str.s
+    str = Files_File_Get(File)
+    
+    If *Result
+        ProcedureReturn PokeS(*Result, str)
+    EndIf
+    
+    ProcedureReturn StringByteLength(str)
+EndProcedure
+
+Procedure PluginFilesFolderGet(Name.s, *Result)
+    Protected str.s
+    str = Files_Folder_Get(Name)
+    
+    If *Result
+        ProcedureReturn PokeS(*Result, str)
+    EndIf
+    
+    ProcedureReturn StringByteLength(str)
+EndProcedure
+
+;-
 Procedure Plugin_Event_Client_Add(*Client.Network_Client)
     Result = #True
     
@@ -1146,7 +1244,7 @@ Procedure Plugin_Initialize(Filename.s) ; Initialisiert Plugin und übergibt Funk
         Plugins(Filename)
         
         CallCFunction(Plugins(Filename)\Library_ID, "Init", @Plugins()\Plugin_Info, @Plugin_Function)
-        
+
         If Plugins(Filename)\Plugin_Info\Version <> #Plugin_Version
             Plugins()\Loaded = #True
             Plugins()\Valid = #False
@@ -1365,10 +1463,10 @@ Procedure Plugin_Thread(*Dummy)
         Delay(100)
     ForEver
 EndProcedure
-; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 1307
-; FirstLine = 1067
-; Folding = 8---0----e+
+; IDE Options = PureBasic 5.30 (Linux - x64)
+; CursorPosition = 119
+; FirstLine = 115
+; Folding = 8---0-----8-
 ; EnableXP
 ; DisableDebugger
 ; CompileSourceDirectory

@@ -137,6 +137,7 @@ XIncludeFile "Shared Includes/Main_Structures.pbi"
 Global NewList Player_List.Player_List()
 Global NewList Map_Data.Map_Data()
 Global NewList Entity.Entity()
+Global Running = 0
 Global FreeID.w = 0 ; For CPE stuff.
 Global NextID.w = 0
 ; ########################################## Ladekram / Loading ############################################
@@ -250,7 +251,6 @@ Declare Font_Draw_Text_Player(*Player.Player_List, Font_ID.s, Map_ID, X, Y, Z, V
 
 Declare Command_Do(Client_ID, Input.s)
 
-Declare Answer_Do()
 
 Declare Plugin_Event_Block_Physics(Destination.s, *Map_Data.Map_Data, X, Y, Z)
 Declare Plugin_Event_Block_Create(Destination.s, *Map_Data.Map_Data, X, Y, Z, Old_Block.a, *Client.Network_Client)
@@ -341,7 +341,8 @@ XIncludeFile "Includes/Network.pbi"
 XIncludeFile "Includes/Error.pbi"
 XIncludeFile "Includes/System.pbi"
 XIncludeFile "Includes/Block.pbi"
-XIncludeFile "Includes/GZip.pbi"
+XIncludeFile "Includes/NBT.pbi"
+;XIncludeFile "Includes/ClassicWorld.pbi"
 XIncludeFile "Includes/Location.pbi"
 XIncludeFile "Includes/Teleporter.pbi"
 XIncludeFile "Includes/Rank.pbi"
@@ -356,7 +357,7 @@ XIncludeFile "Includes/Chat.pbi"
 XIncludeFile "Includes/Build_Mode.pbi"
 XIncludeFile "Includes/Plugin.pbi"
 XIncludeFile "Includes/Command.pbi"
-XIncludeFile "Includes/Answer.pbi"
+;XIncludeFile "Includes/Answer.pbi"
 XIncludeFile "Includes/TMessage.pbi"
 XIncludeFile "Includes/Font.pbi"
 XIncludeFile "Includes/Undo.pbi"
@@ -379,14 +380,14 @@ Language_Strings_Load(Files_File_Get("Language_Strings"))
 Network_Settings\Port = 25565
 Network_Load(Files_File_Get("Network"))
       
-GZip_Init()
+;GZip_Init()
 
 Player_Load(Files_File_Get("Player"))
 Player_List_Load(Files_File_Get("Playerlist"))
 Player_List_Load_Old("Data/Playerlist.txt") ; Load old playerlist
 Block_Load(Files_File_Get("Block"))
 Command_Load(Files_File_Get("Command"))
-Answer_Load(Files_File_Get("Answer"))
+;Answer_Load(Files_File_Get("Answer"))
 Location_Load(Files_File_Get("Location"))
 Rank_Load(Files_File_Get("Rank"))
 TMessage_Load(Files_File_Get("Timed_Messages"))
@@ -406,8 +407,9 @@ Watchdog_Thread_ID_Set("Client_Login", Client_Main\Login_Thread_ID)
 Watchdog_Thread_ID_Set("Plugin_Main", Plugin_Main\Plugin_Thread_ID) ; -- New!
 
 ; ########################################## Hautpschleife / Main Loop ##########################################
+Running = 1
 
-Repeat
+While Running = #True
   
   LockMutex(Main\Mutex)
   
@@ -421,13 +423,13 @@ Repeat
   
   Delay(3) ; ############## Sicherer Wartebereich / Safe Waiting Area
   
-ForEver
+WEnd
 
 ; ########################################## Ende / End ##########################################
-; IDE Options = PureBasic 5.30 (Windows - x64)
+; IDE Options = PureBasic 5.30 (Linux - x64)
 ; ExecutableFormat = Console
-; CursorPosition = 154
-; FirstLine = 145
+; CursorPosition = 425
+; FirstLine = 378
 ; Folding = -
 ; EnableThread
 ; EnableXP

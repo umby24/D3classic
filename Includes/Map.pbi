@@ -12,16 +12,16 @@
 #Map_Block_Element_Size = 4
 
 Structure Map_Main
-  Blockchanging_Thread_ID.i   ; ID des Blockchanging-Threads
-  Physic_Thread_ID.i          ; ID des Physic-Threads
-  Action_Thread_ID.i          ; ID des Action-Threads
-  Save_File.b                 ; Zeigt an, ob gespeichert werden soll (Map-Liste)
-  Save_File_Timer.l           ; Zeigt an, ob gespeichert werden soll (Map-Liste)
-  Temp_Filename.s             ; Temporärer Dateiname für Threadübergabe
-  Temp_ID.i                   ; Temporäre ID für Threadübergabe
-  Temp_Overview_Filename.s    ; Temporärer Dateiname für Threadübergabe
-  File_Date_Last.l            ; Datum letzter Änderung, bei Änderung speichern
-  Timer_Stats.l               ; Timer für die HTML-Statistiken
+  Blockchanging_Thread_ID.i   ; ID of Blockchanging-Threads
+  Physic_Thread_ID.i          ; ID of Physic-Threads
+  Action_Thread_ID.i          ; ID of Action Thread
+  Save_File.b                 ; Same as below?? (Map-Liste)
+  Save_File_Timer.l           ; Indicates if you want to save (Map-Liste)
+  Temp_Filename.s             ; Temp filename for thread transfer
+  Temp_ID.i                   ; Temp ID for Thread transfer
+  Temp_Overview_Filename.s    ; Temporary filename for thread transfer
+  File_Date_Last.l            ; Date of last update, saves in case of change
+  Timer_Stats.l               ; Timer for HTML Stats
 EndStructure
 
 Global Map_Main.Map_Main
@@ -41,7 +41,7 @@ Structure Map_Block         ; Blocks, aus welchen die Karte besteht
 EndStructure
 
 ; #######################################################
-; !!! Strukturen befinden sich in Main_Structures.pbi !!!
+; !!! Structure Defined in Main_Structures.pbi !!!
 ; #######################################################
 
 Structure Map_Action_List
@@ -415,7 +415,8 @@ Procedure Map_Add(Map_ID, X, Y, Z, Name.s)
         EndIf
       EndIf
     EndIf
-  EndIf
+EndIf
+
   ProcedureReturn Map_ID
 EndProcedure
 
@@ -818,7 +819,8 @@ Procedure Map_Load(Map_ID, Directory.s) ; Dekomprimiert und lädt die Information
         Map_Data()\Weather = ReadPreferenceInteger("Allow_Weatherchange", 1)
         Map_Data()\JumpHeight = ReadPreferenceInteger("Jumpeheight", -1)
         
-        If GZip_Decompress_From_File(Filename_Data, Map_Data()\Data, Map_Size*#Map_Block_Element_Size) = Map_Size*#Map_Block_Element_Size
+        dSize = GZip_Decompress_From_File(Filename_Data, Map_Data()\Data, Map_Size*#Map_Block_Element_Size)
+        If dSize = Map_Size*#Map_Block_Element_Size
           Undo_Clear_Map(Map_Data()\ID)
           
           For i = 0 To 255
@@ -844,7 +846,8 @@ Procedure Map_Load(Map_ID, Directory.s) ; Dekomprimiert und lädt die Information
           
           Log_Add("Map", Lang_Get("", "Map loaded", Filename_Data, Str(Map_Data()\Size_X), Str(Map_Data()\Size_Y), Str(Map_Data()\Size_Z)), 0, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
           ProcedureResult = 1
-        Else
+      Else
+          Log_Add("DEBUG", Str(dSize) + ":" + Str(Map_Size*#Map_Block_Element_Size), 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
           Log_Add("Map", Lang_Get("", "Map not loaded: Filesize is wrong", Filename_Data), 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
         EndIf
       EndIf
@@ -1586,7 +1589,7 @@ Procedure Map_Env_Colors_Change(*Map_Data.Map_Data, Red, Green, Blue, Type)
     If Not *Map_Data
         ProcedureReturn
     EndIf
-    
+    PrintN(Str(Red))
     *Map_Data\ColorsSet = #True
     
     Select Type
@@ -2067,7 +2070,7 @@ Procedure Map_Physic_Thread(*Dummy) ; Thread, für Physik
     
     ForEach Map_Data()
       If Map_Data()\Physic_Stopped = 0
-        SortStructuredList(Map_Data()\Map_Block_Do(), #PB_Sort_Ascending, OffsetOf(Map_Block_Do\Time), #PB_Sort_Long)
+        SortStructuredList(Map_Data()\Map_Block_Do(), #PB_Sort_Ascending, OffsetOf(Map_Block_Do\Time), #PB_Long)
         
         Watchdog_Watch("Map_Physic", "After: SortStructuredList(Map_Block_Do())", 1)
         
@@ -2230,10 +2233,10 @@ Procedure Map_Main()
 EndProcedure
 
 RegisterCore("Map", 1000, #Null, #Null, @Map_Main())
-; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 280
-; FirstLine = 241
-; Folding = f79PAeQA-
+; IDE Options = PureBasic 5.30 (Linux - x64)
+; CursorPosition = 1591
+; FirstLine = 1196
+; Folding = f79fAeQQ-
 ; EnableThread
 ; EnableXP
 ; DisableDebugger

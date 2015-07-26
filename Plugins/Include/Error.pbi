@@ -12,8 +12,11 @@ Global Error_Main.Error_Main
 ; ########################################## Proceduren ##########################################
 
 Procedure Error_Handler()
+  *MyMem = AllocateMemory(128)
+  Files_File_Get("Error_HTML", *MyMem)
+  Filename.s = PeekS(*MyMem)
+  FreeMemory(*MyMem)
   
-  Filename.s = PeekS(Files_File_Get("Error_HTML"))
   Filename.s = ReplaceString(Filename, "[i]", Str(Error_Main\Counter))
   Error_Main\Counter + 1
   
@@ -106,9 +109,9 @@ Procedure Error_Enable()
   Error_Main\Counter = 10
   OnErrorCall(@Error_Handler())
 EndProcedure
-; IDE Options = PureBasic 4.51 (Windows - x86)
-; CursorPosition = 43
-; FirstLine = 40
+; IDE Options = PureBasic 5.30 (Linux - x64)
+; CursorPosition = 18
+; FirstLine = 11
 ; Folding = -
 ; EnableXP
 ; DisableDebugger

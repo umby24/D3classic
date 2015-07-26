@@ -23,19 +23,25 @@
 
 ; ################################################### Konstants #############################################
 
-#Plugin_Version = 509
+#Plugin_Version = 510
 
 ; ################################################### Variables/Structures ##################################
+Macro InsertPadding(nr)
+ CompilerIf   #PB_Compiler_Processor = #PB_Processor_x64
+    padding#nr.l
+ CompilerEndIf
+EndMacro
 
 Structure Plugin_Info
   Name.s{16}                  ; Name of the Plugin (16 Chars!)
   Version.l                   ; Pluginversion (Wird geändert wenn ältere Plugins nicht mehr kompatibel sind)
+  ;InsertPadding(1)
   Author.s{16}                ; Author of the Plugin (16 Chars!)
 EndStructure
 
 Structure Plugin_Result_Element
   *Pointer
-  ID.l
+  ID.i
 EndStructure
 
 XIncludeFile "../../Shared Includes/Plugin_Functions.pbi"
@@ -54,7 +60,7 @@ Prototype   Client_Kick(Client_ID, Message.s, Hide)
 Prototype   Network_Settings_Get_Port()
 
 Prototype   Build_Mode_Set(Client_ID, Build_Mode.s)
-Prototype.i Build_Mode_Get(Client_ID)
+Prototype   Build_Mode_Get(Client_ID, *Result)
 Prototype   Build_Mode_State_Set(Client_ID, Build_State)
 Prototype   Build_Mode_State_Get(Client_ID)
 Prototype   Build_Mode_Coordinate_Set(Client_ID, Index, X, Y, Z)
@@ -66,7 +72,7 @@ Prototype   Build_Mode_Long_Get(Client_ID, Index)
 Prototype   Build_Mode_Float_Set(Client_ID, Index, Value.f)
 Prototype.f Build_Mode_Float_Get(Client_ID, Index)
 Prototype   Build_Mode_String_Set(Client_ID, Index, Value.s)
-Prototype.i Build_Mode_String_Get(Client_ID, Index)
+Prototype   Build_Mode_String_Get(Client_ID, Index, *Result)
 
 Prototype   Build_Line_Player(Player_Number, Map_ID, X_0, Y_0, Z_0, X_1, Y_1, Z_1, Material, Priority, Undo, Physic)
 Prototype   Build_Box_Player(Player_Number, Map_ID, X_0, Y_0, Z_0, X_1, Y_1, Z_1, Material, Replace_Material, Hollow, Priority, Undo, Physic)
@@ -83,7 +89,7 @@ Prototype   Entity_Add(Name.s, Map_ID, X.f, Y.f, Z.f, Rotation.f, Look.f)
 Prototype   Entity_Delete(ID)
 Prototype   Entity_Resend(ID)
 Prototype   Entity_Message_2_Clients(ID, Message.s)
-Prototype.i Entity_Displayname_Get(ID)
+Prototype   Entity_Displayname_Get(ID, *Result)
 Prototype   Entity_Displayname_Set(ID, Prefix.s, Name.s, Suffix.s)
 Prototype   Entity_Position_Set(ID, Map_ID, X.f, Y.f, Z.f, Rotation.f, Look.f, Priority.a, Send_Own_Client.a)
 Prototype   Entity_Kill(ID)
@@ -95,7 +101,7 @@ Prototype   Player_Get_Players_Max()
 Prototype   Player_Attribute_Long_Set(Player_Number, Attribute.s, Value.l)
 Prototype   Player_Attribute_Long_Get(Player_Number, Attribute.s)
 Prototype   Player_Attribute_String_Set(Player_Number, Attribute.s, Value.s)
-Prototype.i Player_Attribute_String_Get(Player_Number, Attribute.s)
+Prototype   Player_Attribute_String_Get(Player_Number, Attribute.s, *Result)
 Prototype   Player_Inventory_Set(Player_Number, Material, Number)
 Prototype   Player_Inventory_Get(Player_Number, Material)
 Prototype   Player_Rank_Set(Player_Number, Rank, Reason.s)
@@ -148,19 +154,19 @@ Prototype   Teleporter_Delete(*Map_Data.Map_Data, ID.s)
 
 Prototype   System_Message_Network_Send_2_All(Map_ID, Message.s, Type=0)
 Prototype   System_Message_Network_Send(Client_ID, Message.s, Type=0)
-Prototype.i System_Get_Server_Name()
+Prototype   System_Get_Server_Name(*Result)
 
 Prototype   Network_Out_Block_Set(Client_ID, X, Y, Z, Type.a)
 
 Prototype   Main_LockMutex()
 Prototype   Main_UnlockMutex()
 
-Prototype.i Lang_Get(Language.s, Input.s, Field_0.s = "", Field_1.s = "", Field_2.s = "", Field_3.s = "")
+Prototype  Lang_Get(Language.s, Input.s, *Result, Field_0.s = "", Field_1.s = "", Field_2.s = "", Field_3.s = "")
 
-Prototype.i Files_File_Get(File.s)
-Prototype.i Files_Folder_Get(Name.s)
+Prototype  Files_File_Get(File.s, *Result)
+Prototype  Files_Folder_Get(Name.s, *Result)
 
-Prototype   Log_Add(Module.s, Message.s, Type, PB_File.s, PB_Line, PB_Procedure.s)
+Prototype  Log_Add(wModule.s, Message.s, Type, PB_File.s, PB_Line, PB_Procedure.s)
   
 Prototype CPE_Selection_Cuboid_Add(Client_ID, SelectionID, Label.s, StartX.w, StartY.w, StartZ.w, EndX.w, EndY.w, EndZ.w, Red.w, Green.w, Blue.w, Opacity.w)
 Prototype CPE_Selection_Cuboid_Delete(Client_ID, Selection_ID)
@@ -329,9 +335,9 @@ Procedure Define_Prototypes(*Pointer.Plugin_Function)
   Global Hotkey_Remove.Hotkey_Remove = *Pointer\Hotkey_Remove
   Global Map_HackControl_Set.Map_HackControl_Set = *Pointer\Map_HackControl_Set
 EndProcedure
-; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 149
-; FirstLine = 108
+; IDE Options = PureBasic 5.30 (Linux - x64)
+; CursorPosition = 168
+; FirstLine = 164
 ; Folding = -
 ; EnableXP
 ; DisableDebugger

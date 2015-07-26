@@ -183,11 +183,11 @@ Procedure Watchdog_Thread(*Dummy)
   ForEver
 EndProcedure
 
-Procedure Watchdog_Thread_ID_Set(Module.s, Thread_ID)
+Procedure Watchdog_Thread_ID_Set(wModule.s, Thread_ID)
     LockMutex(Watchdog_Main\Mutex_ID)
     
   ForEach Watchdog_Module()
-    If Watchdog_Module()\Name = Module
+    If Watchdog_Module()\Name = wModule
       Watchdog_Module()\Thread_ID = Thread_ID
     EndIf
   Next
@@ -195,12 +195,12 @@ Procedure Watchdog_Thread_ID_Set(Module.s, Thread_ID)
   UnlockMutex(Watchdog_Main\Mutex_ID)
 EndProcedure
 
-Macro Watchdog_Watch(Module, Message, State)
+Macro Watchdog_Watch(wModule, Message, State)
     LockMutex(Watchdog_Main\Mutex_ID)
     
     ForEach Watchdog_Module()
       
-    If Watchdog_Module()\Name = Module
+    If Watchdog_Module()\Name = wModule
         Watchdog_Module()\Timeout = Milliseconds()-Watchdog_Module()\Time_Watch
         
       If Watchdog_Module()\Timeout_Biggest < Watchdog_Module()\Timeout
@@ -228,9 +228,9 @@ EndMacro
 Procedure Watchdog_Main()
   
 EndProcedure
-; IDE Options = PureBasic 5.00 (Linux - x86)
-; CursorPosition = 157
-; FirstLine = 137
+; IDE Options = PureBasic 5.30 (Linux - x64)
+; CursorPosition = 202
+; FirstLine = 185
 ; Folding = -
 ; EnableXP
 ; DisableDebugger

@@ -137,10 +137,10 @@ CompilerElse
     EndImport
     Import "/usr/lib/libdl.so"
     EndImport
-    ImportC "../../Librarys/lib/lua5.1.x86.a" ;     Linux x86
+    ImportC "../../../Librarys/x86/liblua5.1.so" ;     Linux x86
   CompilerElse
     #Lua_Import_Prefix = ""
-    ImportC "../../Librarys/lib/lua5.1.x64.a" ;     Linux x64
+    ImportC "../../../Librarys/x64/liblua5.1.so" ;     Linux x64
   CompilerEndIf
 CompilerEndIf
   ; lua.h
@@ -488,8 +488,10 @@ ProcedureC Lua_CMD_Build_Mode_Get(Lua_State)
   Client_ID = lua_tointeger(Lua_State, 1)
   
   Result.s = ""
-  
-  Result = PeekS(Build_Mode_Get(Client_ID))
+  *myMem = AllocateMemory(128)
+  Build_Mode_Get(Client_ID, *myMem)
+  Result = PeekS(*myMem)
+  FreeMemory(*myMem)
   
   lua_pushstring(Lua_State, Result)
   
@@ -614,8 +616,10 @@ ProcedureC Lua_CMD_Build_Mode_String_Get(Lua_State)
   Index = lua_tointeger(Lua_State, 2)
   
   Result.s = ""
-  
-  Result = PeekS(Build_Mode_String_Get(Client_ID, Index))
+  *myString = AllocateMemory(128)
+  Build_Mode_String_Get(Client_ID, Index, *myString)
+  Result = PeekS(*myString)
+  FreeMemory(*myString)
   
   lua_pushstring(Lua_State, Result)
   
@@ -1098,7 +1102,11 @@ ProcedureC Lua_CMD_Player_Attribute_String_Get(Lua_State)
   Player_Number = lua_tointeger(Lua_State, 1)
   lua_tostring(Attribute.s, Lua_State, 2) ;Attribute.s = PeekS(lua_tolstring(Lua_State, 2, #Null))
   
-  Result.s = PeekS(Player_Attribute_String_Get(Player_Number, Attribute))
+  *myMem = AllocateMemory(128)
+  Player_Attribute_String_Get(Player_Number, Attribute, *myMem)
+  
+  Result.s = PeekS(*myMem)
+  FreeMemory(*myMem)
   
   lua_pushstring(Lua_State, Result)
   
@@ -2290,8 +2298,10 @@ ProcedureC Lua_CMD_Language_Get(Lua_State)
   ;If *String_2 : Field_2.s = PeekS(*String_2) : EndIf
   ;*String_3 = lua_tolstring(Lua_State, 6, #Null)
   ;If *String_3 : Field_3.s = PeekS(*String_3) : EndIf
-  
-  Result.s = PeekS(Lang_Get(Language, Input, Field_0, Field_1, Field_2, Field_3))
+  *myMem = AllocateMemory(128)
+  Lang_Get(Language, Input, *myMem, Field_0, Field_1, Field_2, Field_3)
+  Result.s = PeekS(*myMem)
+  FreeMemory(*myMem)
   
   lua_pushstring(Lua_State, Result)
   
@@ -2302,8 +2312,10 @@ EndProcedure
 
 ProcedureC Lua_CMD_Files_File_Get(Lua_State)
   lua_tostring(File.s, Lua_State, 1) ;File.s = PeekS(lua_tolstring(Lua_State, 1, #Null))
-  
-  Result.s = PeekS(Files_File_Get(File.s))
+  *myMem = AllocateMemory(128)
+  Files_File_Get(File.s, *myMem)
+  Result.s = PeekS(*myMem)
+  FreeMemory(*myMem)
   
   lua_pushstring(Lua_State, Result)
   
@@ -2312,8 +2324,10 @@ EndProcedure
 
 ProcedureC Lua_CMD_Files_Folder_Get(Lua_State)
   lua_tostring(Name.s, Lua_State, 1) ;Name.s = PeekS(lua_tolstring(Lua_State, 1, #Null))
-  
-  Result.s = PeekS(Files_Folder_Get(Name.s))
+  *myMem = AllocateMemory(128)
+  Files_Folder_Get(Name.s, *myMem)
+  Result.s = PeekS(*myMem)
+  FreeMemory(*myMem)
   
   lua_pushstring(Lua_State, Result)
   
@@ -2707,7 +2721,11 @@ Procedure Lua_Event_Select(ID.s, Log.a=0)
   EndIf
   
   If Log
-    Temp.s = PeekS(Lang_Get("", "Can't find Lua_Event()\ID = '[Field_0]'", ID))
+    *myMem = AllocateMemory(128)
+    Lang_Get("", "Can't find Lua_Event()\ID = '[Field_0]'", *myMem, ID)
+    Temp.s = PeekS(*myMem)
+    FreeMemory(*myMem)
+    
     Log_Add("Lua_Event", Temp.s, 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
   EndIf
   
@@ -3413,13 +3431,22 @@ Procedure Lua_Do_Function(Function.s, Arguments, Results)
     Select Result
       Case #LUA_ERRRUN
         Error.s = PeekS(lua_tolstring(Lua_Main\State, -1, #Null))
-        Temp.s = PeekS(Lang_Get("", "Runtimeerror in [Field_0]", Function, Error))
+        *myMem = AllocateMemory(128)
+        Lang_Get("", "Runtimeerror in [Field_0]", *myMem, Function, Error)
+        Temp.s = PeekS(*myMem)
+        FreeMemory(*myMem)
         Log_Add("Lua-Plugin", Temp.s, 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
       Case #LUA_ERRMEM
-        Temp.s = PeekS(Lang_Get("", "Memoryallocationerror in [Field_0]", Function))
+        *myMem = AllocateMemory(128)
+        Lang_Get("", "Memoryallocationerror in [Field_0]", *myMem, Function)
+        Temp.s = PeekS(*myMem)
+        FreeMemory(*myMem)
         Log_Add("Lua-Plugin", Temp.s, 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
       Case #LUA_ERRERR
-        Temp.s = PeekS(Lang_Get("", "Error in [Field_0]", Function))
+        *myMem = AllocateMemory(128)
+        Lang_Get("", "Error in [Field_0]", *myMem, Function)
+        Temp.s = PeekS(*myMem)
+        FreeMemory(*myMem)
         Log_Add("Lua-Plugin", Temp.s, 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
       
     EndSelect
@@ -3441,13 +3468,22 @@ Procedure Lua_Do_String(String.s)
       
       Select Result
         Case #LUA_ERRRUN
-          Temp.s = PeekS(Lang_Get("", "Runtimeerror with [Field_0]", String, Error))
+          *myMem = AllocateMemory(128)
+          Lang_Get("", "Runtimeerror with [Field_0]", *myMem, String, Error)
+          Temp.s = PeekS(*myMem)
+          FreeMemory(*myMem)
           Log_Add("Lua-Plugin", Temp.s, 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
         Case #LUA_ERRMEM
-          Temp.s = PeekS(Lang_Get("", "Memoryallocationerror with [Field_0]", String, Error))
+          *myMem = AllocateMemory(128)
+          Lang_Get("", "Memoryallocationerror with [Field_0]", *myMem, String, Error)
+          Temp.s = PeekS(*myMem)
+          FreeMemory(*myMem)
           Log_Add("Lua-Plugin", Temp.s, 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
         Case #LUA_ERRERR
-          Temp.s = PeekS(Lang_Get("", "Error with [Field_0]", String, Error))
+          *myMem = AllocateMemory(128)
+          Lang_Get("", "Error with [Field_0]", *myMem, String, Error)
+          Temp.s = PeekS(*myMem)
+          FreeMemory(*myMem)
           Log_Add("Lua-Plugin", Temp.s, 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
       
       EndSelect
@@ -3476,13 +3512,22 @@ Procedure Lua_Do_File(Filename.s)
       
       Select Result
         Case #LUA_ERRRUN
-          Temp.s = PeekS(Lang_Get("", "Runtimeerror in [Field_0]", Filename, Error))
+          *myMem = AllocateMemory(128)
+          Lang_Get("", "Runtimeerror in [Field_0]", *myMem, Filename, Error)
+          Temp.s = PeekS(*myMem)
+          FreeMemory(*myMem)
           Log_Add("Lua-Plugin", Temp.s, 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
         Case #LUA_ERRMEM
-          Temp.s = PeekS(Lang_Get("", "Memoryallocationerror in [Field_0]", Filename, Error))
+          *myMem = AllocateMemory(128)
+          Lang_Get("", "Memoryallocationerror in [Field_0]", *myMem, Filename, Error)
+          Temp.s = PeekS(*myMem)
+          FreeMemory(*myMem)
           Log_Add("Lua-Plugin", Temp.s, 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
         Case #LUA_ERRERR
-          Temp.s = PeekS(Lang_Get("", "Error in [Field_0]", Filename, Error))
+          *myMem = AllocateMemory(128)
+          Lang_Get("", "Error in [Field_0]", *myMem, Filename, Error)
+          Temp.s = PeekS(*myMem)
+          FreeMemory(*myMem)
           Log_Add("Lua-Plugin", Temp.s, 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
       
       EndSelect
@@ -3529,12 +3574,11 @@ Procedure Lua_Check_New_Files(Directory.s)
   EndIf
   
 EndProcedure
-
-; IDE Options = PureBasic 5.00 (Windows - x64)
-; ExecutableFormat = Shared Dll
-; CursorPosition = 3463
-; FirstLine = 3446
-; Folding = ---------------------------------
+; IDE Options = PureBasic 5.30 (Linux - x64)
+; ExecutableFormat = Shared .so
+; CursorPosition = 139
+; FirstLine = 116
+; Folding = -------------------------------------
 ; EnableThread
 ; EnableXP
 ; EnableOnError

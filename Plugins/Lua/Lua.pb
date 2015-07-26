@@ -391,7 +391,10 @@ ProcedureCDLL Main()
       
       ;Temp.s = PeekS(Files_Folder_Get("Lua"))
       ;Lua_Check_New_Files(Temp)
-      Lua_Check_New_Files(PeekS(Files_Folder_Get("Lua")))
+      *MyMem = AllocateMemory(128)
+      Files_Folder_Get("Lua", *MyMem)
+      Lua_Check_New_Files(PeekS(*MyMem))
+      FreeMemory(*MyMem)
       
       ForEach Lua_File()
         File_Date = GetFileDate(Lua_File()\Filename, #PB_Date_Modified)
@@ -416,14 +419,14 @@ ProcedureCDLL Main()
   Next
   
 EndProcedure
-; IDE Options = PureBasic 5.00 (Windows - x64)
-; ExecutableFormat = Shared Dll
-; CursorPosition = 399
-; FirstLine = 377
+; IDE Options = PureBasic 5.30 (Linux - x64)
+; ExecutableFormat = Shared .so
+; CursorPosition = 397
+; FirstLine = 374
 ; Folding = ------
 ; EnableThread
 ; EnableOnError
-; Executable = lua.x86.dll
+; Executable = lua.x64.so
 ; DisableDebugger
 ; CompileSourceDirectory
-; Compiler = PureBasic 5.00 (Windows - x86)
+; Compiler = PureBasic 5.30 (Linux - x64)

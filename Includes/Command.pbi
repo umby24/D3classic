@@ -2182,7 +2182,7 @@ Procedure Command_Plugin_Unload()
 EndProcedure
 
 Procedure Command_Crash()
-  a = b / c
+  Running = 0
 EndProcedure
 
 ;-################################################################################################
@@ -2244,9 +2244,9 @@ Procedure Command_Do(Client_ID, Input.s) ; Parses and passes the command on to t
     Next
     
       If Found = 0
-        If Answer_Do() = 0
+        ;If Answer_Do() = 0
           System_Message_Network_Send(Client_ID, Lang_Get("", "Ingame: Can't find command '[Field_0]'", StringField(Input, 1, "")))
-        EndIf
+        ;EndIf
       EndIf
       
     EndIf
@@ -2272,10 +2272,10 @@ Procedure Command_Main()
   EndProcedure
   
   RegisterCore("Command", 1000, #Null, #Null, @Command_Main())
-; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 2167
-; FirstLine = 2142
-; Folding = 0-----------
+; IDE Options = PureBasic 5.30 (Linux - x64)
+; CursorPosition = 2184
+; FirstLine = 2161
+; Folding = 0------------
 ; EnableXP
 ; DisableDebugger
 ; CompileSourceDirectory

@@ -90,11 +90,11 @@ Procedure Log_Load()
   
 EndProcedure
 
-Procedure Log_Add(Module.s, Message.s, Type, PB_File.s, PB_Line, PB_Procedure.s) ; Saves a log entry
+Procedure Log_Add(wModule.s, Message.s, Type, PB_File.s, PB_Line, PB_Procedure.s) ; Saves a log entry
   LastElement(Log_Message())
   
   If AddElement(Log_Message())
-    Log_Message()\Module = Module
+    Log_Message()\Module = wModule
     Log_Message()\Message = Message
     Log_Message()\PB_File = GetFilePart(PB_File)
     Log_Message()\PB_Line = PB_Line
@@ -113,17 +113,17 @@ Procedure Log_Add(Module.s, Message.s, Type, PB_File.s, PB_Line, PB_Procedure.s)
     Message = ReplaceString(Message, Chr(7), " ")
     
     If Log_Main\Gui = 0
-      PrintN(LSet(GetFilePart(PB_File), 15)+"| "+Module+": "+Trim(Message))
+      PrintN(LSet(GetFilePart(PB_File), 15)+"| "+wModule+": "+Trim(Message))
     Else
-      PrintN(GetFilePart(PB_File) + "|" + Str(PB_Line) + "|" + Module + "|" + Message)
+      PrintN(GetFilePart(PB_File) + "|" + Str(PB_Line) + "|" + wModule + "|" + Message)
     EndIf
     
   EndIf
   
 EndProcedure
-; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 30
-; FirstLine = 13
+; IDE Options = PureBasic 5.30 (Linux - x64)
+; CursorPosition = 117
+; FirstLine = 79
 ; Folding = -
 ; EnableXP
 ; DisableDebugger

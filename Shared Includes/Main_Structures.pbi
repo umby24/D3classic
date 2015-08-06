@@ -182,7 +182,7 @@ Structure Entity
   Build_Material.w            ; Blocktyp, mit welchem gebaut wird. -1 = Normal bauen
   Build_Mode.s                ; Modus, bei dem die Aktion durch Bauen beschrieben wird. (0: Normal >0: Box, Sphere...)
   Build_State.a               ; Status beim Bauen... (Welcher Punkt...)
-  Build_Variable.Build_Variable [#Client_Player_Buildmode_Variables] ; Variablen für den Buildmode (Rang einer RBox...)
+  Build_Variable.Build_Variable [#Client_Player_Buildmode_Variables] ; Variables for build modes (Rang einer RBox...)
 EndStructure
 
 ; ################################################################################################################
@@ -301,9 +301,9 @@ Structure EventStruct
     Timer.i
     Time.i
 EndStructure
-; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 189
-; Folding = AA5
+; IDE Options = PureBasic 5.30 (Linux - x64)
+; CursorPosition = 181
+; FirstLine = 165
 ; EnableXP
 ; DisableDebugger
 ; CompileSourceDirectory

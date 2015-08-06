@@ -84,13 +84,13 @@ EndEnumeration
 
 Structure Lua_Main
   State.i                     ; Lua-State von luaL_NewState()
-  Timer_File_Check.l          ; Timer f?r das ?berpr?fen der Dateigr??e
+  Timer_File_Check.l          ; Timer für das überprüfen der Dateigröße
 EndStructure
 Global Lua_Main.Lua_Main
 
 Structure Lua_File
   Filename.s
-  File_Date_Last.l            ; Datum letzter ?nderung
+  File_Date_Last.l            ; Datum letzter Änderung
 EndStructure
 Global NewList Lua_File.Lua_File()
 
@@ -125,10 +125,10 @@ Declare Lua_Event_Delete(ID.s)
 CompilerIf #PB_Compiler_OS = #PB_OS_Windows
   CompilerIf #PB_Compiler_Processor = #PB_Processor_x86  
     #Lua_Import_Prefix = "_"
-    ImportC "../../Librarys/lib/lua5.1.x86.lib" ; Windows x86
+    ImportC "../../../Librarys/lib/lua5.1.x86.lib" ; Windows x86
   CompilerElse
     #Lua_Import_Prefix = ""
-    ImportC "../../Librarys/lib/lua5.1.x64.lib" ; Windows x64
+    ImportC "../../../Librarys/lib/lua5.1.x64.lib" ; Windows x64
   CompilerEndIf
 CompilerElse
   CompilerIf #PB_Compiler_Processor = #PB_Processor_x86  
@@ -392,7 +392,7 @@ ProcedureC Lua_CMD_Client_Get_Table(Lua_State)
   
   lua_pushinteger(Lua_State, Elements)
   
-  ProcedureReturn 2 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 2 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Client_Get_Map_ID(Lua_State)
@@ -407,7 +407,7 @@ ProcedureC Lua_CMD_Client_Get_Map_ID(Lua_State)
   
   lua_pushinteger(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Client_Get_IP(Lua_State)
@@ -422,7 +422,7 @@ ProcedureC Lua_CMD_Client_Get_IP(Lua_State)
   
   lua_pushstring(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Client_Get_Login_Name(Lua_State)
@@ -437,7 +437,7 @@ ProcedureC Lua_CMD_Client_Get_Login_Name(Lua_State)
   
   lua_pushstring(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Client_Get_Logged_In(Lua_State)
@@ -452,7 +452,7 @@ ProcedureC Lua_CMD_Client_Get_Logged_In(Lua_State)
   
   lua_pushinteger(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Client_Get_Entity(Lua_State)
@@ -469,7 +469,7 @@ ProcedureC Lua_CMD_Client_Get_Entity(Lua_State)
   
   lua_pushinteger(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 
@@ -481,7 +481,7 @@ ProcedureC Lua_CMD_Build_Mode_Set(Lua_State)
   
   Build_Mode_Set(Client_ID, Value)
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Build_Mode_Get(Lua_State)
@@ -495,7 +495,7 @@ ProcedureC Lua_CMD_Build_Mode_Get(Lua_State)
   
   lua_pushstring(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Build_Mode_State_Set(Lua_State)
@@ -504,7 +504,7 @@ ProcedureC Lua_CMD_Build_Mode_State_Set(Lua_State)
   
   Build_Mode_State_Set(Client_ID, Value)
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Build_Mode_State_Get(Lua_State)
@@ -516,7 +516,7 @@ ProcedureC Lua_CMD_Build_Mode_State_Get(Lua_State)
   
   lua_pushinteger(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Build_Mode_Coordinate_Set(Lua_State)
@@ -528,7 +528,7 @@ ProcedureC Lua_CMD_Build_Mode_Coordinate_Set(Lua_State)
   
   Build_Mode_Coordinate_Set(Client_ID, Index, X, Y, Z)
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Build_Mode_Coordinate_Get(Lua_State)
@@ -547,7 +547,7 @@ ProcedureC Lua_CMD_Build_Mode_Coordinate_Get(Lua_State)
   lua_pushinteger(Lua_State, Result_Y)
   lua_pushinteger(Lua_State, Result_Z)
   
-  ProcedureReturn 3 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 3 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Build_Mode_Long_Set(Lua_State)
@@ -557,7 +557,7 @@ ProcedureC Lua_CMD_Build_Mode_Long_Set(Lua_State)
   
   Build_Mode_Long_Set(Client_ID, Index, Value)
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Build_Mode_Long_Get(Lua_State)
@@ -570,7 +570,7 @@ ProcedureC Lua_CMD_Build_Mode_Long_Get(Lua_State)
   
   lua_pushinteger(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Build_Mode_Float_Set(Lua_State)
@@ -585,7 +585,7 @@ ProcedureC Lua_CMD_Build_Mode_Float_Set(Lua_State)
   
   Build_Mode_Float_Set(Client_ID, Index, Value)
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Build_Mode_Float_Get(Lua_State)
@@ -598,7 +598,7 @@ ProcedureC Lua_CMD_Build_Mode_Float_Get(Lua_State)
   
   lua_pushnumber(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Build_Mode_String_Set(Lua_State)
@@ -608,7 +608,7 @@ ProcedureC Lua_CMD_Build_Mode_String_Set(Lua_State)
   
   Build_Mode_String_Set(Client_ID, Index, Value)
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Build_Mode_String_Get(Lua_State)
@@ -623,7 +623,7 @@ ProcedureC Lua_CMD_Build_Mode_String_Get(Lua_State)
   
   lua_pushstring(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ;-############################################################
@@ -644,7 +644,7 @@ ProcedureC Lua_CMD_Build_Line_Player(Lua_State)
   
   Build_Line_Player(Player_Number, Map_ID, X_0, Y_0, Z_0, X_1, Y_1, Z_1, Material, Priority, Undo, Physic)
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Build_Box_Player(Lua_State)
@@ -665,7 +665,7 @@ ProcedureC Lua_CMD_Build_Box_Player(Lua_State)
   
   Build_Box_Player(Player_Number, Map_ID, X_0, Y_0, Z_0, X_1, Y_1, Z_1, Material, Replace_Material, Hollow, Priority, Undo, Physic)
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Build_Sphere_Player(Lua_State)
@@ -689,7 +689,7 @@ ProcedureC Lua_CMD_Build_Sphere_Player(Lua_State)
   
   Build_Sphere_Player(Player_Number, Map_ID, X, Y, Z, R, Material, Replace_Material, Hollow, Priority, Undo, Physic)
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Build_Rank_Box(Lua_State)
@@ -705,7 +705,7 @@ ProcedureC Lua_CMD_Build_Rank_Box(Lua_State)
   
   Build_Rank_Box(Map_ID, X_0, Y_0, Z_0, X_1, Y_1, Z_1, Rank, Max_Rank)
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ;-############################################################
@@ -735,7 +735,7 @@ ProcedureC Lua_CMD_Font_Draw_Text(Lua_State)
   
   Font_Draw_Text(Player_Number, Font_ID, Map_ID, X, Y, Z, V_X, V_Y, String, Material_F, Material_B)
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Font_Draw_Text_Player(Lua_State)
@@ -766,7 +766,7 @@ ProcedureC Lua_CMD_Font_Draw_Text_Player(Lua_State)
     Font_Draw_Text_Player(*Player, Font_ID, Map_ID, X, Y, Z, V_X, V_Y, String, Material_F, Material_B)
   EndIf
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ;-############################################################
@@ -788,7 +788,7 @@ ProcedureC Lua_CMD_Entity_Get_Table(Lua_State)
   
   lua_pushinteger(Lua_State, Elements)
   
-  ProcedureReturn 2 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 2 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Entity_Add(Lua_State)
@@ -829,7 +829,7 @@ ProcedureC Lua_CMD_Entity_Add(Lua_State)
   
   lua_pushinteger(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Entity_Delete(Lua_State)
@@ -837,7 +837,7 @@ ProcedureC Lua_CMD_Entity_Delete(Lua_State)
   
   Entity_Delete(Entity_ID)
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Entity_Get_Player(Lua_State)
@@ -854,7 +854,7 @@ ProcedureC Lua_CMD_Entity_Get_Player(Lua_State)
   
   lua_pushinteger(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Entity_Get_Map_ID(Lua_State)
@@ -869,7 +869,7 @@ ProcedureC Lua_CMD_Entity_Get_Map_ID(Lua_State)
   
   lua_pushinteger(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Entity_Get_X(Lua_State)
@@ -884,7 +884,7 @@ ProcedureC Lua_CMD_Entity_Get_X(Lua_State)
   
   lua_pushnumber(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Entity_Get_Y(Lua_State)
@@ -899,7 +899,7 @@ ProcedureC Lua_CMD_Entity_Get_Y(Lua_State)
   
   lua_pushnumber(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Entity_Get_Z(Lua_State)
@@ -914,7 +914,7 @@ ProcedureC Lua_CMD_Entity_Get_Z(Lua_State)
   
   lua_pushnumber(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Entity_Get_Rotation(Lua_State)
@@ -929,7 +929,7 @@ ProcedureC Lua_CMD_Entity_Get_Rotation(Lua_State)
   
   lua_pushnumber(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Entity_Get_Look(Lua_State)
@@ -944,7 +944,7 @@ ProcedureC Lua_CMD_Entity_Get_Look(Lua_State)
   
   lua_pushnumber(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Entity_Resend(Lua_State)
@@ -952,7 +952,7 @@ ProcedureC Lua_CMD_Entity_Resend(Lua_State)
   
   Entity_Resend(Entity_ID)
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Entity_Message_2_Clients(Lua_State)
@@ -961,7 +961,7 @@ ProcedureC Lua_CMD_Entity_Message_2_Clients(Lua_State)
   
   Entity_Message_2_Clients(Entity_ID, Message)
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Entity_Displayname_Get(Lua_State)
@@ -982,7 +982,7 @@ ProcedureC Lua_CMD_Entity_Displayname_Get(Lua_State)
   lua_pushstring(Lua_State, Result_Name)
   lua_pushstring(Lua_State, Result_Suffix)
   
-  ProcedureReturn 3 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 3 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Entity_Displayname_Set(Lua_State)
@@ -993,7 +993,7 @@ ProcedureC Lua_CMD_Entity_Displayname_Set(Lua_State)
   
   Entity_Displayname_Set(Entity_ID, Prefix, Name, Suffix)
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Entity_Position_Set(Lua_State)
@@ -1034,7 +1034,7 @@ ProcedureC Lua_CMD_Entity_Position_Set(Lua_State)
   
   Entity_Position_Set(Entity_ID, Map_ID, X, Y, Z, Rotation, Look, Priority, Send_Own_Client)
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Entity_Kill(Lua_State)
@@ -1042,7 +1042,7 @@ ProcedureC Lua_CMD_Entity_Kill(Lua_State)
   
   Entity_Kill(Entity_ID)
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ;-############################################################
@@ -1064,7 +1064,7 @@ ProcedureC Lua_CMD_Player_Get_Table(Lua_State)
   
   lua_pushinteger(Lua_State, Elements)
   
-  ProcedureReturn 2 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 2 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Player_Attribute_Long_Set(Lua_State)
@@ -1074,7 +1074,7 @@ ProcedureC Lua_CMD_Player_Attribute_Long_Set(Lua_State)
   
   Player_Attribute_Long_Set(Player_Number, Attribute, Value)
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Player_Attribute_Long_Get(Lua_State)
@@ -1085,7 +1085,7 @@ ProcedureC Lua_CMD_Player_Attribute_Long_Get(Lua_State)
   
   lua_pushinteger(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Player_Attribute_String_Set(Lua_State)
@@ -1095,7 +1095,7 @@ ProcedureC Lua_CMD_Player_Attribute_String_Set(Lua_State)
   
   Player_Attribute_String_Set(Player_Number, Attribute, String)
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Player_Attribute_String_Get(Lua_State)
@@ -1110,7 +1110,7 @@ ProcedureC Lua_CMD_Player_Attribute_String_Get(Lua_State)
   
   lua_pushstring(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Player_Inventory_Set(Lua_State)
@@ -1120,7 +1120,7 @@ ProcedureC Lua_CMD_Player_Inventory_Set(Lua_State)
   
   Player_Inventory_Set(Player_Number, Material, Number)
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Player_Inventory_Get(Lua_State)
@@ -1131,7 +1131,7 @@ ProcedureC Lua_CMD_Player_Inventory_Get(Lua_State)
   
   lua_pushinteger(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Player_Get_Prefix(Lua_State)
@@ -1141,7 +1141,7 @@ ProcedureC Lua_CMD_Player_Get_Prefix(Lua_State)
   
   lua_pushstring(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Player_Get_Name(Lua_State)
@@ -1151,7 +1151,7 @@ ProcedureC Lua_CMD_Player_Get_Name(Lua_State)
   
   lua_pushstring(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Player_Get_Suffix(Lua_State)
@@ -1161,7 +1161,7 @@ ProcedureC Lua_CMD_Player_Get_Suffix(Lua_State)
   
   lua_pushstring(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Player_Get_IP(Lua_State)
@@ -1176,7 +1176,7 @@ ProcedureC Lua_CMD_Player_Get_IP(Lua_State)
   
   lua_pushstring(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Player_Get_Rank(Lua_State)
@@ -1191,7 +1191,7 @@ ProcedureC Lua_CMD_Player_Get_Rank(Lua_State)
   
   lua_pushinteger(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Player_Get_Online(Lua_State)
@@ -1206,7 +1206,7 @@ ProcedureC Lua_CMD_Player_Get_Online(Lua_State)
   
   lua_pushinteger(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Player_Get_Ontime(Lua_State)
@@ -1221,7 +1221,7 @@ ProcedureC Lua_CMD_Player_Get_Ontime(Lua_State)
   
   lua_pushinteger(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Player_Get_Mute_Time(Lua_State)
@@ -1236,7 +1236,7 @@ ProcedureC Lua_CMD_Player_Get_Mute_Time(Lua_State)
   
   lua_pushinteger(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Player_Set_Rank(Lua_State)
@@ -1246,7 +1246,7 @@ ProcedureC Lua_CMD_Player_Set_Rank(Lua_State)
   
   Player_Rank_Set(Player_Number, Rank, Reason)
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Player_Kick(Lua_State)
@@ -1258,7 +1258,7 @@ ProcedureC Lua_CMD_Player_Kick(Lua_State)
   
   Player_Kick(Player_Number, Reason, Count, Log, Show)
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Player_Ban(Lua_State)
@@ -1267,7 +1267,7 @@ ProcedureC Lua_CMD_Player_Ban(Lua_State)
   
   Player_Ban(Player_Number, Reason)
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Player_Unban(Lua_State)
@@ -1275,7 +1275,7 @@ ProcedureC Lua_CMD_Player_Unban(Lua_State)
   
   Player_Unban(Player_Number)
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Player_Stop(Lua_State)
@@ -1284,7 +1284,7 @@ ProcedureC Lua_CMD_Player_Stop(Lua_State)
   
   Player_Stop(Player_Number, Reason)
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Player_Unstop(Lua_State)
@@ -1292,7 +1292,7 @@ ProcedureC Lua_CMD_Player_Unstop(Lua_State)
   
   Player_Unstop(Player_Number)
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Player_Mute(Lua_State)
@@ -1302,7 +1302,7 @@ ProcedureC Lua_CMD_Player_Mute(Lua_State)
   
   Player_Mute(Player_Number, Minutes, Reason)
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Player_Unmute(Lua_State)
@@ -1310,7 +1310,7 @@ ProcedureC Lua_CMD_Player_Unmute(Lua_State)
   
   Player_Unmute(Player_Number)
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ;-############################################################
@@ -1332,7 +1332,7 @@ ProcedureC Lua_CMD_Map_Get_Table(Lua_State)
   
   lua_pushinteger(Lua_State, Elements)
   
-  ProcedureReturn 2 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 2 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Map_Block_Change(Lua_State)
@@ -1352,7 +1352,7 @@ ProcedureC Lua_CMD_Map_Block_Change(Lua_State)
     Map_Block_Change(Player_Number, *Map_Data, X, Y, Z, Type, Undo, Physic, Send, Priority)
   EndIf
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Map_Block_Change_Client(Lua_State)
@@ -1370,7 +1370,7 @@ ProcedureC Lua_CMD_Map_Block_Change_Client(Lua_State)
     Map_Block_Change_Client(*Client, *Map_Data, X, Y, Z, Mode, Type)
   EndIf
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Map_Block_Change_Player(Lua_State)
@@ -1391,7 +1391,7 @@ ProcedureC Lua_CMD_Map_Block_Change_Player(Lua_State)
     Map_Block_Change_Player(*Player, *Map_Data, X, Y, Z, Type, Undo, Physic, Send, Send_Priority)
   EndIf
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Map_Block_Move(Lua_State)
@@ -1411,7 +1411,7 @@ ProcedureC Lua_CMD_Map_Block_Move(Lua_State)
     Map_Block_Move(*Map_Data, X_0, Y_0, Z_0, X_1, Y_1, Z_1, Undo, Physic, Send_Priority)
   EndIf
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Map_Block_Send(Lua_State)
@@ -1424,7 +1424,7 @@ ProcedureC Lua_CMD_Map_Block_Send(Lua_State)
   
   ;Network_Out_Block_Set(Client_ID, X, Y, Z, Type)
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Map_Block_Get_Type(Lua_State)
@@ -1442,7 +1442,7 @@ ProcedureC Lua_CMD_Map_Block_Get_Type(Lua_State)
   
   lua_pushinteger(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Map_Block_Get_Rank(Lua_State)
@@ -1460,7 +1460,7 @@ ProcedureC Lua_CMD_Map_Block_Get_Rank(Lua_State)
   
   lua_pushinteger(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Map_Block_Get_Player_Last(Lua_State)
@@ -1478,7 +1478,7 @@ ProcedureC Lua_CMD_Map_Block_Get_Player_Last(Lua_State)
   
   lua_pushinteger(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Map_Get_Name(Lua_State)
@@ -1493,7 +1493,7 @@ ProcedureC Lua_CMD_Map_Get_Name(Lua_State)
   
   lua_pushstring(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Map_Get_Unique_ID(Lua_State)
@@ -1508,7 +1508,7 @@ ProcedureC Lua_CMD_Map_Get_Unique_ID(Lua_State)
   
   lua_pushstring(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Map_Get_Directory(Lua_State)
@@ -1523,7 +1523,7 @@ ProcedureC Lua_CMD_Map_Get_Directory(Lua_State)
   
   lua_pushstring(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Map_Get_Rank_Build(Lua_State)
@@ -1538,7 +1538,7 @@ ProcedureC Lua_CMD_Map_Get_Rank_Build(Lua_State)
   
   lua_pushinteger(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Map_Get_Rank_Join(Lua_State)
@@ -1553,7 +1553,7 @@ ProcedureC Lua_CMD_Map_Get_Rank_Join(Lua_State)
   
   lua_pushinteger(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Map_Get_Rank_Show(Lua_State)
@@ -1568,7 +1568,7 @@ ProcedureC Lua_CMD_Map_Get_Rank_Show(Lua_State)
   
   lua_pushinteger(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Map_Get_Dimensions(Lua_State)
@@ -1589,7 +1589,7 @@ ProcedureC Lua_CMD_Map_Get_Dimensions(Lua_State)
   lua_pushinteger(Lua_State, Result_Y)
   lua_pushinteger(Lua_State, Result_Z)
   
-  ProcedureReturn 3 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 3 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Map_Get_Spawn(Lua_State)
@@ -1616,7 +1616,7 @@ ProcedureC Lua_CMD_Map_Get_Spawn(Lua_State)
   lua_pushnumber(Lua_State, Result_Rot)
   lua_pushnumber(Lua_State, Result_Look)
   
-  ProcedureReturn 5 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 5 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Map_Get_Save_Intervall(Lua_State)
@@ -1631,7 +1631,7 @@ ProcedureC Lua_CMD_Map_Get_Save_Intervall(Lua_State)
   
   lua_pushinteger(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Map_Set_Name(Lua_State)
@@ -1643,7 +1643,7 @@ ProcedureC Lua_CMD_Map_Set_Name(Lua_State)
     *Pointer\Name = Input
   EndIf
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Map_Set_Directory(Lua_State)
@@ -1658,7 +1658,7 @@ ProcedureC Lua_CMD_Map_Set_Directory(Lua_State)
     *Pointer\Directory = Input
   EndIf
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Map_Set_Rank_Build(Lua_State)
@@ -1670,7 +1670,7 @@ ProcedureC Lua_CMD_Map_Set_Rank_Build(Lua_State)
     *Pointer\Rank_Build = Input
   EndIf
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Map_Set_Rank_Join(Lua_State)
@@ -1682,7 +1682,7 @@ ProcedureC Lua_CMD_Map_Set_Rank_Join(Lua_State)
     *Pointer\Rank_Join = Input
   EndIf
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Map_Set_Rank_Show(Lua_State)
@@ -1694,7 +1694,7 @@ ProcedureC Lua_CMD_Map_Set_Rank_Show(Lua_State)
     *Pointer\Rank_Show = Input
   EndIf
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Map_Set_Spawn(Lua_State)
@@ -1739,7 +1739,7 @@ ProcedureC Lua_CMD_Map_Set_Spawn(Lua_State)
     *Pointer\Spawn_Look = Input_Look
   EndIf
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Map_Set_Save_Intervall(Lua_State)
@@ -1751,7 +1751,7 @@ ProcedureC Lua_CMD_Map_Set_Save_Intervall(Lua_State)
     *Pointer\Save_Intervall = Intervall
   EndIf
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Map_Add(Lua_State)
@@ -1765,7 +1765,7 @@ ProcedureC Lua_CMD_Map_Add(Lua_State)
   
   lua_pushinteger(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Map_Action_Add_Resize(Lua_State)
@@ -1778,7 +1778,7 @@ ProcedureC Lua_CMD_Map_Action_Add_Resize(Lua_State)
   
   lua_pushinteger(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Map_Action_Add_Fill(Lua_State)
@@ -1790,7 +1790,7 @@ ProcedureC Lua_CMD_Map_Action_Add_Fill(Lua_State)
   
   lua_pushinteger(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Map_Action_Add_Save(Lua_State)
@@ -1801,7 +1801,7 @@ ProcedureC Lua_CMD_Map_Action_Add_Save(Lua_State)
   
   lua_pushinteger(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Map_Action_Add_Load(Lua_State)
@@ -1812,7 +1812,7 @@ ProcedureC Lua_CMD_Map_Action_Add_Load(Lua_State)
   
   lua_pushinteger(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Map_Action_Add_Delete(Lua_State)
@@ -1822,7 +1822,7 @@ ProcedureC Lua_CMD_Map_Action_Add_Delete(Lua_State)
   
   lua_pushinteger(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Map_Resend(Lua_State)
@@ -1830,7 +1830,7 @@ ProcedureC Lua_CMD_Map_Resend(Lua_State)
   
   Map_Resend(Map_ID)
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Map_Export(Lua_State)
@@ -1845,7 +1845,7 @@ ProcedureC Lua_CMD_Map_Export(Lua_State)
   
   Map_Export(Map_ID, X_0, Y_0, Z_0, X_1, Y_1, Z_1, Filename)
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Map_Export_Get_Size(Lua_State)
@@ -1872,7 +1872,7 @@ ProcedureC Lua_CMD_Map_Import_Player(Lua_State)
   
   Map_Import_Player(Player_Number, Filename, Map_ID, X, Y, Z, SX, SY, SZ)
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ;-############################################################
@@ -1894,7 +1894,7 @@ ProcedureC Lua_CMD_Block_Get_Table(Lua_State)
   
   lua_pushinteger(Lua_State, Elements)
   
-  ProcedureReturn 2 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 2 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Block_Get_Name(Lua_State)
@@ -1909,7 +1909,7 @@ ProcedureC Lua_CMD_Block_Get_Name(Lua_State)
   
   lua_pushstring(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Block_Get_Rank_Place(Lua_State)
@@ -1924,7 +1924,7 @@ ProcedureC Lua_CMD_Block_Get_Rank_Place(Lua_State)
   
   lua_pushinteger(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Block_Get_Rank_Delete(Lua_State)
@@ -1939,7 +1939,7 @@ ProcedureC Lua_CMD_Block_Get_Rank_Delete(Lua_State)
   
   lua_pushinteger(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Block_Get_Client_Type(Lua_State)
@@ -1954,7 +1954,7 @@ ProcedureC Lua_CMD_Block_Get_Client_Type(Lua_State)
   
   lua_pushinteger(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ;-############################################################
@@ -1976,7 +1976,7 @@ ProcedureC Lua_CMD_Rank_Get_Table(Lua_State)
   
   lua_pushinteger(Lua_State, Elements)
   
-  ProcedureReturn 2 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 2 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Rank_Add(Lua_State)
@@ -1987,7 +1987,7 @@ ProcedureC Lua_CMD_Rank_Add(Lua_State)
     
   Rank_Add(Rank, Name, Prefix, Suffix)
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Rank_Delete(Lua_State)
@@ -1996,7 +1996,7 @@ ProcedureC Lua_CMD_Rank_Delete(Lua_State)
   
   Rank_Delete(Rank, Exact)
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Rank_Get_Name(Lua_State)
@@ -2012,7 +2012,7 @@ ProcedureC Lua_CMD_Rank_Get_Name(Lua_State)
   
   lua_pushstring(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Rank_Get_Prefix(Lua_State)
@@ -2028,7 +2028,7 @@ ProcedureC Lua_CMD_Rank_Get_Prefix(Lua_State)
   
   lua_pushstring(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Rank_Get_Suffix(Lua_State)
@@ -2044,7 +2044,7 @@ ProcedureC Lua_CMD_Rank_Get_Suffix(Lua_State)
   
   lua_pushstring(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Rank_Get_Root(Lua_State)
@@ -2059,7 +2059,7 @@ ProcedureC Lua_CMD_Rank_Get_Root(Lua_State)
   
   lua_pushinteger(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ;-############################################################
@@ -2085,10 +2085,10 @@ ProcedureC Lua_CMD_Teleporter_Get_Table(Lua_State)
     
     lua_pushinteger(Lua_State, Elements)
     
-    ProcedureReturn 2 ; Anzahl der R?ckgabeargumente
+    ProcedureReturn 2 ; Anzahl der Rückgabeargumente
   EndIf
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Teleporter_Get_Box(Lua_State)
@@ -2124,7 +2124,7 @@ ProcedureC Lua_CMD_Teleporter_Get_Box(Lua_State)
   lua_pushinteger(Lua_State, Result_Y_1)
   lua_pushinteger(Lua_State, Result_Z_1)
   
-  ProcedureReturn 6 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 6 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Teleporter_Get_Destination(Lua_State)
@@ -2163,7 +2163,7 @@ ProcedureC Lua_CMD_Teleporter_Get_Destination(Lua_State)
   lua_pushnumber(Lua_State, Result_Rot)
   lua_pushnumber(Lua_State, Result_Look)
   
-  ProcedureReturn 6 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 6 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Teleporter_Add(Lua_State)
@@ -2214,7 +2214,7 @@ ProcedureC Lua_CMD_Teleporter_Add(Lua_State)
     Teleporter_Add(*Map_Data, ID.s, X_0, Y_0, Z_0, X_1, Y_1, Z_1, Dest_Map_Unique_ID, Dest_Map_ID, X, Y, Z, Rot, Look)
   EndIf
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Teleporter_Delete(Lua_State)
@@ -2226,7 +2226,7 @@ ProcedureC Lua_CMD_Teleporter_Delete(Lua_State)
     Teleporter_Delete(*Map_Data, ID.s)
   EndIf
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ;-############################################################
@@ -2247,7 +2247,7 @@ ProcedureC Lua_CMD_System_Message_Network_Send_2_All(Lua_State)
   
   
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_System_Message_Network_Send(Lua_State)
@@ -2264,7 +2264,7 @@ ProcedureC Lua_CMD_System_Message_Network_Send(Lua_State)
     System_Message_Network_Send(Client_ID, Message.s)
   EndIf
 
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ;-############################################################
@@ -2278,7 +2278,7 @@ ProcedureC Lua_CMD_Network_Out_Block_Set(Lua_State)
   
   Network_Out_Block_Set(Client_ID, X, Y, Z, Type)
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ;-############################################################
@@ -2305,7 +2305,7 @@ ProcedureC Lua_CMD_Language_Get(Lua_State)
   
   lua_pushstring(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ;-############################################################
@@ -2319,7 +2319,7 @@ ProcedureC Lua_CMD_Files_File_Get(Lua_State)
   
   lua_pushstring(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Files_Folder_Get(Lua_State)
@@ -2331,7 +2331,7 @@ ProcedureC Lua_CMD_Files_Folder_Get(Lua_State)
   
   lua_pushstring(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ;-############################################################
@@ -2348,7 +2348,7 @@ ProcedureC Lua_CMD_Event_Add(Lua_State)
   
   lua_pushinteger(Lua_State, Result)
   
-  ProcedureReturn 1 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 1 ; Anzahl der Rückgabeargumente
 EndProcedure
 
 ProcedureC Lua_CMD_Event_Delete(Lua_State)
@@ -2356,7 +2356,7 @@ ProcedureC Lua_CMD_Event_Delete(Lua_State)
   
   Lua_Event_Delete(ID.s)
   
-  ProcedureReturn 0 ; Anzahl der R?ckgabeargumente
+  ProcedureReturn 0 ; Anzahl der Rückgabeargumente
 EndProcedure
 ;-###########################################################
 ; CPE Extensions
@@ -2633,7 +2633,7 @@ ProcedureC Lua_CMD_Map_Env_Apperance_Set(Lua_State)
     Side_Block = lua_tointeger(Lua_State, 3)
     Edge_Block = lua_tointeger(Lua_State, 4)
     Side_Level = lua_tointeger(Lua_State, 5)
-    
+
     *ThisMap = Map_Get_Pointer(Map_ID)
     If *ThisMap
         Map_Env_Appearance_Set(*ThisMap, CustomURL, Side_Block, Edge_Block, Side_Level)
@@ -3576,8 +3576,8 @@ Procedure Lua_Check_New_Files(Directory.s)
 EndProcedure
 ; IDE Options = PureBasic 5.30 (Linux - x64)
 ; ExecutableFormat = Shared .so
-; CursorPosition = 139
-; FirstLine = 116
+; CursorPosition = 2635
+; FirstLine = 2631
 ; Folding = -------------------------------------
 ; EnableThread
 ; EnableXP

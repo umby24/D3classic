@@ -142,7 +142,7 @@ Global FreeID.w = 0 ; For CPE stuff.
 Global NextID.w = 0
 ; ########################################## Ladekram / Loading ############################################
 
-Main\Version = 10141 ;#PB_Editor_CompileCount*0.4 + #PB_Editor_BuildCount*4.9
+Main\Version = 1015 ;#PB_Editor_CompileCount*0.4 + #PB_Editor_BuildCount*4.9
 
 Main\Running_Time = Date()
 
@@ -189,7 +189,7 @@ Declare Map_Overview_Save_Iso_Fast(*Map_Data_Element, Filename.s)
 Declare Map_Block_Change(Player_Number, *Map_Data.Map_Data, X, Y, Z, Type.a, Undo.a, Physic.a, Send.a, Priority.a)
 Declare Map_Block_Change_Player(*Player.Player_List, *Map_Data.Map_Data, X, Y, Z, Type.a, Undo.a, Physic.a, Send.a, Send_Priority.a)
 Declare Map_Block_Move(*Map_Data.Map_Data, X_0, Y_0, Z_0, X_1, Y_1, Z_1, Priority, Undo, Physic)
-Declare Map_Select_ID(Map_ID, Log=1)
+Declare Map_Select_ID(Map_ID, Log=0)
 Declare Map_HackControl_Set(*Map_Data.Map_Data, Flying, NoClip, Speeding, SpawnControl, ThirdPerson, Weather, JumpHeight.w)
 
 Declare Physic_Block_Compute_10(Map_ID, X.l, Y.l, Z.l)
@@ -339,6 +339,7 @@ XIncludeFile "Includes/String.pbi"
 XIncludeFile "Includes/Language.pbi"
 XIncludeFile "Includes/Network.pbi"
 XIncludeFile "Includes/Error.pbi"
+XIncludeFile "Network/Packets.pbi"
 XIncludeFile "Includes/System.pbi"
 XIncludeFile "Includes/Block.pbi"
 XIncludeFile "Includes/NBT.pbi"
@@ -371,7 +372,7 @@ XIncludeFile "Includes/CPE.pbi"
 
 ; ########################################## Initkram / Init ##########################################
 
-OpenConsole()
+OpenConsole("D3 Server " + Main\Version)
 
 Main\Mutex = CreateMutex()
 
@@ -423,13 +424,14 @@ While Running = #True
   
   Delay(3) ; ############## Sicherer Wartebereich / Safe Waiting Area
   
-WEnd
+Wend
 
+CoreShutdown()
 ; ########################################## Ende / End ##########################################
 ; IDE Options = PureBasic 5.30 (Linux - x64)
 ; ExecutableFormat = Console
-; CursorPosition = 425
-; FirstLine = 378
+; CursorPosition = 191
+; FirstLine = 188
 ; Folding = -
 ; EnableThread
 ; EnableXP

@@ -220,15 +220,15 @@ ProcedureCDLL Main()
         FreeMemory(*myString)
     EndIf
 EndProcedure
-; IDE Options = PureBasic 5.30 (Linux - x64)
-; ExecutableFormat = Shared .so
+; IDE Options = PureBasic 5.30 (Windows - x64)
+; ExecutableFormat = Shared Dll
 ; CursorPosition = 173
 ; FirstLine = 170
 ; Folding = --
 ; EnableThread
 ; EnableXP
 ; EnableOnError
-; Executable = Heartbeat.x64.so
+; Executable = Heartbeat.x86.dll
 ; DisableDebugger
 ; CompileSourceDirectory
-; Compiler = PureBasic 5.30 (Linux - x64)
+; Compiler = PureBasic 5.30 (Windows - x86)

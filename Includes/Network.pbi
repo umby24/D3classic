@@ -769,9 +769,9 @@ Procedure Network_Input_Do()  ; Wertet die empfangenen Daten aus. / Evaluates re
             
             *Temp_Buffer = AllocateMemory(2)
             If *Temp_Buffer
-              Network_Client_Input_Read_Buffer(Network_Client()\ID, *Temp_Buffer, 2)
-              Extensions = PeekB(*Temp_Buffer)* 256
-              Extensions + PeekB(*Temp_Buffer+1)& 255
+                Network_Client_Input_Read_Buffer(Network_Client()\ID, *Temp_Buffer, 2)
+                Extensions = PeekW(*Temp_Buffer)
+                Extensions = EndianW(Extensions)
             EndIf
             
             FreeMemory(*Temp_Buffer)
@@ -779,6 +779,14 @@ Procedure Network_Input_Do()  ; Wertet die empfangenen Daten aus. / Evaluates re
             Network_Client()\CPE = #True
             Network_Client()\CustomExtensions = Extensions
             
+            If Extensions = 0
+                CPE_Send_Extensions(Network_Client()\ID)
+                
+                If Network_Client()\TextHotkey = #True
+                    CPE_Client_Send_Hotkeys(Network_Client()\ID)
+                EndIf
+            EndIf
+
             Log_Add("CPE","Client supports " + Str(Extensions) + " extensions", 0, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
                        
           EndIf
@@ -805,33 +813,35 @@ Procedure Network_Input_Do()  ; Wertet die empfangenen Daten aus. / Evaluates re
             AddElement(Network_Client()\ExtensionVersions())
             Network_Client()\ExtensionVersions() = extVersion
             
-            Select ExtName
-                Case "CustomBlocks"
+            Select LCase(ExtName)
+                Case "customblocks"
                     Network_Client()\CustomBlocks = #True  
-                Case "HeldBlock"
+                Case "heldblock"
                     Network_Client()\HeldBlock = #True  
-                Case "ClickDistance"
+                Case "clickdistance"
                     Network_Client()\ClickDistance = #True
-                Case "SelectionCuboid"
+                Case "selectioncuboid"
                     Network_Client()\SelectionCuboid = #True
-                Case "ExtPlayerList"
+                Case "extplayerlist"
                     Network_Client()\ExtPlayerList = #True
-                Case "ChangeModel"
+                Case "changemodel"
                     Network_Client()\ChangeModel = #True
-                Case "EnvWeatherType"
+                Case "envweathertype"
                     Network_Client()\CPEWeather = #True
-                Case "EnvColors"
+                Case "envcolors"
                     Network_Client()\EnvColors = #True  
-                Case "MessageTypes"
+                Case "messagetypes"
                     Network_Client()\MessageTypes = #True
-                Case "BlockPermissions"
+                Case "blockpermissions"
                     Network_Client()\BlockPermissions = #True
-                Case "EnvMapAppearance"
+                Case "envmapappearance"
                     Network_Client()\EnvMapAppearance = #True
-                Case "HackControl"
+                Case "hackcontrol"
                     Network_Client()\HackControl = #True
-                Case "TextHotKey"
+                Case "texthotkey"
                     Network_Client()\TextHotkey = #True
+                Case "emotefix"
+                    Network_Client()\EmoteFix = #True
             EndSelect
             
             Network_Client()\CustomExtensions - 1
@@ -1014,8 +1024,9 @@ RegisterCore("Network_Events", 1, #Null, #Null, @Network_Events())
 RegisterCore("Network_Output_Send", 0, #Null, #Null, @Network_Output_Send())
 RegisterCore("Network_Output_Do", 0, #Null, #Null, @Network_Output_Do())
 RegisterCore("Network_Input_Do", 0, #Null, #Null, @Network_Input_Do())
-; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 27
+; IDE Options = PureBasic 5.30 (Linux - x64)
+; CursorPosition = 842
+; FirstLine = 709
 ; Folding = ----R5
 ; EnableXP
 ; DisableDebugger

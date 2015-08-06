@@ -128,8 +128,11 @@ Procedure Files_Load(Filename.s)
             If First And Second
                 Directory.s = Mid(Temp, First + 1, (Second - (First + 1)))
                 Realdir.s = Files_Folder_Get(Directory)
-                Realdir = ReplaceString(Realdir, "/", "\")
-                
+                CompilerIf #PB_Compiler_OS = #PB_OS_Windows
+                    Realdir = ReplaceString(Realdir, "/", "\")
+                CompilerElse
+                    Realdir = ReplaceString(Realdir, "\", "/")
+                CompilerEndIf
                 If FileSize(Working + Prepend + Realdir) = -1
                     CreateDirectory(Working + Prepend + Realdir)
                 EndIf
@@ -184,12 +187,12 @@ Procedure.s Files_Folder_Get(Name.s)
     
     ProcedureReturn Files_Folder_Get_Return_String
 EndProcedure
-; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 163
-; FirstLine = 135
+; IDE Options = PureBasic 5.30 (Linux - x64)
+; CursorPosition = 133
+; FirstLine = 103
 ; Folding = -
 ; EnableXP
-; Executable = ..\Minecraft-Server.x86.exe
+; Executable = ../Minecraft-Server.x86.exe
 ; DisableDebugger
 ; CompileSourceDirectory
 ; EnableCompileCount = 0

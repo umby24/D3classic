@@ -66,7 +66,6 @@ Procedure Hotkeys_Save(Filename.s)
     If CreatePreferences(Filename) <> 0
         ForEach Hotkeys()
             PreferenceGroup(Hotkeys()\Label)
-            PrintN(Str(Hotkeys()\Keycode))
             WritePreferenceString("Action", Hotkeys()\Action)
             WritePreferenceLong("Keycode", Hotkeys()\Keycode)
             WritePreferenceInteger("Modifier", Hotkeys()\Keymods)
@@ -91,9 +90,9 @@ Procedure Hotkey_Main()
 EndProcedure
 
 RegisterCore("Hotkeys", 1000, #Null, #Null, @Hotkey_Main())
-; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 82
-; FirstLine = 33
+; IDE Options = PureBasic 5.30 (Linux - x64)
+; CursorPosition = 67
+; FirstLine = 48
 ; Folding = -
 ; EnableThread
 ; EnableXP

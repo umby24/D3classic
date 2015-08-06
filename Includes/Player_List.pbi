@@ -134,7 +134,6 @@ Procedure Player_List_Load(Filename.s) ; Lädt die Liste mit Spielern aus Datenba
     
     If DatabaseQuery(Player_List_Main\Database_ID, "SELECT * FROM Player_List") ; Ermittelt alle Einträge
       
-      PrintN(Str(DatabaseColumns(Player_List_Main\Database_ID)))
       If DatabaseColumns(Player_List_Main\Database_ID) = 16
         Log_Add("Player_List", "Updated old Database", 0, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
         DatabaseUpdate(Player_List_Main\Database_ID, "ALTER TABLE Player_List ADD COLUMN Global Integer")
@@ -360,9 +359,9 @@ Procedure Player_List_Main()
 EndProcedure
 
 RegisterCore("Player_List", 120000, #Null, #Null, @Player_List_Main())
-; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 361
-; FirstLine = 306
+; IDE Options = PureBasic 5.30 (Linux - x64)
+; CursorPosition = 135
+; FirstLine = 132
 ; Folding = ---
 ; EnableXP
 ; DisableDebugger

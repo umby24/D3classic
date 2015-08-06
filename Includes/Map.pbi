@@ -151,7 +151,7 @@ Procedure Map_HTML_Stats()
   EndIf
 EndProcedure
 
-Procedure Map_Select_ID(Map_ID, Log=1)
+Procedure Map_Select_ID(Map_ID, Log=0)
   If ListIndex(Map_Data()) <> -1 And Map_Data()\ID = Map_ID
     ProcedureReturn #True
   Else
@@ -2233,8 +2233,8 @@ EndProcedure
 
 RegisterCore("Map", 1000, #Null, #Null, @Map_Main())
 ; IDE Options = PureBasic 5.30 (Linux - x64)
-; CursorPosition = 776
-; FirstLine = 718
+; CursorPosition = 1615
+; FirstLine = 1221
 ; Folding = f79fAeQQ-
 ; EnableThread
 ; EnableXP

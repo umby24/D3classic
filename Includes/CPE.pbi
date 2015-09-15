@@ -431,7 +431,6 @@ Procedure CPE_Client_Hackcontrol_Send(Client_ID, Flying, Noclip, Speeding, Spawn
             Network_Client_Output_Write_Byte(Client_ID, Speeding)
             Network_Client_Output_Write_Byte(Client_ID, SpawnControl)
             Network_Client_Output_Write_Byte(Client_ID, ThirdPerson)
-            Network_Client_Output_Write_Byte(Client_ID, WeatherControl)
             Network_Client_Output_Write_Word(Client_ID, Jumpheight)
         EndIf
     EndIf

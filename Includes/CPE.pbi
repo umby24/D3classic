@@ -70,13 +70,11 @@ Procedure CPE_Send_Extensions(Client_ID)
     
     If Network_Client_Select(Client_ID)
         If Network_Client()\ClickDistance = #True
-            Network_Client_Output_Write_Byte(Client_ID, 18)
-            Network_CLient_Output_Write_Word(Client_ID, System_Main\Click_Distance)
+            SendClickDistance(Client_ID, System_Main\Click_Distance)
         EndIf
         
         If Network_Client()\CustomBlocks = #True
-            Network_Client_Output_Write_Byte(Client_ID, 19)
-            Network_Client_Output_Write_Byte(Client_ID, 1) ; We support 1st level of blocks :D
+            SendCustomBlockSupportLevel(Client_ID, 1)
         Else
             Client_Login(Client_ID, Network_Client()\Player\Login_Name, Network_Client()\Player\MPPass, Network_Client()\Player\Client_Version)
         EndIf
@@ -136,10 +134,7 @@ Procedure CPE_HoldThis(Client_ID, Block, CanChange)
                 ProcedureReturn
             EndIf
             
-            
-            Network_Client_Output_Write_Byte(Client_ID, 20)
-            Network_Client_Output_Write_Byte(Client_ID, Block)
-            Network_Client_Output_Write_Byte(Client_ID, CanChange)
+            SendHoldThis(Client_ID, Block, CanChange)
         EndIf
     EndIf
     
@@ -153,30 +148,21 @@ Procedure CPE_Selection_Cuboid_Add(Client_ID, SelectionID, Label.s, StartX.w, St
     
     List_Store(*Network_Client_Old, Network_Client())
     
-    If Network_Client_Select(Client_ID)
-        If Network_Client()\SelectionCuboid = #True And List_Contains(SelectionID, Network_Client()\Selections()) = #False
-            
-            LastElement(Network_Client()\Selections()) ; Add to our ID list.
-            AddElement(Network_Client()\Selections())
-            Network_Client()\Selections() = SelectionID
-            
-            
-            Network_Client_Output_Write_Byte(Client_ID, 26)
-            Network_Client_Output_Write_Byte(Client_ID, SelectionID)
-            Network_Client_Output_Write_String(CLient_ID, LSet(Label, 64, " "), 64)
-            Network_Client_Output_Write_Word(Client_ID, StartX)
-            Network_Client_Output_Write_Word(Client_ID, StartZ)
-            Network_Client_Output_Write_Word(Client_ID, StartY)
-            Network_Client_Output_Write_Word(Client_ID, EndX)
-            Network_Client_Output_Write_Word(Client_ID, EndZ)
-            Network_Client_Output_Write_Word(Client_ID, EndY)
-            Network_Client_Output_Write_Word(Client_ID, Red)
-            Network_Client_Output_Write_Word(Client_ID, Green)
-            Network_Client_Output_Write_Word(Client_ID, Blue)
-            Network_Client_Output_Write_Word(Client_ID, Opacity)
-            
-        EndIf
+    If Not Network_Client_Select(Client_ID)
+        List_Restore(*Network_Client_Old, Network_Client()) 
+        ProcedureReturn
     EndIf
+    
+    If Network_Client()\SelectionCuboid = #False Or List_Contains(SelectionID, Network_Client()\Selections()) = #True
+        List_Restore(*Network_Client_Old, Network_Client()) 
+        ProcedureReturn
+    EndIf
+    
+    LastElement(Network_Client()\Selections()) ; Add to our ID list.
+    AddElement(Network_Client()\Selections())
+    Network_Client()\Selections() = SelectionID
+    
+    SendSelectionBoxAdd(Client_ID, SelectionID, Label.s, StartX.w, StartY.w, StartZ.w, EndX.w, EndY.w, EndZ.w, Red.w, Green.w, Blue.w, Opacity.w)
     
     List_Restore(*Network_Client_Old, Network_Client()) 
 EndProcedure
@@ -184,16 +170,20 @@ EndProcedure
 Procedure CPE_Selection_Cuboid_Delete(Client_ID, Selection_ID)
     List_Store(*Network_Client_Old, Network_Client())
     
-    If Network_Client_Select(Client_ID)
-        If Network_Client()\SelectionCuboid = #True And List_Contains(Selection_ID, Network_Client()\Selections()) = #True
-            Network_Client_Output_Write_Byte(Client_ID, 27)
-            Network_Client_Output_Write_Byte(Client_ID, Selection_ID)
-            
-            List_PopPosition(Selection_ID, Network_Client()\Selections())
-            DeleteElement(Network_Client()\Selections())
-            
-        EndIf
+    If Not Network_Client_Select(Client_ID)
+        List_Restore(*Network_Client_Old, Network_Client()) 
+        ProcedureReturn
     EndIf
+    
+    If Network_Client()\SelectionCuboid = #False Or List_Contains(Selection_ID, Network_Client()\Selections()) = #False
+        List_Restore(*Network_Client_Old, Network_Client()) 
+        ProcedureReturn
+    EndIf
+    
+    SendSelectionBoxDelete(Client_ID, Selection_ID)
+    
+    List_PopPosition(Selection_ID, Network_Client()\Selections())
+    DeleteElement(Network_Client()\Selections())
     
     List_Restore(*Network_Client_Old, Network_Client()) 
 EndProcedure
@@ -276,19 +266,22 @@ EndProcedure
 Procedure CPE_Model_Change(Client_ID, Model.s)
     List_Store(*Network_Client_Old, Network_Client())
     
-    If Network_Client_Select(Client_ID)
-        Map_ID = Network_Client()\Player\Entity\Map_ID
-        Entity_ID = Network_Client()\Player\Entity\ID_Client
-        Network_Client()\Player\Entity\Model = Model
-        
-        ForEach Network_Client()
-            If Network_Client()\Logged_In = #True And Network_Client()\ChangeModel = #True And Network_Client()\Player\Entity\Map_ID = Map_ID
-                Network_Client_Output_Write_Byte(Network_Client()\ID, 29)
-                Network_Client_Output_Write_Byte(Network_Client()\ID, Entity_ID)
-                Network_Client_Output_Write_String(Network_Client()\ID, LSet(Model, 64, " "), 64)
-            EndIf
-        Next
+    If Not Network_Client_Select(Client_ID)
+        List_Restore(*Network_Client_Old, Network_Client()) 
+        ProcedureReturn
     EndIf
+    
+    Map_ID = Network_Client()\Player\Entity\Map_ID
+    Entity_ID = Network_Client()\Player\Entity\ID_Client
+    Network_Client()\Player\Entity\Model = Model
+    
+    ForEach Network_Client()
+        If Network_Client()\Logged_In = #False Or Network_Client()\ChangeModel = #False Or Network_Client()\Player\Entity\Map_ID <> Map_ID
+            Continue
+        EndIf
+        
+        SendChangeModel(Network_Client()\ID, Entity_ID, Model)
+    Next
     
     List_Restore(*Network_Client_Old, Network_Client()) 
 EndProcedure
@@ -300,43 +293,50 @@ Procedure CPE_Aftermap_Actions(Client_ID, *MapData.Map_Data)
         ProcedureReturn
     EndIf
     
-    If Network_Client_Select(Client_ID)
-        If Network_Client()\EnvColors = #True
-            If *MapData\ColorsSet = #True
-                R = Red(*MapData\SkyColor)
-                G = Green(*MapData\SkyColor)
-                B = Blue(*MapData\SkyColor)
-                CPE_Set_Env_Colors(0, R, G, B)
-                
-                R = Red(*MapData\CloudColor)
-                G = Green(*MapData\CloudColor)
-                B = Blue(*MapData\CloudColor)
-                CPE_Set_Env_Colors(1, R, G, B)
-                
-                R = Red(*MapData\FogColor)
-                G = Green(*MapData\FogColor)
-                B = Blue(*MapData\FogColor)
-                CPE_Set_Env_Colors(2, R, G, B)
-                
-                R = Red(*MapData\alight)
-                G = Green(*MapData\alight)
-                B = Blue(*MapData\alight)
-                CPE_Set_Env_Colors(3, R, G, B)
-                
-                R = Red(*MapData\dlight)
-                G = Green(*MapData\dlight)
-                B = Blue(*MapData\dlight)
-                CPE_Set_Env_Colors(4, R, G, B)
-            EndIf
-        EndIf
-        If Network_Client()\EnvMapAppearance = #True And *MapData\CustomAppearance = #True
-            CPE_Client_Send_Map_Appearence(Network_Client()\ID, *MapData\CustomURL, *MapData\Side_Block, *MapData\Edge_Block, *MapData\Side_level) ; Send the client the map's custom parameters.
-        EndIf
-        If Network_Client()\HackControl = #True
-            CPE_Client_Hackcontrol_Send(Network_Client()\ID, *MapData\Flying, *MapData\NoClip, *MapData\Speeding, *MapData\SpawnControl, *MapData\ThirdPerson, *MapData\Weather, *MapData\JumpHeight)
-        EndIf
-        ;CPE_Client_Send_Hotkeys(Network_Client()\ID)
+    If Not Network_Client_Select(Client_ID)
+        List_Restore(*Network_Client_Old, Network_Client()) 
+        ProcedureReturn
     EndIf
+    
+    If Network_Client()\EnvColors = #False
+        Continue
+    EndIf
+    
+    If *MapData\ColorsSet = #True
+        R = Red(*MapData\SkyColor)
+        G = Green(*MapData\SkyColor)
+        B = Blue(*MapData\SkyColor)
+        CPE_Set_Env_Colors(0, R, G, B)
+        
+        R = Red(*MapData\CloudColor)
+        G = Green(*MapData\CloudColor)
+        B = Blue(*MapData\CloudColor)
+        CPE_Set_Env_Colors(1, R, G, B)
+        
+        R = Red(*MapData\FogColor)
+        G = Green(*MapData\FogColor)
+        B = Blue(*MapData\FogColor)
+        CPE_Set_Env_Colors(2, R, G, B)
+        
+        R = Red(*MapData\alight)
+        G = Green(*MapData\alight)
+        B = Blue(*MapData\alight)
+        CPE_Set_Env_Colors(3, R, G, B)
+        
+        R = Red(*MapData\dlight)
+        G = Green(*MapData\dlight)
+        B = Blue(*MapData\dlight)
+        CPE_Set_Env_Colors(4, R, G, B)
+    EndIf
+    
+    If Network_Client()\EnvMapAppearance = #True And *MapData\CustomAppearance = #True
+        CPE_Client_Send_Map_Appearence(Network_Client()\ID, *MapData\CustomURL, *MapData\Side_Block, *MapData\Edge_Block, *MapData\Side_level) ; Send the client the map's custom parameters.
+    EndIf
+    
+    If Network_Client()\HackControl = #True
+        CPE_Client_Hackcontrol_Send(Network_Client()\ID, *MapData\Flying, *MapData\NoClip, *MapData\Speeding, *MapData\SpawnControl, *MapData\ThirdPerson, *MapData\Weather, *MapData\JumpHeight)
+    EndIf
+    ;CPE_Client_Send_Hotkeys(Network_Client()\ID)
     
     List_Restore(*Network_Client_Old, Network_Client()) 
 EndProcedure
@@ -438,10 +438,10 @@ Procedure CPE_Client_Hackcontrol_Send(Client_ID, Flying, Noclip, Speeding, Spawn
     
     List_Restore(*Network_Client_Old, Network_Client())
 EndProcedure
-; IDE Options = PureBasic 5.30 (Linux - x64)
-; CursorPosition = 439
-; FirstLine = 396
-; Folding = ----
+; IDE Options = PureBasic 5.30 (Windows - x64)
+; CursorPosition = 343
+; FirstLine = 69
+; Folding = AA+-
 ; EnableThread
 ; EnableXP
 ; EnableOnError

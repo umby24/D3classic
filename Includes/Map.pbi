@@ -1637,7 +1637,7 @@ Procedure Map_Env_Appearance_Set(*Map_Data.Map_Data, Texture.s, Side_Block, Edge
     List_Restore(*Network_Client_Old, Network_Client()) 
 EndProcedure
 
-Procedure Map_HackControl_Set(*Map_Data.Map_Data, Flying, NoClip, Speeding, SpawnControl, ThirdPerson, Weather, JumpHeight.w)
+Procedure Map_HackControl_Set(*Map_Data.Map_Data, Flying, NoClip, Speeding, SpawnControl, ThirdPerson, JumpHeight.w)
     If Not *Map_Data
         ProcedureReturn
     EndIf
@@ -1647,11 +1647,10 @@ Procedure Map_HackControl_Set(*Map_Data.Map_Data, Flying, NoClip, Speeding, Spaw
     *Map_Data\Speeding = Speeding
     *Map_Data\SpawnControl = SpawnControl
     *Map_Data\ThirdPerson = ThirdPerson
-    *Map_Data\Weather = Weather
     *Map_Data\JumpHeight = JumpHeight
     
     ForEach Network_Client()
-        CPE_Client_Hackcontrol_Send(Network_Client()\ID, Flying, NoClip, SPeeding, SpawnControl, ThirdPerson, Weather, JumpHeight)
+        CPE_Client_Hackcontrol_Send(Network_Client()\ID, Flying, NoClip, SPeeding, SpawnControl, ThirdPerson, JumpHeight)
     Next
     
 EndProcedure
@@ -2232,9 +2231,9 @@ Procedure Map_Main()
 EndProcedure
 
 RegisterCore("Map", 1000, #Null, #Null, @Map_Main())
-; IDE Options = PureBasic 5.30 (Linux - x64)
-; CursorPosition = 1615
-; FirstLine = 1221
+; IDE Options = PureBasic 5.30 (Windows - x64)
+; CursorPosition = 1652
+; FirstLine = 1240
 ; Folding = f79fAeQQ-
 ; EnableThread
 ; EnableXP

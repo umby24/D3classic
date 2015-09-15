@@ -51,10 +51,9 @@ Procedure SendChangeModel(ClientID, EntityId, Model.s)
     Network_Client_Output_Write_Byte(ClientID, 29)
     Network_Client_Output_Write_Byte(ClientID, EntityId)
     Network_Client_Output_Write_String(ClientID, LSet(Model, 64, " "), 64)
-EndIf
-    
+EndProcedure
 ; IDE Options = PureBasic 5.30 (Windows - x64)
-; CursorPosition = 51
+; CursorPosition = 53
 ; Folding = --
 ; EnableThread
 ; EnableXP

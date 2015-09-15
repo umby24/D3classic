@@ -190,7 +190,7 @@ Declare Map_Block_Change(Player_Number, *Map_Data.Map_Data, X, Y, Z, Type.a, Und
 Declare Map_Block_Change_Player(*Player.Player_List, *Map_Data.Map_Data, X, Y, Z, Type.a, Undo.a, Physic.a, Send.a, Send_Priority.a)
 Declare Map_Block_Move(*Map_Data.Map_Data, X_0, Y_0, Z_0, X_1, Y_1, Z_1, Priority, Undo, Physic)
 Declare Map_Select_ID(Map_ID, Log=0)
-Declare Map_HackControl_Set(*Map_Data.Map_Data, Flying, NoClip, Speeding, SpawnControl, ThirdPerson, Weather, JumpHeight.w)
+Declare Map_HackControl_Set(*Map_Data.Map_Data, Flying, NoClip, Speeding, SpawnControl, ThirdPerson, JumpHeight.w)
 
 Declare Physic_Block_Compute_10(Map_ID, X.l, Y.l, Z.l)
 Declare Physic_Block_Compute_11(Map_ID, X.l, Y.l, Z.l)
@@ -303,7 +303,7 @@ Declare Map_Env_Colors_Change(*Map_Data.Map_Data, Red, Green, Blue, Type)
 Declare CPE_Client_Set_Block_Permissions(Client_ID, Block_ID, CanPlace, CanDelete)
 Declare CPE_Client_Send_Map_Appearence(Client_ID, URL.s, Side_Block, Edge_Block, Side_Level.w)
 Declare Map_Env_Appearance_Set(*Map_Data.Map_Data, Texture.s, Side_Block, Edge_Block, Side_Level.w)
-Declare CPE_Client_Hackcontrol_Send(Client_ID, Flying, Noclip, Speeding, SpawnControl, ThirdPerson, WeatherControl, Jumpheight.w)
+Declare CPE_Client_Hackcontrol_Send(Client_ID, Flying, Noclip, Speeding, SpawnControl, ThirdPerson, Jumpheight.w)
 Declare CPE_Client_Send_Hotkeys(Client_ID)
 Declare Hotkey_Add(Label.s, Action.s, Keycode.l, Keymods.b)
 Declare Hotkey_Remove(Label.s)
@@ -428,10 +428,10 @@ Wend
 
 CoreShutdown()
 ; ########################################## Ende / End ##########################################
-; IDE Options = PureBasic 5.30 (Linux - x64)
+; IDE Options = PureBasic 5.30 (Windows - x64)
 ; ExecutableFormat = Console
-; CursorPosition = 191
-; FirstLine = 188
+; CursorPosition = 192
+; FirstLine = 161
 ; Folding = -
 ; EnableThread
 ; EnableXP

@@ -298,11 +298,7 @@ Procedure CPE_Aftermap_Actions(Client_ID, *MapData.Map_Data)
         ProcedureReturn
     EndIf
     
-    If Network_Client()\EnvColors = #False
-        Continue
-    EndIf
-    
-    If *MapData\ColorsSet = #True
+    If *MapData\ColorsSet = #True And Network_Client()\EnvColors = #True
         R = Red(*MapData\SkyColor)
         G = Green(*MapData\SkyColor)
         B = Blue(*MapData\SkyColor)
@@ -334,7 +330,7 @@ Procedure CPE_Aftermap_Actions(Client_ID, *MapData.Map_Data)
     EndIf
     
     If Network_Client()\HackControl = #True
-        CPE_Client_Hackcontrol_Send(Network_Client()\ID, *MapData\Flying, *MapData\NoClip, *MapData\Speeding, *MapData\SpawnControl, *MapData\ThirdPerson, *MapData\Weather, *MapData\JumpHeight)
+        CPE_Client_Hackcontrol_Send(Network_Client()\ID, *MapData\Flying, *MapData\NoClip, *MapData\Speeding, *MapData\SpawnControl, *MapData\ThirdPerson, *MapData\JumpHeight)
     EndIf
     ;CPE_Client_Send_Hotkeys(Network_Client()\ID)
     
@@ -420,7 +416,7 @@ Procedure CPE_Client_Send_Hotkeys(Client_ID)
     List_Restore(*Network_Client_Old, Network_Client())
 EndProcedure
 
-Procedure CPE_Client_Hackcontrol_Send(Client_ID, Flying, Noclip, Speeding, SpawnControl, ThirdPerson, WeatherControl, Jumpheight.w)
+Procedure CPE_Client_Hackcontrol_Send(Client_ID, Flying, Noclip, Speeding, SpawnControl, ThirdPerson, Jumpheight.w)
     List_Store(*Network_Client_Old, Network_Client())
     
     If Network_Client_Select(Client_ID)
@@ -438,9 +434,9 @@ Procedure CPE_Client_Hackcontrol_Send(Client_ID, Flying, Noclip, Speeding, Spawn
     List_Restore(*Network_Client_Old, Network_Client())
 EndProcedure
 ; IDE Options = PureBasic 5.30 (Windows - x64)
-; CursorPosition = 343
-; FirstLine = 69
-; Folding = AA+-
+; CursorPosition = 332
+; FirstLine = 82
+; Folding = EA--
 ; EnableThread
 ; EnableXP
 ; EnableOnError

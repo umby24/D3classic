@@ -13,6 +13,8 @@ Structure pureBot ;Define our settings container
   NickPass.s
 EndStructure
 
+Global NewList Players.s()
+
 XIncludeFile "../Include/Include.pbi" ;Include the D3 SDK
 XIncludeFile "reqfunc.pb" ;Include IRC Bot required functions.
 
@@ -23,6 +25,9 @@ XIncludeFile "reqfunc.pb" ;Include IRC Bot required functions.
 Global thisBot.pureBot ;Init our settings
 thisBot\Running = 0
 
+Declare saveSettings()
+Declare loadSettings()
+
 ;Now, must include some required functions for the server to reconize our plugin.
 ProcedureCDLL Init(*Plugin_Info.Plugin_Info, *Plugin_Function.Plugin_Function) ; Called with the loading of the library
   *Plugin_Info\Name = #Plugin_Name
@@ -32,14 +37,20 @@ ProcedureCDLL Init(*Plugin_Info.Plugin_Info, *Plugin_Function.Plugin_Function) ;
   Define_Prototypes(*Plugin_Function)
   
   OpenConsole()
+  loadSettings()
+  saveSettings()
   System_Message_Network_Send_2_All(-1, "&eIRC Plugin Initialized")
 EndProcedure
 
 ProcedureCDLL Deinit() ; Called with the unloading of the library
   If thisBot\Running = 1 ; If the bot is running, close it gracefully.
     thisBot\Quit = 1
-    send_raw("QUIT " + thisBot\Botname + " :Plugin closing", thisBot\Socket)
+    send_raw("PRIVMSG " + thisBot\Channel + " :[Plugin Closed]", thisBot\Socket)
+    send_raw("QUIT :Plugin closing", thisBot\Socket)
+    Delay(300)
     CloseNetworkConnection(thisBot\Socket)
+    ;FreeMemory(thisBot)
+    Delay(100)
   EndIf
 EndProcedure
 
@@ -129,10 +140,21 @@ Procedure initBot() ;Put this in a function so it can be called by command.
   EndIf
 EndProcedure
 
+Procedure RemovePlayer(Name.s)
+  
+  ForEach Players()
+    If Players() = Name
+      DeleteElement(Players())
+      ProcedureReturn #True
+    EndIf
+  Next
+  
+  ProcedureReturn #False
+EndProcedure
+
 ;The below function will handle our incoming IRC commands.
 ProcedureCDLL Event_Chat_Map(*Entity.Entity, Message.s)
   Result = 1
-  
   If thisBot\Running = 1 And (thisBot\Mode = 2 Or thisBot\Mode = 3)
     mapname.s = ""
     
@@ -140,8 +162,7 @@ ProcedureCDLL Event_Chat_Map(*Entity.Entity, Message.s)
     If *Pointer
       mapname = *Pointer\Name
     EndIf
-    ircMessage.s = Chr(3) + "07[" + Chr(3) + "06" + mapname + Chr(3) + "07] " + Chr(3) + *Entity\Name + ": " + Message
-    
+    ircMessage.s = Chr(3) + "07[" + Chr(3) + "06" + mapname + Chr(3) + "07] " + Chr(15) + *Entity\Name + ": " + Message
     send_raw("PRIVMSG " + thisBot\Channel + " :" + ircMessage, thisBot\Socket)
   EndIf
   
@@ -150,10 +171,12 @@ EndProcedure
 
 ProcedureCDLL Event_Chat_All(*Entity.Entity, Message.s)
   Result = 1
-    If thisBot\Running = 1 And (thisBot\Mode = 2 Or thisBot\Mode = 3)
-    ircMessage.s = Chr(3) + "07[" + Chr(3) + "06Global" + Chr(3) + "07] " + Chr(3) + *Entity\Name + ": " + Message
+  
+  If thisBot\Running = 1 And (thisBot\Mode = 2 Or thisBot\Mode = 3)
+    ircMessage.s = Chr(3) + "07[" + Chr(3) + "06Global" + Chr(3) + "07] " + Chr(15) + *Entity\Name + ": " + Message
     send_raw("PRIVMSG " + thisBot\Channel + " :" + ircMessage, thisBot\Socket)
   EndIf
+  
   ProcedureReturn Result
 EndProcedure
 
@@ -162,8 +185,11 @@ ProcedureCDLL Event_Client_Login(*Client.Network_Client)
   If *Client
     cname.s = *Client\Player\Login_Name
     
+    AddElement(Players())
+    Players() = cname
+    
     If thisBot\Running = 1 And (thisBot\Mode = 2 Or thisBot\Mode = 3)
-      ircMessage.s = Chr(3) + "07[" + Chr(3) + "06Global" + Chr(3) + "07] " + Chr(3) + cname + " Joined."
+      ircMessage.s = Chr(3) + "07[" + Chr(3) + "06Global" + Chr(3) + "07] " + Chr(15) + cname + " Joined."
       send_raw("PRIVMSG " + thisBot\Channel + " :" + ircMessage, thisBot\Socket)
     EndIf 
   EndIf
@@ -176,8 +202,10 @@ ProcedureCDLL Event_Client_Delete(*Client.Network_Client)
   If *Client
     cname.s = *Client\Player\Login_Name
     
+    RemovePlayer(cname)
+    
     If thisBot\Running = 1 And (thisBot\Mode = 2 Or thisBot\Mode = 3)
-      ircMessage.s = Chr(3) + "07[" + Chr(3) + "06Global" + Chr(3) + "07] " + Chr(3) + cname + " Left."
+      ircMessage.s = Chr(3) + "07[" + Chr(3) + "06Global" + Chr(3) + "07] " + Chr(15) + cname + " Left."
       send_raw("PRIVMSG " + thisBot\Channel + " :" + ircMessage, thisBot\Socket)
     EndIf 
   EndIf
@@ -220,7 +248,7 @@ ProcedureCDLL Event_Command(Argument.s, *Client.Network_Client, Command.s, Text_
       Case "ircsave"
         saveSettings()
         System_Message_Network_Send(*Client\ID, "&eIRC Settings saved.")
-      Case "NickPass"
+      Case "nickpass"
         thisBot\NickPass = Arg_0
         saveSettings()
         System_Message_Network_Send(*Client\ID, "&eSettings updated. If IRC is running, restart it.")
@@ -231,7 +259,8 @@ ProcedureCDLL Event_Command(Argument.s, *Client.Network_Client, Command.s, Text_
             If thisBot\Running = 1
               thisBot\Quit = 1
               thisBot\Running = 0
-              send_raw("QUIT " + thisBot\Botname + " :Plugin closing", thisBot\Socket)
+              send_raw("PRIVMSG " + thisBot\Channel + " :[Plugin Closed]", thisBot\Socket)
+              send_raw("QUIT :Plugin closing", thisBot\Socket)
               CloseNetworkConnection(thisBot\Socket)
               Log_Add("Irc", "IRC Client Closed.", 0, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
               System_Message_Network_Send(*Client\ID, "&eIRC Client closed.")
@@ -276,12 +305,11 @@ ProcedureCDLL Event_Command(Argument.s, *Client.Network_Client, Command.s, Text_
     EndSelect
   EndIf
 EndProcedure
-
 ; IDE Options = PureBasic 5.30 (Windows - x64)
 ; ExecutableFormat = Shared Dll
-; CursorPosition = 243
-; FirstLine = 221
-; Folding = --
+; CursorPosition = 306
+; FirstLine = 263
+; Folding = ---
 ; EnableThread
 ; EnableXP
 ; EnableOnError

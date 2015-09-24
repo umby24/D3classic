@@ -3,9 +3,11 @@ Procedure split(Array a$(1), s$, delimeter$)
   count = CountString(s$,delimeter$) + 1
  
   Dim a$(count)
+  
   For i = 1 To count
     a$(i - 1) = StringField(s$,i,delimeter$)
   Next
+  
   ProcedureReturn count ;return count of substrings
 EndProcedure
 
@@ -13,6 +15,73 @@ Procedure send_raw(string$, Socket)
   If Socket
     SendNetworkString(Socket, string$ + Chr(13) + Chr(10))
   EndIf
+EndProcedure
+
+Procedure handleCommands(Command.s, Message.s, Array Args.s(1), *thisBot.purebot, Sender.s)
+  Command = LCase(Command)
+  
+  Select Command
+    Case ".m"
+      
+      Elements = Map_Count_Elements()
+      thisID = -1
+      
+      If Elements > 0
+        Dim Temp.Plugin_Result_Element(Elements)
+        Map_Get_Array(@Temp())
+        
+        Main_LockMutex()
+        
+        For i = 0 To Elements-1
+          *thisMap.Map_Data = Map_Get_Pointer(Temp(i)\ID)
+          If LCase(*thisMap\Name) = LCase(Args(1))
+            thisID = Temp(i)\ID
+            Break
+          EndIf
+        Next
+        
+        Main_UnlockMutex()
+        
+        If thisID <> -1
+          System_Message_Network_Send_2_All(thisID, "&eIRC <" + sender + "> &f" + Message)
+        Else
+          send_raw("NOTICE " + Sender + " :Map not found.", *thisBot\Socket)
+        EndIf
+        
+      EndIf
+      
+    Case ".help"
+      PrintN(CommAnd + "|")
+      send_raw("PRIVMSG " + *thisBot\Channel + " :IRC Bridge commands: .m, .help, .info, .commands, .players, .online.", *thisBot\socket)
+      
+    Case ".info"
+      send_raw("PRIVMSG " + *thisBot\Channel + " :D3 Server IRC Bridge plugin, by Umby24. Version: 2", *thisBot\socket)
+      
+    Case ".commands"
+      send_raw("PRIVMSG " + *thisBot\Channel + " :IRC Bridge commands: .m, .help, .info, .commands, .players, .online.", *thisBot\socket)
+      
+    Case ".players"
+      onlinePlayers = Entity_Count_Elements()
+      send_raw("PRIVMSG " + *thisBot\Channel + " :There are " + Str(onlinePlayers) + " players online.", *thisBot\socket)
+      
+      thisString.s = ""
+      
+      If onlinePlayers > 0
+        ForEach Players()
+          thisString = thisString + Players() + ", "  
+        Next
+        
+          
+        send_raw("PRIVMSG " + *thisBot\Channel + " :" + thisString, *thisBot\socket)
+      EndIf
+      
+      
+    Case ".online"
+      onlinePlayers = Entity_Count_Elements()
+      send_raw("PRIVMSG " + *thisBot\Channel + " :There are " + Str(onlinePlayers) + " players online.", *thisBot\socket)
+      
+  EndSelect
+  
 EndProcedure
 
 Procedure.s getIrcString(Socket)
@@ -83,10 +152,29 @@ Procedure ircLoop(*thisBot.pureBot)
       
       Select second
         Case "PRIVMSG"
-          If *thisBot\Mode = 1 Or *thisBot\Mode = 3
+          If (*thisBot\Mode = 1 Or *thisBot\Mode = 3) And Left(message, 1) <> "."
             System_Message_Network_Send_2_All(-1, "&eIRC <" + name + "> &f" + message)
             Log_Add("Irc", "Message: <" + name + "> " + message, 0, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
           EndIf
+          
+          If Left(message, 1) = "."
+            ;Command
+            If FindString(message, " ") = 0
+              message = message + " "
+            EndIf
+            
+            Command.s = Mid(message, 0, FindString(message, " ") - 1)
+            
+            Dim args.s(0)
+            split(args(),message, " ") ; Gets the args
+            
+            If (CountString(message, " ")) >= 2
+              message = Mid(message, Len(Args(0)) + Len(Args(1)) + 3, Len(message) - (Len(Args(0)) + Len(Args(1)) + 2))
+            EndIf
+            
+            handleCommands(Command, Message, args(), *thisBot, name)
+          EndIf
+          
           
           Continue
         Case "NOTICE"
@@ -130,22 +218,17 @@ Procedure ircLoop(*thisBot.pureBot)
       EndSelect
       
       quit = *thisBot\quit
+      
       If *thisBot\Raw
         PrintN(message)
       EndIf
       
   Wend
   
-  
 EndProcedure
-
-
-
-
-
-; IDE Options = PureBasic 5.00 (Windows - x86)
-; CursorPosition = 118
-; FirstLine = 110
+; IDE Options = PureBasic 5.30 (Windows - x64)
+; CursorPosition = 227
+; FirstLine = 147
 ; Folding = -
 ; EnableThread
 ; EnableXP

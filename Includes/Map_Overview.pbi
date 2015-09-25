@@ -7,7 +7,9 @@
 ; ########################################## Proceduren ##########################################
 
 Procedure Map_Overview_Save_2D(*Map_Data_Element.Map_Data, Directory.s) ; Speichert ein Abbild der Karte als Image
-  
+      If *Map_Data_Element\Loaded = 0
+        ProcedureReturn
+    EndIf
   *Pointer.Map_Block
   
   If 1 ; Hier sollte das Element geprüft werden!
@@ -85,7 +87,10 @@ Procedure Map_Overview_Save_2D(*Map_Data_Element.Map_Data, Directory.s) ; Speich
 EndProcedure
 
 Procedure Map_Overview_Save_Iso_Fast(*Map_Data_Element.Map_Data, Filename.s) ; Speichert ein Abbild der Karte als Image (Isometrisch)
-  
+    If *Map_Data_Element\Loaded = 0
+        ProcedureReturn
+    EndIf
+    
   *Pointer.Map_Block
   
   If 1 ; Hier sollte das Element geprüft werden!
@@ -173,10 +178,9 @@ Procedure Map_Overview_Save_Iso_Fast(*Map_Data_Element.Map_Data, Filename.s) ; S
     EndIf
   EndIf
 EndProcedure
-; IDE Options = PureBasic 4.50 (Windows - x86)
-; CursorPosition = 168
-; FirstLine = 123
-; Folding = -
+; IDE Options = PureBasic 5.30 (Windows - x64)
+; CursorPosition = 11
+; Folding = 9
 ; EnableThread
 ; EnableXP
 ; DisableDebugger

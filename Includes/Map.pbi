@@ -565,12 +565,15 @@ Procedure Map_Resize(Map_ID, X, Y, Z) ; Ändert die Größe der Karte
 EndProcedure
 
 Procedure Map_Fill(Map_ID, Function_Name.s, Argument_String.s) ; Füllt die Karte mit einer Landschaft
-  
   Procedureresult = 0
   
   *Pointer.Map_Block
   
   If Map_Select_ID(Map_ID)
+      If Map_Data()\Loaded = 0
+          Map_Reload(Map_ID)
+      EndIf
+      
     X = Map_Data()\Size_X
     Y = Map_Data()\Size_Y
     Z = Map_Data()\Size_Z
@@ -610,12 +613,16 @@ Procedure Map_Fill(Map_ID, Function_Name.s, Argument_String.s) ; Füllt die Karte
 EndProcedure
 
 Procedure Map_Save(*Map_Data_Element.Map_Data, Directory.s) ; Komprimiert und Speichert die Karte (Gewählt über Pointer zum Element) (Thread)
-  
+    
+    If *Map_Data_Element\Loaded = 0
+        ProcedureReturn 1
+    EndIf
+    
   ProcedureResult = 0
   
   *Pointer.Map_Block
   
-  If 1 ; Hier sollte das Element geprüft werden!
+  If 1 ; here, the element should be tested!
     Map_Size_X = *Map_Data_Element\Size_X
     Map_Size_Y = *Map_Data_Element\Size_Y
     Map_Size_Z = *Map_Data_Element\Size_Z
@@ -2232,9 +2239,9 @@ EndProcedure
 
 RegisterCore("Map", 1000, #Null, #Null, @Map_Main())
 ; IDE Options = PureBasic 5.30 (Windows - x64)
-; CursorPosition = 1652
-; FirstLine = 1240
-; Folding = f79fAeQQ-
+; CursorPosition = 370
+; FirstLine = 323
+; Folding = f79-CeQQ-
 ; EnableThread
 ; EnableXP
 ; DisableDebugger

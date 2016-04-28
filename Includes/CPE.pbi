@@ -338,11 +338,7 @@ Procedure CPE_Aftermap_Actions(Client_ID, *MapData.Map_Data)
 EndProcedure
 
 Procedure CPE_Set_Env_Colors(Type.b, Red.w, Green.w, Blue.w)
-    Network_Client_Output_Write_Byte(Network_Client()\ID, 25)
-    Network_Client_Output_Write_Byte(Network_Client()\ID, Type)
-    Network_Client_Output_Write_Word(Network_Client()\ID, Red)
-    Network_Client_Output_Write_Word(Network_Client()\ID, Green)
-    Network_Client_Output_Write_Word(Network_Client()\ID, Blue)
+    SendSetEnviromentColors(Network_Client()\ID, Type, Red, Green, Blue)
 EndProcedure
 
 Procedure CPE_Set_Weather(Client_ID, Weather.b)
@@ -350,8 +346,7 @@ Procedure CPE_Set_Weather(Client_ID, Weather.b)
     
     If Network_Client_Select(Client_ID)
         If Network_Client()\CPEWeather = #True
-            Network_Client_Output_Write_Byte(Network_Client()\ID, 31)
-            Network_Client_Output_Write_Byte(Network_Client()\ID, Weather)
+            SendSetWeather(Network_Client()\ID, Weather)
         EndIf
     EndIf
     
@@ -360,11 +355,8 @@ EndProcedure
 
 Procedure CPE_Handle_Entity()
     If Network_Client()\Logged_In = #True And Network_Client()\ChangeModel = #True And Entity()\Model <> "default"
-        Network_Client_Output_Write_Byte(Network_Client()\ID, 29)
-        Network_Client_Output_Write_Byte(Network_Client()\ID, Entity()\ID_Client)
-        Network_Client_Output_Write_String(Network_Client()\ID, LSet(Entity()\Model, 64, " "), 64)
+        SendChangeModel(Network_Client()\ID, Entity()\ID_Client, Entity()\Model)
     EndIf
-    
 EndProcedure
 
 Procedure CPE_Client_Set_Block_Permissions(Client_ID, Block_ID, CanPlace, CanDelete)
@@ -372,10 +364,7 @@ Procedure CPE_Client_Set_Block_Permissions(Client_ID, Block_ID, CanPlace, CanDel
     
     If Network_Client_Select(Client_ID)
         If Network_Client()\BlockPermissions = #True
-            Network_Client_Output_Write_Byte(Client_ID, 28)
-            Network_Client_Output_Write_Byte(Client_ID, Block_ID)
-            Network_Client_Output_Write_Byte(Client_ID, CanPlace)
-            Network_Client_Output_Write_Byte(Client_ID, CanDelete)
+             SendBlockPermissions(Client_ID, Block_ID, CanPlace, CanDelete)
         EndIf
     EndIf
     
@@ -384,14 +373,10 @@ EndProcedure
 
 Procedure CPE_Client_Send_Map_Appearence(Client_ID, URL.s, Side_Block, Edge_Block, Side_Level.w)
     List_Store(*Network_Client_Old, Network_Client())
-    ;URL = LSet(URL, 64)
+    
     If Network_Client_Select(Client_ID)
         If Network_Client()\EnvMapAppearance = #True
-            Network_Client_Output_Write_Byte(Client_ID, 30)
-            Network_Client_Output_Write_String(Client_ID, LSet(URL, 64, " "), 64)
-            Network_Client_Output_Write_Byte(Client_ID, Side_Block)
-            Network_Client_Output_Write_Byte(Client_ID, Edge_Block)
-            Network_Client_Output_Write_Word(Client_ID, Side_Level)
+            SendEnvMapAppearance(Client_ID, URL, Side_Block, Edge_Block, Side_Level)
         EndIf
     EndIf
     
@@ -404,11 +389,7 @@ Procedure CPE_Client_Send_Hotkeys(Client_ID)
     If Network_Client_Select(Client_ID)
         If Network_Client()\TextHotkey = #True
             ForEach Hotkeys()
-                Network_Client_Output_Write_Byte(Client_ID, 21)
-                Network_Client_Output_Write_String(Client_ID, LSet(Hotkeys()\Label, 64, " "), 64)
-                Network_Client_Output_Write_String(Client_ID, LSet(ReplaceString(Hotkeys()\Action, "\n", Chr(13)), 64, " "), 64)
-                Network_Client_Output_Write_Int(Client_ID, Hotkeys()\Keycode)
-                Network_Client_Output_Write_Byte(Client_ID, Hotkeys()\Keymods)
+                SendTextHotkeys(Client_ID, Hotkeys()\Label, Hotkeys()\Action, Hotkeys()\Keycode, Hotkeys()\Keymods)
             Next
         EndIf
     EndIf
@@ -421,22 +402,16 @@ Procedure CPE_Client_Hackcontrol_Send(Client_ID, Flying, Noclip, Speeding, Spawn
     
     If Network_Client_Select(Client_ID)
         If Network_Client()\HackControl = #True
-            Network_Client_Output_Write_Byte(Client_ID, 32)
-            Network_Client_Output_Write_Byte(Client_ID, Flying)
-            Network_Client_Output_Write_Byte(Client_ID, Noclip)
-            Network_Client_Output_Write_Byte(Client_ID, Speeding)
-            Network_Client_Output_Write_Byte(Client_ID, SpawnControl)
-            Network_Client_Output_Write_Byte(Client_ID, ThirdPerson)
-            Network_Client_Output_Write_Word(Client_ID, Jumpheight)
+            SendHackControl(Client_ID, Flying, Noclip, Speeding, SpawnControl, ThirdPerson, Jumpheight)
         EndIf
     EndIf
     
     List_Restore(*Network_Client_Old, Network_Client())
 EndProcedure
-; IDE Options = PureBasic 5.30 (Windows - x64)
-; CursorPosition = 332
-; FirstLine = 82
-; Folding = EA--
+; IDE Options = PureBasic 5.30 (Windows - x86)
+; CursorPosition = 406
+; FirstLine = 115
+; Folding = DAj-
 ; EnableThread
 ; EnableXP
 ; EnableOnError

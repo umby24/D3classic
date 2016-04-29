@@ -101,9 +101,10 @@ Procedure SendHackControl(ClientID, Flying.b, Noclip.b, Speeding.b, SpawnControl
 EndProcedure
         
 ;}
-; IDE Options = PureBasic 5.30 (Windows - x86)
-; CursorPosition = 95
-; FirstLine = 62
-; Folding = ---
+
+
+; IDE Options = PureBasic 5.30 (Linux - x64)
+; CursorPosition = 104
+; Folding = +--
 ; EnableThread
 ; EnableXP

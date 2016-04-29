@@ -1,4 +1,4 @@
 [Test]
-Action = /box
+Action = /box\n
 Keycode = 46
 Modifier = 1

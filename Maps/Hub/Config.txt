@@ -2,7 +2,7 @@
 ; Save_Intervall: in minutes (0 = Disabled)
 ; Jumpheight: -1 = Default
 ;
-Server_Version = 10141
+Server_Version = 1015
 Unique_ID = LIRNDCSDCEUTSCRN
 Name = Hub
 Rank_Build = 0
@@ -15,11 +15,11 @@ Overview_Type = 2
 Size_X = 384
 Size_Y = 384
 Size_Z = 128
-Spawn_X = 122.25
-Spawn_Y = 28.46875
-Spawn_Z = 8
-Spawn_Rot = 177.1875
-Spawn_Look = -12.65625
+Spawn_X = 295.21875
+Spawn_Y = 289.75
+Spawn_Z = 64
+Spawn_Rot = -63.28125
+Spawn_Look = 19.6875
 Colors_Set = 1
 Sky_Color = -1
 Cloud_Color = -1

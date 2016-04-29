@@ -13,8 +13,3 @@ Name = temp
 Directory = Maps/temp/
 Delete = 0
 Reload = 0
-[6]
-Name = faggot
-Directory = Maps/faggot/
-Delete = 0
-Reload = 0

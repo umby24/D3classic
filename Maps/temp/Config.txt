@@ -2,8 +2,8 @@
 ; Save_Intervall: in minutes (0 = Disabled)
 ; Jumpheight: -1 = Default
 ;
-Server_Version = 10141
-Unique_ID = HWLCAIHFQBEPYDPF
+Server_Version = 1015
+Unique_ID = PIDYKMQLRLDOFPEE
 Name = temp
 Rank_Build = 0
 Rank_Join = 0

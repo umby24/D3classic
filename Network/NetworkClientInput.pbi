@@ -122,6 +122,7 @@ Procedure Network_Client_Input_Read_Buffer(Client_ID, *Data_Buffer, Data_Size)  
   List_Restore(*Network_Client_Old, Network_Client())
 EndProcedure
 
+;- Writes data into a clients input buffer, after it has been received from a socket.
 Procedure Network_Client_Input_Write_Buffer(Client_ID, *Data_Buffer, Data_Size)   ; Schreibt Daten in den Empfangsbuffer -- Write data in the receive buffer
   List_Store(*Network_Client_Old, Network_Client())
   
@@ -157,9 +158,9 @@ Procedure Network_Client_Input_Write_Buffer(Client_ID, *Data_Buffer, Data_Size) 
   
   List_Restore(*Network_Client_Old, Network_Client())
 EndProcedure
-; IDE Options = PureBasic 5.30 (Windows - x86)
-; CursorPosition = 158
-; FirstLine = 50
+; IDE Options = PureBasic 5.30 (Linux - x64)
+; CursorPosition = 124
+; FirstLine = 39
 ; Folding = n-
 ; EnableUnicode
 ; EnableXP

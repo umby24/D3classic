@@ -2,13 +2,13 @@
 ; Save_Intervall: in minutes (0 = Disabled)
 ; Jumpheight: -1 = Default
 ;
-Server_Version = 10141
+Server_Version = 1015
 Unique_ID = WDBDLGQPOIKDERRR
 Name = Theatre
 Rank_Build = 0
 Rank_Join = 0
 Rank_Show = 0
-Physic_Stopped = 1
+Physic_Stopped = 0
 MOTD_Override = 
 Save_Intervall = 10
 Overview_Type = 2

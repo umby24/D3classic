@@ -419,13 +419,14 @@ ProcedureCDLL Main()
   Next
   
 EndProcedure
-; IDE Options = PureBasic 5.30 (Windows - x64)
-; ExecutableFormat = Shared Dll
+; IDE Options = PureBasic 5.30 (Linux - x64)
+; ExecutableFormat = Shared .so
 ; CursorPosition = 391
+; FirstLine = 348
 ; Folding = ------
 ; EnableThread
 ; EnableOnError
-; Executable = lua.x86.dll
+; Executable = lua.x64.so
 ; DisableDebugger
 ; CompileSourceDirectory
-; Compiler = PureBasic 5.30 (Windows - x86)
+; Compiler = PureBasic 5.30 (Linux - x64)

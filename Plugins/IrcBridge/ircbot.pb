@@ -305,13 +305,13 @@ ProcedureCDLL Event_Command(Argument.s, *Client.Network_Client, Command.s, Text_
     EndSelect
   EndIf
 EndProcedure
-; IDE Options = PureBasic 5.30 (Windows - x64)
-; ExecutableFormat = Shared Dll
+; IDE Options = PureBasic 5.30 (Linux - x64)
+; ExecutableFormat = Shared .so
 ; CursorPosition = 306
 ; FirstLine = 263
 ; Folding = ---
 ; EnableThread
 ; EnableXP
 ; EnableOnError
-; Executable = irc.x86.dll
-; Compiler = PureBasic 5.30 (Windows - x86)
+; Executable = irc.x64.so
+; Compiler = PureBasic 5.30 (Linux - x64)

@@ -26,6 +26,7 @@ Structure Build_Mode_Blocks_To_Resend ; Block to be resent after changing buildm
   Y.u
   Z.u
 EndStructure
+; - DOn't need to send full title for skin
 
 Global NewList Build_Mode_Blocks_To_Resend.Build_Mode_Blocks_To_Resend()
 
@@ -291,7 +292,8 @@ Procedure Build_Mode_Main()
 EndProcedure
 
 RegisterCore("BuildMode", 1000, #Null, #Null, @Build_Mode_Main())
-; IDE Options = PureBasic 5.00 (Windows - x64)
+; IDE Options = PureBasic 5.30 (Linux - x64)
+; CursorPosition = 21
 ; Folding = ----
 ; EnableXP
 ; DisableDebugger

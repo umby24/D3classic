@@ -124,6 +124,24 @@ Procedure SendClientHandshake(ClientID, ProtocolVersion.b, ServerName.s, ServerM
     Network_Client_Output_Write_Byte(ClientID, UserType)
 EndProcedure
 
+Procedure SendMapInit(ClientID)
+    Network_Client_Output_Write_Byte(ClientID, 02)
+EndProcedure
+
+Procedure SendMapData(ClientID, chunkSize.w, *Data, PercentComplete.a)
+    Network_Client_Output_Write_Byte(ClientID, 03)
+    Network_Client_Output_Write_Word(ClientID, chunkSize) ; Menge der Bytes
+    Network_Client_Output_Write_Buffer(ClientID, *Data, chunkSize)
+    Network_Client_Output_Write_Byte(ClientID, PercentComplete)
+EndProcedure
+
+Procedure SendMapFinalize(ClientID, X.w, Y.w, Z.w)
+    Network_Client_Output_Write_Byte(ClientID, 4)
+    Network_Client_Output_Write_Word(ClientID, X)
+    Network_Client_Output_Write_Word(ClientID, Z)
+    Network_Client_Output_Write_Word(ClientID, Y)
+EndProcedure
+
 Procedure SendBlockChange(ClientID, X.w, Y.w, Z.w, Type.a)
     Network_Client_Output_Write_Byte(ClientID, 6)
     Network_Client_Output_Write_Word(ClientID, X)
@@ -169,8 +187,7 @@ Procedure SendDisconnect(ClientID, Reason.s)
     Network_Client_Output_Write_String(ClientID, Reason, 64)    
 EndProcedure
 ; IDE Options = PureBasic 5.30 (Linux - x64)
-; CursorPosition = 48
-; FirstLine = 15
-; Folding = -----
+; CursorPosition = 140
+; Folding = +----
 ; EnableThread
 ; EnableXP

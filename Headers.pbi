@@ -1,4 +1,5 @@
 Declare Network_Client_Input_Available(Client_ID)
+
 Declare UnregisterCore(Name.s)
 
 Declare RegisterCore(Name.s, Timer.i, *InitFunction, *ShutdownFunction, *MainFunction)
@@ -141,6 +142,10 @@ Declare SendHoldThis(ClientID, HeldBlock.b, PreventChange.b)
 
 Declare SendTextHotkeys(ClientID, Label.s, Action.s, Keycode.l, Keymod.b)
 
+Declare SendExtAddPlayerName(ClientID, NameId.w, Playername.s, Listname.s, Groupname.s, Grouprank.b)
+
+Declare SendExtRemovePlayerName(ClientID, NameID.w)
+
 Declare SendSetEnviromentColors(ClientID, Type.b, Red.w, Green.w, Blue.w)
 
 Declare SendSelectionBoxAdd(ClientID, SelectionID, Label.s, StartX.w, StartY.w, StartZ.w, EndX.w, EndY.w, EndZ.w, Red.w, Green.w, Blue.w, Opacity.w)
@@ -158,6 +163,12 @@ Declare SendSetWeather(ClientID, Weather.b)
 Declare SendHackControl(ClientID, Flying.b, Noclip.b, Speeding.b, SpawnControl.b, ThirdPerson.b, Jumpheight.w)
 
 Declare SendClientHandshake(ClientID, ProtocolVersion.b, ServerName.s, ServerMotd.s, UserType.b)
+
+Declare SendMapInit(ClientID)
+
+Declare SendMapData(ClientID, chunkSize.w, *Data, PercentComplete.a)
+
+Declare SendMapFinalize(ClientID, X.w, Y.w, Z.w)
 
 Declare SendBlockChange(ClientID, X.w, Y.w, Z.w, Type.a)
 
@@ -177,9 +188,9 @@ Declare System_Load(Filename.s) ; Lädt die Einstellungen
 
 Declare System_Main()
 
-Declare Block_Load(Filename.s)
+Declare Block_Load(Filename.s) ; - Loads the Blocks.txt file, which contains all blocks the server recognizes and its respective settings.
 
-Declare Block_Save(Filename.s)
+Declare Block_Save(Filename.s) ; - Saves the blocks and all block data.
 
 Declare Block_Get_Pointer(Number) ; Specifices a pointer back to the element.
 
@@ -319,9 +330,9 @@ Declare Map_Overview_Save_2D(*Map_Data_Element.Map_Data, Directory.s) ; Speicher
 
 Declare Map_Overview_Save_Iso_Fast(*Map_Data_Element.Map_Data, Filename.s) ; Speichert ein Abbild der Karte als Image (Isometrisch)
 
-Declare Build_Line_Player(Player_Number, Map_ID, X_0, Y_0, Z_0, X_1, Y_1, Z_1, Material, Priority, Undo, Physic)
+Declare Build_Line_Player(Player_Number, Map_ID, X_0, Y_0, Z_0, X_1, Y_1, Z_1, Material, Priority, Undo, Physic) ; - Builds a line between two points.
 
-Declare Build_Box_Player(Player_Number, Map_ID, X_0, Y_0, Z_0, X_1, Y_1, Z_1, Material, Replace_Material, Hollow, Priority, Undo, Physic)
+Declare Build_Box_Player(Player_Number, Map_ID, X_0, Y_0, Z_0, X_1, Y_1, Z_1, Material, Replace_Material, Hollow, Priority, Undo, Physic) ; - Fills the area between two points.
 
 Declare Build_Sphere_Player(Player_Number, Map_ID, X, Y, Z, R.f, Material, Replace_Material, Hollow, Priority, Undo, Physic)
 
@@ -861,5 +872,6 @@ Declare CPE_Client_Hackcontrol_Send(Client_ID, Flying, Noclip, Speeding, SpawnCo
 
 
 ; IDE Options = PureBasic 5.30 (Linux - x64)
+; CursorPosition = 1
 ; EnableUnicode
 ; EnableXP

@@ -78,13 +78,13 @@ Plugin = Lua:Build_Mode_Anchor
 Name = Get Last-Player
 Plugin = Lua:Build_Mode_Get_Player
 
-[Sphere]
-Name = Sphere
-Plugin = Lua:Build_Mode_Sphere
-
 [BCount]
 Name = BCount
 Plugin = Lua:Build_Mode_BCount
+
+[Sphere]
+Name = Sphere
+Plugin = Lua:Build_Mode_Sphere
 
 [Circle]
 Name = Circle

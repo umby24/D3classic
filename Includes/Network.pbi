@@ -656,42 +656,39 @@ Procedure Network_Main()
         Network_Save(Files_File_Get("Network"))
     EndIf
     
-    
     File_Date = GetFileDate(Files_File_Get("Network"), #PB_Date_Modified)
     
     If Network_Main\File_Date_Last <> File_Date
         Network_Load(Files_File_Get("Network"))
     EndIf
+EndProcedure
+
+Procedure UpdateNetworkStats()
+    ForEach Network_Client()
+        Network_Client()\Download_Rate = Network_Client()\Download_Rate_Counter / 5
+        Network_Client()\Upload_Rate = Network_Client()\Upload_Rate_Counter / 5
+        Network_Client()\Download_Rate_Counter = 0
+        Network_Client()\Upload_Rate_Counter = 0
+    Next
     
-    If Network_Main\Timer_Rate < Milliseconds()
-        Network_Main\Timer_Rate = Milliseconds() + 5000
-        
-        ForEach Network_Client()
-            Network_Client()\Download_Rate = Network_Client()\Download_Rate_Counter / 5
-            Network_Client()\Upload_Rate = Network_Client()\Upload_Rate_Counter / 5
-            Network_Client()\Download_Rate_Counter = 0
-            Network_Client()\Upload_Rate_Counter = 0
-        Next
-        
-        Network_Main\Download_Rate = Network_Main\Download_Rate_Counter / 5
-        Network_Main\Upload_Rate = Network_Main\Upload_Rate_Counter / 5
-        Network_Main\Download_Rate_Counter = 0
-        Network_Main\Upload_Rate_Counter = 0
-        
-        Network_HTML_Stats()
-        
-    EndIf
+    Network_Main\Download_Rate = Network_Main\Download_Rate_Counter / 5
+    Network_Main\Upload_Rate = Network_Main\Upload_Rate_Counter / 5
+    Network_Main\Download_Rate_Counter = 0
+    Network_Main\Upload_Rate_Counter = 0
+    
+    Network_HTML_Stats()
 EndProcedure
 
 RegisterCore("Network_Main", 1000, #Null, @Network_Stop(), @Network_Main())
+RegisterCore("Network_Stats", 5000, #Null, #Null, @UpdateNetworkStats())
 RegisterCore("Network_Events", 1, #Null, #Null, @Network_Events())
 RegisterCore("Network_Output_Send", 0, #Null, #Null, @Network_Output_Send())
 RegisterCore("Network_Output_Do", 0, #Null, #Null, @Network_Output_Do())
 RegisterCore("Network_Input_Do", 0, #Null, #Null, @Network_Input_Do())
 ; IDE Options = PureBasic 5.30 (Linux - x64)
-; CursorPosition = 618
-; FirstLine = 117
-; Folding = PA5
+; CursorPosition = 662
+; FirstLine = 75
+; Folding = BAw-
 ; EnableXP
 ; DisableDebugger
 ; CompileSourceDirectory

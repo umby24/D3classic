@@ -102,9 +102,61 @@ EndProcedure
         
 ;}
 
+Procedure SendClientHandshake(ClientID, ProtocolVersion.b, ServerName.s, ServerMotd.s, UserType.b)
+    Network_Client_Output_Write_Byte(ClientID, 0)
+    Network_Client_Output_Write_Byte(ClientID, ProtocolVersion)
+    Network_Client_Output_Write_String(ClientID, ServerName, 64)
+    Network_Client_Output_Write_String(ClientID, ServerMotd, 64)
+    Network_Client_Output_Write_Byte(ClientID, UserType)
+EndProcedure
+
+Procedure SendBlockChange(ClientID, X.w, Y.w, Z.w, Type.a)
+    Network_Client_Output_Write_Byte(ClientID, 6)
+    Network_Client_Output_Write_Word(ClientID, X)
+    Network_Client_Output_Write_Word(ClientID, Z)
+    Network_Client_Output_Write_Word(ClientID, Y)
+    Network_Client_Output_Write_Byte(ClientID, Type)    
+EndProcedure
+
+Procedure SendSpawnEntity(ClientID, PlayerId.b, Name.s, X.w, Y.w, Z.w, Rotation.b, Look.b)
+    Network_Client_Output_Write_Byte(ClientID, 7)
+    Network_Client_Output_Write_Byte(ClientID, PlayerId)
+    Network_Client_Output_Write_String(ClientID, Name, 64)
+    Network_Client_Output_Write_Word(ClientID, X)
+    Network_Client_Output_Write_Word(ClientID, Z)
+    Network_Client_Output_Write_Word(ClientID, Y)
+    Network_Client_Output_Write_Byte(ClientID, Rotation)
+    Network_Client_Output_Write_Byte(ClientID, Look)    
+EndProcedure
+
+Procedure SendPlayerTeleport(ClientID, PlayerId.b, X.w, Y.w, Z.w, Rotation.b, Look.b)
+    Network_Client_Output_Write_Byte(ClientID, 8)
+    Network_Client_Output_Write_Byte(ClientID, PlayerId)
+    Network_Client_Output_Write_Word(ClientID, X)
+    Network_Client_Output_Write_Word(ClientID, Z)
+    Network_Client_Output_Write_Word(ClientID, Y)
+    Network_Client_Output_Write_Byte(ClientID, Rotation)
+    Network_Client_Output_Write_Byte(ClientID, Look)
+EndProcedure
+
+Procedure SendDespawnEntity(ClientID, PlayerId.b)
+    Network_Client_Output_Write_Byte(ClientID, 12)
+    Network_Client_Output_Write_Byte(ClientID, PlayerId)   
+EndProcedure
+
+Procedure SendChatMessage(ClientID, Message.s, Location.b)
+    Network_Client_Output_Write_Byte(ClientID, 13)
+    Network_Client_Output_Write_Byte(ClientID, Location)
+    Network_Client_Output_Write_String(ClientID, Message, 64)  
+EndProcedure
+
+Procedure SendDisconnect(ClientID, Reason.s)
+    Network_Client_Output_Write_Byte(ClientID, 14)
+    Network_Client_Output_Write_String(ClientID, Reason, 64)    
+EndProcedure
 
 ; IDE Options = PureBasic 5.30 (Linux - x64)
-; CursorPosition = 104
-; Folding = +--
+; CursorPosition = 113
+; Folding = +---
 ; EnableThread
 ; EnableXP

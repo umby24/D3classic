@@ -28,7 +28,7 @@ Global NewList Build_Player_Queue.Build_Player_Queue()
 
 ; ########################################## Proceduren ##########################################
 
-Procedure Build_Line_Player(Player_Number, Map_ID, X_0, Y_0, Z_0, X_1, Y_1, Z_1, Material, Priority, Undo, Physic)
+Procedure Build_Line_Player(Player_Number, Map_ID, X_0, Y_0, Z_0, X_1, Y_1, Z_1, Material, Priority, Undo, Physic) ; - Builds a line between two points.
   D_X = X_1 - X_0
   D_Y = Y_1 - Y_0
   D_Z = Z_1 - Z_0
@@ -51,7 +51,7 @@ Procedure Build_Line_Player(Player_Number, Map_ID, X_0, Y_0, Z_0, X_1, Y_1, Z_1,
   Next
 EndProcedure
 
-Procedure Build_Box_Player(Player_Number, Map_ID, X_0, Y_0, Z_0, X_1, Y_1, Z_1, Material, Replace_Material, Hollow, Priority, Undo, Physic)
+Procedure Build_Box_Player(Player_Number, Map_ID, X_0, Y_0, Z_0, X_1, Y_1, Z_1, Material, Replace_Material, Hollow, Priority, Undo, Physic) ; - Fills the area between two points.
   If X_0 > X_1
     X_2 = X_0
     X_0 = X_1
@@ -200,9 +200,9 @@ Procedure Build_Main()
 EndProcedure
 
 RegisterCore("Build", 0, #Null, #Null, @Build_Main())
-; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 201
-; FirstLine = 143
+; IDE Options = PureBasic 5.30 (Linux - x64)
+; CursorPosition = 53
+; FirstLine = 20
 ; Folding = --
 ; EnableXP
 ; DisableDebugger

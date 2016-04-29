@@ -1,6 +1,6 @@
 local Atomic_Material = 202
 local Atomic_Bomb_Radius = 100
-local Atomic_Shroom_Material_1 = 51
+local Atomic_Shroom_Material_1 = 88
 local Atomic_Shroom_Material_2 = 203
 local Atomic_Kill_Deepness = 5
 

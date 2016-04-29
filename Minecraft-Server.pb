@@ -180,6 +180,7 @@ XIncludeFile "Includes/Log.pbi"
 XIncludeFile "Includes/String.pbi"
 XIncludeFile "Includes/Language.pbi"
 XIncludeFile "Includes/Network.pbi"
+XIncludeFile "Network/NetworkClientOutput.pbi"
 XIncludeFile "Network/NetworkClientInput.pbi"
 XIncludeFile "Includes/Error.pbi"
 XIncludeFile "Network/Packets.pbi"
@@ -273,8 +274,8 @@ CoreShutdown()
 ; ########################################## Ende / End ##########################################
 ; IDE Options = PureBasic 5.30 (Linux - x64)
 ; ExecutableFormat = Console
-; CursorPosition = 149
-; FirstLine = 126
+; CursorPosition = 182
+; FirstLine = 165
 ; Folding = -
 ; EnableThread
 ; EnableXP

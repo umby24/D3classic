@@ -19,7 +19,7 @@ Global Block_Main.Block_Main
 ; #################################################################
 ; !!! Structure defined in Main_Structures.pbi !!!
 ; #################################################################
-Global Dim Block.Block(255)
+Global Dim Block.Block(255) ; - Array of blocks, easily accessible by index.
 
 ; ########################################## Constants ############################################
 
@@ -27,7 +27,7 @@ Global Dim Block.Block(255)
 
 ; ########################################## Proceduren ##########################################
 
-Procedure Block_Load(Filename.s)
+Procedure Block_Load(Filename.s) ; - Loads the Blocks.txt file, which contains all blocks the server recognizes and its respective settings.
   If Not OpenPreferences(Filename.s)
       ProcedureReturn
   EndIf
@@ -63,7 +63,7 @@ Procedure Block_Load(Filename.s)
     ClosePreferences()
 EndProcedure
 
-Procedure Block_Save(Filename.s)
+Procedure Block_Save(Filename.s) ; - Saves the blocks and all block data.
   File_ID = CreateFile(#PB_Any, Filename)
     
   If Not IsFile(File_ID)
@@ -142,10 +142,10 @@ Procedure Block_Main()
 EndProcedure
 
 RegisterCore("Block", 1000, #Null, #Null, @Block_Main())
-; IDE Options = PureBasic 5.00 (Windows - x86)
-; CursorPosition = 103
-; FirstLine = 79
-; Folding = -
+; IDE Options = PureBasic 5.30 (Linux - x64)
+; CursorPosition = 21
+; FirstLine = 9
+; Folding = 9
 ; EnableXP
 ; DisableDebugger
 ; CompileSourceDirectory

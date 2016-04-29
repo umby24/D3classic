@@ -3,7 +3,7 @@
 ; Jumpheight: -1 = Default
 ;
 Server_Version = 1015
-Unique_ID = PIDYKMQLRLDOFPEE
+Unique_ID = LMLHLWKAOERBISEY
 Name = temp
 Rank_Build = 0
 Rank_Join = 0
@@ -12,9 +12,9 @@ Physic_Stopped = 0
 MOTD_Override = 
 Save_Intervall = 10
 Overview_Type = 2
-Size_X = 256
-Size_Y = 256
-Size_Z = 256
+Size_X = 128
+Size_Y = 128
+Size_Z = 128
 Spawn_X = 32
 Spawn_Y = 32
 Spawn_Z = 42.6666679382

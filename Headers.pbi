@@ -1,3 +1,4 @@
+Declare Network_Client_Input_Available(Client_ID)
 Declare UnregisterCore(Name.s)
 
 Declare RegisterCore(Name.s, Timer.i, *InitFunction, *ShutdownFunction, *MainFunction)
@@ -58,61 +59,61 @@ Declare.s Lang_Get(Language.s, Input.s, Field_0.s = "", Field_1.s = "", Field_2.
 
 Declare Language_Main()
 
-Declare Network_Save(Filename.s) ; Speichert die Einstellungen
+Declare Network_Save(Filename.s) ; Saves network settings
 
-Declare Network_Load(Filename.s) ; L?dt die Einstellungen
+Declare Network_Load(Filename.s) ; Loads network settings
 
-Declare Network_Start()
+Declare Network_Start() ; - Starts listening for connections
 
-Declare Network_Stop()
+Declare Network_Stop() ; - Disconnects all clients and stops listening for new connections.
 
-Declare Network_HTML_Stats()
+Declare Network_HTML_Stats() ; - Generates the network stats HTML page
 
-Declare Network_Client_Count()
+Declare Network_Client_Count() ; - Gets the size of network_client() list (Number of connected clients, verified or not)
 
-Declare Network_Client_Get_Pointer(Client_ID, Log=1)    ; Wählt das Linked-List-Objekt
+Declare Network_Client_Get_Pointer(Client_ID, Log=1)    ; Gets a pointer to the given linked-list object
 
-Declare Network_Client_Select(Client_ID, Log=1)    ; Wählt das Linked-List-Objekt
+Declare Network_Client_Select(Client_ID, Log=1)    ; Selects the linked-list object
 
 Declare Network_Client_Add(Client_ID)     ; Fügt einen Clienten hinzu / Adds a client
 
-Declare Network_Client_Delete(Client_ID, Message.s, Show_2_All)     ; Löscht einen Clienten
+Declare Network_Client_Delete(Client_ID, Message.s, Show_2_All)     ; Deletes a client
 
-Declare Network_Client_Kick(Client_ID, Message.s, Hide) ; Kickt den Client
+Declare Network_Client_Kick(Client_ID, Message.s, Hide) ; Kick the client
 
-Declare Network_Client_Ping(Client_ID) ; Pingt den Client an
-
-Declare Network_Client_Output_Available(Client_ID)     ; Bytes verfügbar im Sendebuffer
-
-Declare Network_Client_Output_Add_Offset(Client_ID, Bytes)     ; Addiert einige Bytes zum Offset des Sendebuffers
-
-Declare Network_Client_Output_Read_Buffer(Client_ID, *Data_Buffer, Data_Size)   ; Liest Daten aus dem Sendebuffer
-
-Declare Network_Client_Output_Write_Byte(Client_ID, Value.b)     ; Schreibt ein Byte in den Sendebuffer
-
-Declare.w EndianW(val.w) ; Change Endianness of a Short (Word). Yay inline ASM!
-
-Declare Network_Client_Output_Write_Word(Client_ID, Value.w)     ; Schreibt ein Word in den Sendebuffer
-
-Declare.l Endian(val.l)
-
-Declare Network_Client_Output_Write_Int(Client_ID, Value.l) ;Using 'Long' here, because in this context, it is an int (4 Bytes)
-
-Declare Network_Client_Output_Write_String(Client_ID, String.s, Length)     ; Schreibt einen String angegebener L?nge in den Sendebuffer
-
-Declare Network_Client_Output_Write_Buffer(Client_ID, *Data_Buffer, Data_Size)     ; Schreibt einen Speicherbereich angegebener L?nge in den Sendebuffer
+Declare Network_Client_Ping(Client_ID) ; Send a ping to the specified client.
 
 Declare Network_Input_Do()  ; Wertet die empfangenen Daten aus. / Evaluates received data
 
-Declare Network_Output_Do()  ; Erstellt zu sendende Daten
+Declare Network_Output_Do()  ; Client timeout checking (Sends pings)
 
-Declare Network_Output_Send() ; Sendet Daten vom Sendebuffer
+Declare Network_Output_Send() ; Sends data from the send buffers
 
 Declare Network_Events()
 
 Declare Network_Main()
 
-Declare Network_Client_Input_Available(Client_ID)
+Declare UpdateNetworkStats()
+
+Declare Network_Client_Output_Available(Client_ID)     ; Returns the number of bytes in the output buffer.
+
+Declare Network_Client_Output_Add_Offset(Client_ID, Bytes)     ; Addiert einige Bytes zum Offset des Sendebuffers
+
+Declare Network_Client_Output_Read_Buffer(Client_ID, *Data_Buffer, Data_Size)   ; Liest Daten aus dem Sendebuffer
+
+Declare Network_Client_Output_Write_Byte(Client_ID, Value.b)     ; Writes a byte to the send buffer
+
+Declare.w EndianW(val.w) ; Change Endianness of a Short (Word). Yay inline ASM!
+
+Declare.l Endian(val.l) ; Change endianness of an int (long, DWORD, etc)
+
+Declare Network_Client_Output_Write_Word(Client_ID, Value.w)     ; Write a short to the send buffer
+
+Declare Network_Client_Output_Write_Int(Client_ID, Value.l) ;Using 'Long' here, because in this context, it is an int (4 Bytes)
+
+Declare Network_Client_Output_Write_String(Client_ID, String.s, Length)     ; Write a string of the given length to the sendbuffer
+
+Declare Network_Client_Output_Write_Buffer(Client_ID, *Data_Buffer, Data_Size)     ; Write raw bytes into the send buffer.
 
 Declare Network_Client_Input_Add_Offset(Client_ID, Bytes)     ; Addiert einige Bytes zum Offset des Empfangbuffers -- Adds some bytes to offset the receive buffer
 
@@ -155,6 +156,20 @@ Declare SendEnvMapAppearance(ClientID, Url.s, Sideblock.b, Edgeblock.b, Sideleve
 Declare SendSetWeather(ClientID, Weather.b)
 
 Declare SendHackControl(ClientID, Flying.b, Noclip.b, Speeding.b, SpawnControl.b, ThirdPerson.b, Jumpheight.w)
+
+Declare SendClientHandshake(ClientID, ProtocolVersion.b, ServerName.s, ServerMotd.s, UserType.b)
+
+Declare SendBlockChange(ClientID, X.w, Y.w, Z.w, Type.a)
+
+Declare SendSpawnEntity(ClientID, PlayerId.b, Name.s, X.w, Y.w, Z.w, Rotation.b, Look.b)
+
+Declare SendPlayerTeleport(ClientID, PlayerId.b, X.w, Y.w, Z.w, Rotation.b, Look.b)
+
+Declare SendDespawnEntity(ClientID, PlayerId.b)
+
+Declare SendChatMessage(ClientID, Message.s, Location.b)
+
+Declare SendDisconnect(ClientID, Reason.s)
 
 Declare System_Save(Filename.s) ; Speichert die Einstellungen
 
@@ -762,8 +777,6 @@ Declare Network_Out_Entity_Delete(Client_ID, ID_Client) ; Löscht eine Spielerobj
 
 Declare Network_Out_Entity_Position(Client_ID, ID_Client, X.f, Y.f, Z.f, Rotation.f, Look.f) ; Sendet die Spielerbewegung von "Client_ID" zu allen
 
-Declare Network_Functions_Main() ; Verwaltet Spieler, verschickt änderungen
-
 Declare Entity_Select_ID(ID, Log=1)
 
 Declare Entity_Select_Name(Name.s, Log=1)
@@ -847,8 +860,6 @@ Declare CPE_Client_Send_Hotkeys(Client_ID)
 Declare CPE_Client_Hackcontrol_Send(Client_ID, Flying, Noclip, Speeding, SpawnControl, ThirdPerson, Jumpheight.w)
 
 
-; IDE Options = PureBasic 5.30 (Windows - x86)
-; CursorPosition = 115
-; FirstLine = 87
+; IDE Options = PureBasic 5.30 (Linux - x64)
 ; EnableUnicode
 ; EnableXP

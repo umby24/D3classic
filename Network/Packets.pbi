@@ -34,7 +34,21 @@ Procedure SendTextHotkeys(ClientID, Label.s, Action.s, Keycode.l, Keymod.b)
     Network_Client_Output_Write_Int(ClientID, keycode)
     Network_Client_Output_Write_Byte(ClientID, Keymod)
 EndProcedure
-            
+
+Procedure SendExtAddPlayerName(ClientID, NameId.w, Playername.s, Listname.s, Groupname.s, Grouprank.b)
+    Network_Client_Output_Write_Byte(ClientID, 22) ; - Send the new player's information to the client
+    Network_Client_Output_Write_Word(ClientID, NameId)
+    Network_Client_Output_Write_String(ClientID, LSet(Playername,64," "),64)
+    Network_Client_Output_Write_String(ClientID, LSet(Listname, 64, " "),64)
+    Network_Client_Output_Write_String(ClientID, LSet(Groupname, 64, " "), 64)
+    Network_Client_Output_Write_Byte(ClientID, Grouprank)    
+EndProcedure
+
+Procedure SendExtRemovePlayerName(ClientID, NameID.w)
+    Network_Client_Output_Write_Byte(ClientID, 24)
+    Network_Client_Output_Write_Word(ClientID, NameID)    
+EndProcedure
+
 Procedure SendSetEnviromentColors(ClientID, Type.b, Red.w, Green.w, Blue.w)
     Network_Client_Output_Write_Byte(ClientID, 25)
     Network_Client_Output_Write_Byte(ClientID, Type)
@@ -154,9 +168,9 @@ Procedure SendDisconnect(ClientID, Reason.s)
     Network_Client_Output_Write_Byte(ClientID, 14)
     Network_Client_Output_Write_String(ClientID, Reason, 64)    
 EndProcedure
-
 ; IDE Options = PureBasic 5.30 (Linux - x64)
-; CursorPosition = 113
-; Folding = +---
+; CursorPosition = 48
+; FirstLine = 15
+; Folding = -----
 ; EnableThread
 ; EnableXP

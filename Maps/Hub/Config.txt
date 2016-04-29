@@ -3,7 +3,7 @@
 ; Jumpheight: -1 = Default
 ;
 Server_Version = 1015
-Unique_ID = OYINHSHZMQREFSDG
+Unique_ID = HBLHLXDTIVFJOLNA
 Name = Hub
 Rank_Build = 0
 Rank_Join = 0

@@ -1978,8 +1978,8 @@ Procedure Map_Block_Set_Rank_Box(*Map_Data.Map_Data, X_0, Y_0, Z_0, X_1, Y_1, Z_
     
 EndProcedure
 
+; - Adds a block to the processing loop. Processing is uniqued by coordinate
 Procedure Map_Block_Do_Add(*Map_Data.Map_Data, X.l, Y.l, Z.l) ; Fügt einen Block in die Abarbeitungsschleife ein (Filtert blöcke, welche nichts tun)
-    
     *Pointer.Map_Block
     
     If ListIndex(*Map_Data\Map_Block_Do()) <> -1
@@ -2062,7 +2062,7 @@ Procedure Map_Block_Do_Distribute(*Map_Data.Map_Data, X, Y, Z)
     EndIf
 EndProcedure
 
-Procedure Map_Physic_Thread(*Dummy) ; Thread, für Physik
+Procedure Map_Physic_Thread(*Dummy) ; Thread, für Physik / Thread for Physics
     Repeat
         
         LockMutex(Main\Mutex)
@@ -2130,7 +2130,7 @@ Procedure Map_Physic_Thread(*Dummy) ; Thread, für Physik
     ForEver
 EndProcedure
 
-Procedure Map_Blockchanging_Thread(*Dummy) ; In diesem Thread werden alle Blockänderungen nacheinander gesendet
+Procedure Map_Blockchanging_Thread(*Dummy) ; In diesem Thread werden alle Blockänderungen nacheinander gesendet / Sends all blockchanges, sequentially.
     Blockchange_Timer = Milliseconds()
     
     Repeat
@@ -2240,10 +2240,10 @@ Procedure Map_Main()
 EndProcedure
 
 RegisterCore("Map", 1000, #Null, #Null, @Map_Main())
-; IDE Options = PureBasic 5.30 (Linux - x64)
-; CursorPosition = 1087
-; FirstLine = 1053
-; Folding = ---------
+; IDE Options = PureBasic 5.30 (Windows - x86)
+; CursorPosition = 1981
+; FirstLine = 154
+; Folding = AAAAAAAk+
 ; EnableThread
 ; EnableXP
 ; DisableDebugger

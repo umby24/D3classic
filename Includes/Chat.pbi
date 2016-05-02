@@ -37,7 +37,7 @@ Procedure Chat_Message_Network_Send_2_Map(Entity_ID, Message.s) ; Sends a messag
         
         Map_ID = Entity()\Map_ID
         Text.s = HandleChatEscapes(Message)
-        Text = ReplaceString(Input, Chr(10), Chr(10)+Entity_Displayname_Get(Entity_ID)+"&f: ")
+        Text = ReplaceString(Text, Chr(10), Chr(10)+Entity_Displayname_Get(Entity_ID)+"&f: ")
         
         If Plugin_Event_Chat_Map(Entity(), Message.s)
           Log_Add("Chat", Entity()\Name+": "+Message, 1, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
@@ -161,8 +161,8 @@ Procedure HandleIncomingChat(Text.s, PlayerId.b)
 EndProcedure
 
 ; IDE Options = PureBasic 5.30 (Windows - x86)
-; CursorPosition = 131
-; FirstLine = 63
+; CursorPosition = 39
+; FirstLine = 3
 ; Folding = 3
 ; EnableXP
 ; DisableDebugger

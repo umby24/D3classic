@@ -26,7 +26,7 @@ Global NewList Undo_Step.Undo_Step()
 
 ; ########################################## Proceduren ##########################################
 
-Procedure Undo_Save(Filename.s) ; Speichert die Einstellungen
+Procedure Undo_Save(Filename.s) ; Speichert die Einstellungen / Saves Settings
   File_ID = CreateFile(#PB_Any, Filename)
   If IsFile(File_ID)
     
@@ -39,7 +39,7 @@ Procedure Undo_Save(Filename.s) ; Speichert die Einstellungen
   EndIf
 EndProcedure
 
-Procedure Undo_Load(Filename.s) ; Lädt die Einstellungen
+Procedure Undo_Load(Filename.s) ; Lädt die Einstellungen / Loads settings
   If OpenPreferences(Filename)
     
     Undo_Main\Max_Steps = ReadPreferenceLong("Max_Steps", 100000)
@@ -52,7 +52,7 @@ Procedure Undo_Load(Filename.s) ; Lädt die Einstellungen
   EndIf
 EndProcedure
 
-Procedure Undo_Add(Player_Number, Map_ID, X, Y, Z, Type_Before.b, Player_Before)
+Procedure Undo_Add(Player_Number, Map_ID, X, Y, Z, Type_Before.b, Player_Before) ; Adds a step to the change tracking system
 ;Procedure Undo_Add_temp(*Map_Data.Map_Data, Player_Number, X, Y, Z, Type_Before.b, Player_Before)
   ;If X >= 0 And X < *Map_Data\Size_X And Y >= 0 And Y < *Map_Data\Size_Y And Z >= 0 And Z < *Map_Data\Size_Z
     FirstElement(Undo_Step())
@@ -69,7 +69,7 @@ Procedure Undo_Add(Player_Number, Map_ID, X, Y, Z, Type_Before.b, Player_Before)
   ;EndIf
 EndProcedure
 
-Procedure Undo_Do_Player(Map_ID, Player_Number, Time) ; Macht alle Änderungen von einem bestimmten Player rückgängig.
+Procedure Undo_Do_Player(Map_ID, Player_Number, Time) ; Macht alle Änderungen von einem bestimmten Player rückgängig. / Undoes changes made by a particular player
   ForEach Undo_Step()
     If Undo_Step()\Player_Number = Player_Number And Undo_Step()\Time >= Time
       If Map_ID = -1 Or Undo_Step()\Map_ID = Map_ID
@@ -82,7 +82,7 @@ Procedure Undo_Do_Player(Map_ID, Player_Number, Time) ; Macht alle Änderungen vo
   Next
 EndProcedure
 
-Procedure Undo_Do_Time(Map_ID, Time) ; Stellt alle Blöcke von einem bestimmten Zeitraum wieder her.
+Procedure Undo_Do_Time(Map_ID, Time) ; Stellt alle Blöcke von einem bestimmten Zeitraum wieder her. / Undoes block changes based on time.
   ForEach Undo_Step()
     If Undo_Step()\Time >= Time
       If Map_ID = -1 Or Undo_Step()\Map_ID = Map_ID
@@ -95,7 +95,7 @@ Procedure Undo_Do_Time(Map_ID, Time) ; Stellt alle Blöcke von einem bestimmten Z
   Next
 EndProcedure
 
-Procedure Undo_Clear_Map(Map_ID) ; Löscht Undo-Schritte einer Map
+Procedure Undo_Clear_Map(Map_ID) ; Löscht Undo-Schritte einer Map / Removes all undo steps for a given map
   ForEach Undo_Step()
     If Undo_Step()\Map_ID = Map_ID
       DeleteElement(Undo_Step())
@@ -103,7 +103,7 @@ Procedure Undo_Clear_Map(Map_ID) ; Löscht Undo-Schritte einer Map
   Next
 EndProcedure
 
-Procedure Undo_Clear() ; Löscht ältere Undo-Schritte
+Procedure Undo_Clear() ; Löscht ältere Undo-Schritte / Removes all undo steps.
   LastElement(Undo_Step())
   While ListSize(Undo_Step()) > Undo_Main\Max_Steps
     DeleteElement(Undo_Step())
@@ -127,9 +127,9 @@ Procedure Undo_Main()
 EndProcedure
 
 RegisterCore("Undo", 1000, #Null, #Null, @Undo_Main())
-; IDE Options = PureBasic 5.00 (Windows - x64)
-; CursorPosition = 125
-; FirstLine = 68
+; IDE Options = PureBasic 5.30 (Windows - x86)
+; CursorPosition = 105
+; FirstLine = 75
 ; Folding = --
 ; EnableXP
 ; DisableDebugger

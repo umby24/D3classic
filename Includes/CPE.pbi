@@ -59,7 +59,7 @@ Procedure CPE_Send_ExtInfo(Client_ID, Name.s, MPPass.s, Version)
         SendExtEntry(Client_ID, "TextHotKey", 1)
         SendExtEntry(Client_ID, "HackControl", 1)
         SendExtEntry(Client_ID, "SelectionCuboid", 1)
-        
+        SendExtEntry(Client_ID, "LongerMessages", 1)
     EndIf
     
     List_Restore(*Network_Client_Old, Network_Client()) ; Wait for the rest of the negotiation to take place...

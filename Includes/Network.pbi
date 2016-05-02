@@ -316,6 +316,7 @@ Procedure Network_Input_Do()  ; Wertet die empfangenen Daten aus. / Evaluates re
                         Network_Client()\EnvMapAppearance = #False
                         Network_Client()\TextHotkey = #False
                         Network_Client()\HackControl = #False
+                        Network_Client()\LongerMessages = #False
                         
                         If Network_Client()\Logged_In = 0 And Network_Client()\Disconnect_Time = 0 And Unused_ID <> 66
                             Client_Login(Network_Client()\ID, Trim(Player_Name), Player_Pass, Client_Version)
@@ -395,31 +396,33 @@ Procedure Network_Input_Do()  ; Wertet die empfangenen Daten aus. / Evaluates re
                     
                 Case 13 ; ############### Nachricht kommt herein
                     If Network_Client_Input_Available(Network_Client()\ID) >= 1 + 1 + 64
-                        Network_Client_Input_Add_Offset(Network_Client()\ID, 2)
+                        Network_Client_Input_Add_Offset(Network_Client()\ID, 1)
+                        Define playerId.b = Network_Client_Input_Read_Byte(Network_Client()\ID)
                         Text.s = Trim(Network_Client_Input_Read_String(Network_Client()\ID, 64))
                         
                         If Network_Client()\Logged_In = 1
                             If Network_Client()\Player\Entity
-                                If Left(Text, 1) = "/"
-                                    Command_Do(Network_Client()\ID, Mid(Text, 2))
-                                ElseIf Left(Text, 1) = "#"
-                                    If (Network_Client()\GlobalChat)
-                                        Chat_Message_Network_Send_2_Map(Network_Client()\Player\Entity\ID, Mid(Text, 2))
-                                    Else
-                                        Chat_Message_Network_Send_2_All(Network_Client()\Player\Entity\ID, Mid(Text, 2))
-                                    EndIf
-                                    
-                                ElseIf Left(Text, 1) = "@"
-                                    Private_Message_Name.s = Mid(StringField(Text, 1, " "), 2)
-                                    Chat_Message_Network_Send(Network_Client()\Player\Entity\ID, Private_Message_Name, Mid(Text, 2+Len(Private_Message_Name)))
-                                Else
-                                    If (Network_Client()\GlobalChat)
-                                        Chat_Message_Network_Send_2_All(Network_Client()\Player\Entity\ID, Text)
-                                    Else
-                                        Chat_Message_Network_Send_2_Map(Network_Client()\Player\Entity\ID, Text)
-                                    EndIf
-                                    
-                                EndIf
+                                HandleIncomingChat(Text, playerId)
+;                                 If Left(Text, 1) = "/"
+;                                     Command_Do(Network_Client()\ID, Mid(Text, 2))
+;                                 ElseIf Left(Text, 1) = "#"
+;                                     If (Network_Client()\GlobalChat)
+;                                         Chat_Message_Network_Send_2_Map(Network_Client()\Player\Entity\ID, Mid(Text, 2))
+;                                     Else
+;                                         Chat_Message_Network_Send_2_All(Network_Client()\Player\Entity\ID, Mid(Text, 2))
+;                                     EndIf
+;                                     
+;                                 ElseIf Left(Text, 1) = "@"
+;                                     Private_Message_Name.s = Mid(StringField(Text, 1, " "), 2)
+;                                     Chat_Message_Network_Send(Network_Client()\Player\Entity\ID, Private_Message_Name, Mid(Text, 2+Len(Private_Message_Name)))
+;                                 Else
+;                                     If (Network_Client()\GlobalChat)
+;                                         Chat_Message_Network_Send_2_All(Network_Client()\Player\Entity\ID, Text)
+;                                     Else
+;                                         Chat_Message_Network_Send_2_Map(Network_Client()\Player\Entity\ID, Text)
+;                                     EndIf
+;                                     
+;                                 EndIf
                             EndIf
                         EndIf
                     EndIf
@@ -505,6 +508,8 @@ Procedure Network_Input_Do()  ; Wertet die empfangenen Daten aus. / Evaluates re
                                 Network_Client()\TextHotkey = #True
                             Case "emotefix"
                                 Network_Client()\EmoteFix = #True
+                            Case "longermessages"
+                                Network_Client()\LongerMessages = #True
                         EndSelect
                         
                         Network_Client()\CustomExtensions - 1
@@ -685,10 +690,10 @@ RegisterCore("Network_Events", 1, #Null, #Null, @Network_Events())
 RegisterCore("Network_Output_Send", 0, #Null, #Null, @Network_Output_Send())
 RegisterCore("Network_Output_Do", 0, #Null, #Null, @Network_Output_Do())
 RegisterCore("Network_Input_Do", 0, #Null, #Null, @Network_Input_Do())
-; IDE Options = PureBasic 5.30 (Linux - x64)
-; CursorPosition = 662
-; FirstLine = 75
-; Folding = BAw-
+; IDE Options = PureBasic 5.30 (Windows - x86)
+; CursorPosition = 511
+; FirstLine = 272
+; Folding = BAx-
 ; EnableXP
 ; DisableDebugger
 ; CompileSourceDirectory

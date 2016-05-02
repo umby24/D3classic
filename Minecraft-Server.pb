@@ -16,7 +16,6 @@ UseSQLiteDatabase()
 ; - Wettersystem (Regen, Gewitter, Schnee)
 ; - Answersystem verbessern (/me, Globalausgabe, Mapausgabe, Privatausgabe..., Einsetzen von Operanden)
 ; - Nur Mitglieder funktion
-; - IRC-Chat einbinden
 ; - Wildcards für Benutzer
 ; - Abkürzungen für Befehle/Materialien
 ; - Farbcodes
@@ -143,7 +142,7 @@ Global FreeID.w = 0 ; For CPE stuff.
 Global NextID.w = 0
 ; ########################################## Ladekram / Loading ############################################
 
-Main\Version = 1015 ;#PB_Editor_CompileCount*0.4 + #PB_Editor_BuildCount*4.9
+Main\Version = 1016 ;#PB_Editor_CompileCount*0.4 + #PB_Editor_BuildCount*4.9
 
 Main\Running_Time = Date()
 
@@ -211,6 +210,7 @@ XIncludeFile "Includes/Network_Functions.pbi"
 XIncludeFile "Includes/Entity.pbi"
 XIncludeFile "Includes/Hotkey.pbi"
 XIncludeFile "Includes/CPE.pbi"
+XIncludeFile "Includes/console.pbi"
 
 ; ########################################## Proceduren / Procedures ##########################################
 
@@ -224,8 +224,6 @@ Language_Strings_Load(Files_File_Get("Language_Strings"))
 
 Network_Settings\Port = 25565
 Network_Load(Files_File_Get("Network"))
-      
-;GZip_Init()
 
 Player_Load(Files_File_Get("Player"))
 Player_List_Load(Files_File_Get("Playerlist"))
@@ -238,21 +236,24 @@ Rank_Load(Files_File_Get("Rank"))
 TMessage_Load(Files_File_Get("Timed_Messages"))
 
 Network_Start()
+Global Running = 1
 
 Map_Main\Blockchanging_Thread_ID = CreateThread(@Map_Blockchanging_Thread(), 0)
 Map_Main\Physic_Thread_ID = CreateThread(@Map_Physic_Thread(), 0)
 Map_Main\Action_Thread_ID = CreateThread(@Map_Action_Thread(), 0)
 Client_Main\Login_Thread_ID = CreateThread(@Client_Login_Thread(), 0)
 Plugin_Main\Plugin_Thread_ID = CreateThread(@Plugin_Thread(), 0) ; -- oo, shiny.
+Define ConsoleThread.i = CreateThread(@MainConsole(), 0)
 
 Watchdog_Thread_ID_Set("Map_Blockchanging", Map_Main\Blockchanging_Thread_ID)
 Watchdog_Thread_ID_Set("Map_Physic", Map_Main\Physic_Thread_ID)
 Watchdog_Thread_ID_Set("Map_Action", Map_Main\Action_Thread_ID)
 Watchdog_Thread_ID_Set("Client_Login", Client_Main\Login_Thread_ID)
 Watchdog_Thread_ID_Set("Plugin_Main", Plugin_Main\Plugin_Thread_ID) ; -- New!
+Watchdog_Thread_ID_Set("Console_Main", ConsoleThread)
 
 ; ########################################## Hautpschleife / Main Loop ##########################################
-Running = 1
+
 
 While Running = #True
   
@@ -272,10 +273,9 @@ Wend
 
 CoreShutdown()
 ; ########################################## Ende / End ##########################################
-; IDE Options = PureBasic 5.30 (Linux - x64)
+; IDE Options = PureBasic 5.30 (Windows - x86)
 ; ExecutableFormat = Console
-; CursorPosition = 182
-; FirstLine = 165
+; CursorPosition = 23
 ; Folding = -
 ; EnableThread
 ; EnableXP

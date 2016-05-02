@@ -116,6 +116,7 @@ EndProcedure
         
 ;}
 
+;{ Vanilla Packets
 Procedure SendClientHandshake(ClientID, ProtocolVersion.b, ServerName.s, ServerMotd.s, UserType.b)
     Network_Client_Output_Write_Byte(ClientID, 0)
     Network_Client_Output_Write_Byte(ClientID, ProtocolVersion)
@@ -186,8 +187,9 @@ Procedure SendDisconnect(ClientID, Reason.s)
     Network_Client_Output_Write_Byte(ClientID, 14)
     Network_Client_Output_Write_String(ClientID, Reason, 64)    
 EndProcedure
-; IDE Options = PureBasic 5.30 (Linux - x64)
-; CursorPosition = 140
-; Folding = +----
+;}
+; IDE Options = PureBasic 5.30 (Windows - x86)
+; CursorPosition = 189
+; Folding = +-f--
 ; EnableThread
 ; EnableXP

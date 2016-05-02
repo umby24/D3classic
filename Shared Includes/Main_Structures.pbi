@@ -183,6 +183,7 @@ Structure Entity
   Build_Mode.s                ; Modus, bei dem die Aktion durch Bauen beschrieben wird. (0: Normal >0: Box, Sphere...)
   Build_State.a               ; Status beim Bauen... (Welcher Punkt...)
   Build_Variable.Build_Variable [#Client_Player_Buildmode_Variables] ; Variables for build modes (Rang einer RBox...)
+  ChatBuffer.s ; - Holding place for LongerMessages support
 EndStructure
 
 ; ################################################################################################################
@@ -250,6 +251,7 @@ Structure Network_Client
   EnvMapAppearance.b          ; Defines if the client supports EnvMapAppearance.
   HackControl.b               ; Defines if the client supports HackControl
   TextHotkey.b                ; Defines if the client supports TextHotkey.
+  LongerMessages.b            ; Defines if the client supports LongerMessages
   GlobalChat.b
   
   List Extensions.s()        ; Holds a list of all supported plugins on the client.
@@ -301,9 +303,9 @@ Structure EventStruct
     Timer.i
     Time.i
 EndStructure
-; IDE Options = PureBasic 5.30 (Linux - x64)
-; CursorPosition = 181
-; FirstLine = 165
+; IDE Options = PureBasic 5.30 (Windows - x86)
+; CursorPosition = 253
+; FirstLine = 228
 ; EnableXP
 ; DisableDebugger
 ; CompileSourceDirectory

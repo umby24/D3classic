@@ -101,16 +101,15 @@ Procedure System_Message_Network_Send_2_All(Map_ID, Message.s, Type=0) ; Sendet 
     
     For i = 1 To Lines
         Text.s = StringField(Message, i, Chr(10))
-        
-        If String_IV(Right(Text, 1)) And Network_Client()\EmoteFix = #False
-            Text = Text + "." ; Suffix emotes for non-fixed clients.
-        EndIf
-        
         Text = LSet(Text, 64, " ")
         
         If Text <> LSet("", 64, " ") And Text <> ""
             ForEach Network_Client()
                 If Network_Client()\Player\Map_ID = Map_ID Or Map_ID = -1
+                    If String_IV(Right(Text, 1)) And Network_Client()\EmoteFix = #False
+                        Text = Text + "." ; Suffix emotes for non-fixed clients.
+                    EndIf
+                    
                     SendChatMessage(Network_Client()\ID, Text, Type)
                 EndIf
             Next
@@ -220,9 +219,10 @@ Procedure Network_Out_Entity_Position(Client_ID, ID_Client, X.f, Y.f, Z.f, Rotat
         ChangeCurrentElement(Network_Client(), *Network_Client_Old)
     EndIf
 EndProcedure
-; IDE Options = PureBasic 5.30 (Linux - x64)
-; CursorPosition = 132
-; Folding = w5
+; IDE Options = PureBasic 5.30 (Windows - x86)
+; CursorPosition = 104
+; FirstLine = 8
+; Folding = 56
 ; EnableXP
 ; DisableDebugger
 ; CompileSourceDirectory

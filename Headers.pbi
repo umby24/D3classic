@@ -438,6 +438,8 @@ Declare Chat_Message_Network_Send_2_All(Entity_ID, Message.s) ; Sends a message 
 
 Declare Chat_Message_Network_Send(Entity_ID, Player_Name.s, Message.s) ; Sends a message from one entity to another.
 
+Declare HandleIncomingChat(Text.s, PlayerId.b)
+
 Declare Build_Mode_Load(Filename.s)
 
 Declare Build_Mode_Save(Filename.s)
@@ -871,7 +873,7 @@ Declare CPE_Client_Send_Hotkeys(Client_ID)
 Declare CPE_Client_Hackcontrol_Send(Client_ID, Flying, Noclip, Speeding, SpawnControl, ThirdPerson, Jumpheight.w)
 
 
-; IDE Options = PureBasic 5.30 (Linux - x64)
+; IDE Options = PureBasic 5.30 (Windows - x86)
 ; CursorPosition = 1
 ; EnableUnicode
 ; EnableXP

@@ -1,0 +1,54 @@
+12:44:55>  Language.pbi    | 64   | Language       : File loaded. File:Data/Language_Strings.txt
+12:44:55>  Network.pbi     | 70   | Network        : File loaded. File:Data/Network.txt
+12:44:55>  Player.pbi      | 76   | Player         : File loaded. File:Data/Player.txt
+12:44:55>  Player_List.pbi | 50   | Player_List    : Database opened. File:Data/Playerlist.sqlite
+12:44:55>  Player_List.pbi | 171  | Player_List    : Database loaded. File:Data/Playerlist.sqlite
+12:44:55>  Player_List.pbi | 21   | Player_List    : Database closed. File:
+12:44:55>  Block.pbi       | 61   | Block          : File loaded. File:Data/Block.txt
+12:44:55>  Command.pbi     | 600  | Command        : File loaded. File:Data/Command.txt
+12:44:55>  Location.pbi    | 46   | Location       : File loaded. File:Data/Location.txt
+12:44:55>  Rank.pbi        | 38   | Rank           : File loaded. File:Data/Rank.txt
+12:44:55>  TMessage.pbi    | 38   | TMessage       : File loaded. File:Data/Timed_Messages.txt
+12:44:55>  Network.pbi     | 87   | Network        : (Network)Server started (Port:25565)
+12:44:55>  Plugin.pbi      | 1344 | Plugin         : Plugin loaded (File:'Plugins/Heartbeat/Heartbeat.x64.so', Name:'Heartbeat', Auth:'David Vogel')
+12:44:55>  ircbot.pb       | 73   | Irc            : Settings Saved.
+12:44:55>  ircbot.pb       | 73   | Irc            : Settings Saved.
+12:44:55>  Plugin.pbi      | 1344 | Plugin         : Plugin loaded (File:'Plugins/IrcBridge/irc.x64.so', Name:'IRC Bridge', Auth:'Umby24')
+12:44:55>  Lua.pbi         | 3217 | Lua-Plugin     : Lua loaded
+12:44:55>  Plugin.pbi      | 1344 | Plugin         : Plugin loaded (File:'Plugins/Lua/lua.x64.so', Name:'Lua', Auth:'David Vogel')
+12:44:55>  Lua.pbi         | 3519 | Lua-Plugin     : Runtimeerror in Lua/Map_Fill/dungeon.lua: attempt to call a string value
+stack traceback:
+12:44:55>  Heartbeat.pb    | 106  | Heartbeat      : 
+12:44:55>  Heartbeat.pb    | 84   | Heartbeat      : File saved. File:Data/Heartbeat.txt
+12:44:55>  Heartbeat.pb    | 191  | Heartbeat      : sent
+12:44:56>  Map.pbi         | 324  | Map_List       : File loaded. File:Data/Map_List.txt
+12:44:56>  Map.pbi         | 285  | Map_List       : File saved. File:Data/Map_List.txt
+12:44:56>  Map.pbi         | 351  | Map_Settings   : File loaded. File:Data/Map_Settings.txt
+12:44:56>  Command.pbi     | 624  | Command        : File saved. File:Data/Command.txt
+12:44:56>  System.pbi      | 45   | System         : File loaded. File:Data/System.txt
+12:44:56>  Font.pbi        | 91   | Font           : File loaded. File:Data/Font.txt
+12:44:56>  Block.pbi       | 114  | Block          : File saved. File:Data/Block.txt
+12:44:56>  Language.pbi    | 86   | Language       : File saved. File:Data/Language_Strings.txt
+12:44:56>  Hotkey.pbi      | 58   | Hotkeys        : Hotkeys loaded
+12:44:56>  Undo.pbi        | 48   | Undo           : File loaded. File:Data/Undo.txt
+12:44:56>  Build_Mode.pbi  | 56   | Build_Mode     : File loaded. File:Data/Build_Mode.txt
+12:44:56>  Map.pbi         | 854  | Map            : Map 'Maps/Hub/Data-Layer.gz' loaded (384,384,128)
+12:44:56>  Map.pbi         | 854  | Map            : Map 'Maps/temp/Data-Layer.gz' loaded (128,128,128)
+12:44:56>  Map.pbi         | 854  | Map            : Map 'Maps/Theatre/Data-Layer.gz' loaded (64,64,64)
+12:44:57>  Build_Mode.pbi  | 77   | Build_Mode     : File saved. File:Data/Build_Mode.txt
+12:45:0>   Network.pbi     | 235  | Network        : Client created (ID:26187688, IP:127.0.0.1)
+12:45:0>   Network.pbi     | 325  | Network        : CPE Client Detected
+12:45:0>   Network.pbi     | 453  | CPE            : Client supports 21 extensions
+12:45:0>   Network.pbi     | 532  | CPE            : CPE Process Complete.
+12:45:0>   Client.pbi      | 114  | Client         : Player logged in (IP=127.0.0.1, Name='umby24')
+12:45:6>   Map.pbi         | 285  | Map_List       : File saved. File:Data/Map_List.txt
+12:45:16>  Map.pbi         | 982  | Map            : Unloading...
+12:45:16>  Map.pbi         | 748  | Map            : File saved. File:Maps/Theatre/Data-Layer.gz
+12:45:16>  Map.pbi         | 1004 | Map            : Map Unloaded (Theatre)
+12:45:16>  Map.pbi         | 982  | Map            : Unloading...
+12:45:16>  Map.pbi         | 748  | Map            : File saved. File:Maps/temp/Data-Layer.gz
+12:45:16>  Map.pbi         | 1004 | Map            : Map Unloaded (temp)
+12:45:25>  Heartbeat.pb    | 191  | Heartbeat      : sent
+12:45:55>  Heartbeat.pb    | 191  | Heartbeat      : sent
+12:46:19>  Client.pbi      | 190  | Client         : Player logged out (IP=127.0.0.1, Name='umby24', Message='Disconnected')
+12:46:19>  Network.pbi     | 252  | Network        : Client deleted (ID:26187688, IP:127.0.0.1, Message:Disconnected)

@@ -41,7 +41,8 @@ Procedure SendExtAddPlayerName(ClientID, NameId.w, Playername.s, Listname.s, Gro
     Network_Client_Output_Write_String(ClientID, LSet(Playername,64," "),64)
     Network_Client_Output_Write_String(ClientID, LSet(Listname, 64, " "),64)
     Network_Client_Output_Write_String(ClientID, LSet(Groupname, 64, " "), 64)
-    Network_Client_Output_Write_Byte(ClientID, Grouprank)    
+    Network_Client_Output_Write_Byte(ClientID, Grouprank)
+    PrintN("Sent Ext Add Player Name: " + Playername + " to " + Str(ClientID))
 EndProcedure
 
 Procedure SendExtRemovePlayerName(ClientID, NameID.w)
@@ -113,9 +114,22 @@ Procedure SendHackControl(ClientID, Flying.b, Noclip.b, Speeding.b, SpawnControl
     Network_Client_Output_Write_Byte(ClientID, ThirdPerson)
     Network_Client_Output_Write_Word(ClientID, Jumpheight)
 EndProcedure
-        
+
+Procedure SendExtAddEntity2(ClientID, EntityId.b, IGN.s, Skin.s, X.w, Y.w, Z.w, Rotation.b, Look.b)
+    Network_Client_Output_Write_Byte(ClientID, 33)
+    Network_Client_Output_Write_Byte(ClientID, EntityID)
+    Network_Client_Output_Write_String(ClientID, LSet(IGN, 64, " "), 64)
+    Network_Client_Output_Write_String(ClientID, LSet(Skin, 64, " "), 64)
+    Network_Client_Output_Write_Word(ClientID, X)
+    Network_Client_Output_Write_Word(ClientID, Z)
+    Network_Client_Output_Write_Word(ClientID, Y)
+    Network_Client_Output_Write_Byte(ClientID, Rotation)
+    Network_Client_Output_Write_Byte(ClientID, Look)
+EndProcedure
+
 ;}
 
+;{ Vanilla Packets
 Procedure SendClientHandshake(ClientID, ProtocolVersion.b, ServerName.s, ServerMotd.s, UserType.b)
     Network_Client_Output_Write_Byte(ClientID, 0)
     Network_Client_Output_Write_Byte(ClientID, ProtocolVersion)
@@ -186,8 +200,10 @@ Procedure SendDisconnect(ClientID, Reason.s)
     Network_Client_Output_Write_Byte(ClientID, 14)
     Network_Client_Output_Write_String(ClientID, Reason, 64)    
 EndProcedure
+;}
 ; IDE Options = PureBasic 5.30 (Linux - x64)
-; CursorPosition = 140
-; Folding = +----
+; CursorPosition = 44
+; FirstLine = 28
+; Folding = ---+-
 ; EnableThread
 ; EnableXP

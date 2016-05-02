@@ -50,7 +50,7 @@ Procedure CPE_Send_ExtInfo(Client_ID, Name.s, MPPass.s, Version)
         SendExtEntry(Client_ID, "HeldBlock", 1)
         SendExtEntry(Client_ID, "ClickDistance", 1)
         SendExtEntry(Client_ID, "ChangeModel", 1)
-        SendExtEntry(Client_ID, "ExtPlayerList", 1)
+        SendExtEntry(Client_ID, "ExtPlayerList", 2)
         SendExtEntry(Client_ID, "EnvWeatherType", 1)
         SendExtEntry(Client_ID, "EnvMapAppearance", 1)
         SendExtEntry(Client_ID, "MessageTypes", 1)
@@ -408,10 +408,30 @@ Procedure CPE_Client_Hackcontrol_Send(Client_ID, Flying, Noclip, Speeding, Spawn
     
     List_Restore(*Network_Client_Old, Network_Client())
 EndProcedure
-; IDE Options = PureBasic 5.30 (Windows - x86)
-; CursorPosition = 406
-; FirstLine = 115
-; Folding = DAj-
+
+Procedure CPE_GetClientExtVersion(Extension.s)
+    Protected Result.l = 0
+    
+    If Network_Client()\CPE = #False ; - Skip searching for clients that don't even support CPE.
+        ProcedureReturn Result
+    EndIf
+    
+    ResetList(Network_Client()\Extensions())
+    ResetList(Network_Client()\ExtensionVersions())
+    
+    While NextElement(Network_Client()\Extensions()) And NextElement(Network_Client()\ExtensionVersions())
+        If LCase(Network_Client()\Extensions()) = LCase(Extension)
+            Result = Network_Client()\ExtensionVersions()
+        EndIf
+    Wend    
+    
+    ProcedureReturn Result
+EndProcedure
+
+; IDE Options = PureBasic 5.30 (Linux - x64)
+; CursorPosition = 422
+; FirstLine = 153
+; Folding = HAj-
 ; EnableThread
 ; EnableXP
 ; EnableOnError

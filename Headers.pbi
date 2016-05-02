@@ -1,4 +1,4 @@
-Declare Network_Client_Input_Available(Client_ID)
+Declare Network_Client_Input_Available(Client_ID) 
 
 Declare UnregisterCore(Name.s)
 
@@ -161,6 +161,8 @@ Declare SendEnvMapAppearance(ClientID, Url.s, Sideblock.b, Edgeblock.b, Sideleve
 Declare SendSetWeather(ClientID, Weather.b)
 
 Declare SendHackControl(ClientID, Flying.b, Noclip.b, Speeding.b, SpawnControl.b, ThirdPerson.b, Jumpheight.w)
+
+Declare SendExtAddEntity2(ClientID, EntityId.b, IGN.s, Skin.s, X.w, Y.w, Z.w, Rotation.b, Look.b)
 
 Declare SendClientHandshake(ClientID, ProtocolVersion.b, ServerName.s, ServerMotd.s, UserType.b)
 
@@ -869,6 +871,8 @@ Declare CPE_Client_Send_Map_Appearence(Client_ID, URL.s, Side_Block, Edge_Block,
 Declare CPE_Client_Send_Hotkeys(Client_ID)
 
 Declare CPE_Client_Hackcontrol_Send(Client_ID, Flying, Noclip, Speeding, SpawnControl, ThirdPerson, Jumpheight.w)
+
+Declare CPE_GetClientExtVersion(Extension.s)
 
 
 ; IDE Options = PureBasic 5.30 (Linux - x64)

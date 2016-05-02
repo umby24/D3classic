@@ -1,4 +1,8 @@
-  ;  zlib.h -- Interface of the 'zlib' general purpose compression library
+; Purebasic ZLib Library Include
+; - Originally by Dadido3
+; - Modified for cross platform (Windows / Linux, x86 and x64) by Umby24
+
+;  zlib.h -- Interface of the 'zlib' general purpose compression library
   ; version 1.2.8, April 28th, 2013
   ; 
   ; Copyright (C) 1995-2013 Jean-loup Gailly And Mark Adler
@@ -414,9 +418,8 @@ Procedure GZip_Decompress_From_File(Filename.s, *Output, Output_Len)
     Output_Len = Decomp
     ProcedureReturn Decomp
 EndProcedure
-; IDE Options = PureBasic 5.30 (Linux - x64)
-; CursorPosition = 331
-; FirstLine = 325
+; IDE Options = PureBasic 5.30 (Windows - x86)
+; CursorPosition = 2
 ; Folding = ---
 ; EnableXP
 ; DisableDebugger

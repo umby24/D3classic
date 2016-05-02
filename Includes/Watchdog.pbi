@@ -1,3 +1,6 @@
+; D3 Server Thread Watchdog
+; Purpose: Monitor performance and provide statistics for running threads in the server
+
 ; ########################################## Variablen / Variables ##########################################
 
 Structure Watchdog_Main
@@ -228,9 +231,8 @@ EndMacro
 Procedure Watchdog_Main()
   
 EndProcedure
-; IDE Options = PureBasic 5.30 (Linux - x64)
-; CursorPosition = 202
-; FirstLine = 185
+; IDE Options = PureBasic 5.30 (Windows - x86)
+; CursorPosition = 2
 ; Folding = -
 ; EnableXP
 ; DisableDebugger

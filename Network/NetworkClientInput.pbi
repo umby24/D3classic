@@ -1,18 +1,19 @@
-﻿Procedure Network_Client_Input_Available(Client_ID)     ; Bytes verf?gbar im Empfangsbuffer -- Bytes available in the receive buffer
-    List_Store(*Network_Client_Old, Network_Client())
+﻿Procedure Network_Client_Input_Available(Client_ID)     ;  -- Bytes available in the receive buffer
+    Protected ReturnValue
+   ; List_Store(*Network_Client_Old, Network_Client())
     
-    If Network_Client_Select(Client_ID)
-        Return_Value = Network_Client()\Buffer_Input_Available
-    EndIf
+   ; If Network_Client_Select(Client_ID)
+        ReturnValue = Network_Client()\Buffer_Input_Available
+  ;  EndIf
     
-    List_Restore(*Network_Client_Old, Network_Client())
-    ProcedureReturn Return_Value
+   ; List_Restore(*Network_Client_Old, Network_Client())
+    ProcedureReturn ReturnValue
 EndProcedure
 
 Procedure Network_Client_Input_Add_Offset(Client_ID, Bytes)     ; Addiert einige Bytes zum Offset des Empfangbuffers -- Adds some bytes to offset the receive buffer
-    List_Store(*Network_Client_Old, Network_Client())
+    ;List_Store(*Network_Client_Old, Network_Client())
     
-    If Network_Client_Select(Client_ID)
+  ;  If Network_Client_Select(Client_ID)
         Network_Client()\Buffer_Input_Offset + Bytes
         Network_Client()\Buffer_Input_Available - Bytes
         
@@ -23,36 +24,38 @@ Procedure Network_Client_Input_Add_Offset(Client_ID, Bytes)     ; Addiert einige
         If Network_Client()\Buffer_Input_Offset >= #Network_Buffer_Size
             Network_Client()\Buffer_Input_Offset - #Network_Buffer_Size
         EndIf
-    EndIf
+  ;  EndIf
     
-    List_Restore(*Network_Client_Old, Network_Client())
+  ;  List_Restore(*Network_Client_Old, Network_Client())
 EndProcedure
 
 Procedure.b Network_Client_Input_Read_Byte(Client_ID)     ; Liest ein Byte aus dem Empfangsbuffer -- Reads a byte from the receive buffer
-    List_Store(*Network_Client_Old, Network_Client())
+    Protected Value.b
+   ; List_Store(*Network_Client_Old, Network_Client())
     
-    If Network_Client_Select(Client_ID)
+   ; If Network_Client_Select(Client_ID)
         If Network_Client()\Buffer_Input_Available >= 1
             
-            Value.b = PeekB(Network_Client()\Buffer_Input + Network_Client()\Buffer_Input_Offset)
+            Value = PeekB(Network_Client()\Buffer_Input + Network_Client()\Buffer_Input_Offset)
             
             Network_Client()\Buffer_Input_Offset + 1
             Network_Client()\Buffer_Input_Available - 1
+            
             If Network_Client()\Buffer_Input_Offset >= #Network_Buffer_Size
                 Network_Client()\Buffer_Input_Offset - #Network_Buffer_Size
             EndIf
         EndIf
-    EndIf
+  ;  EndIf
     
-    List_Restore(*Network_Client_Old, Network_Client())
-    ProcedureReturn Value.b
+  ;  List_Restore(*Network_Client_Old, Network_Client())
+    ProcedureReturn Value
 EndProcedure
 
-Procedure.b ClientInputReadShort(Client_ID)     ; Liest ein Byte aus dem Empfangsbuffer -- Reads a short from the receive buffer
+Procedure.w ClientInputReadShort(Client_ID)     ; Liest ein Byte aus dem Empfangsbuffer -- Reads a short from the receive buffer
     Protected Value.w, *Network_Client_Old
-    List_Store(*Network_Client_Old, Network_Client())
+   ; List_Store(*Network_Client_Old, Network_Client())
     
-    If Network_Client_Select(Client_ID)
+   ; If Network_Client_Select(Client_ID)
         If Network_Client()\Buffer_Input_Available >= 2
             
             Value = PeekW(Network_Client()\Buffer_Input + Network_Client()\Buffer_Input_Offset)
@@ -66,19 +69,44 @@ Procedure.b ClientInputReadShort(Client_ID)     ; Liest ein Byte aus dem Empfang
                 Network_Client()\Buffer_Input_Offset - #Network_Buffer_Size
             EndIf
         EndIf
-    EndIf
+  ;  EndIf
     
-    List_Restore(*Network_Client_Old, Network_Client())
-    ProcedureReturn Value.w
+  ;  List_Restore(*Network_Client_Old, Network_Client())
+    ProcedureReturn Value
+EndProcedure
+
+Procedure.l ClientInputReadInt(ClientId)
+    Protected Value.l, *Network_Client_Old
+   ; List_Store(*Network_Client_Old, Network_Client())
+    
+  ;  If Network_Client_Select(Client_ID)
+        If Network_Client()\Buffer_Input_Available >= 4
+            
+            Value = PeekL(Network_Client()\Buffer_Input + Network_Client()\Buffer_Input_Offset)
+            
+            Network_Client()\Buffer_Input_Offset + 4
+            Network_Client()\Buffer_Input_Available - 4
+            
+            Value = Endian(Value)
+            
+            If Network_Client()\Buffer_Input_Offset >= #Network_Buffer_Size
+                Network_Client()\Buffer_Input_Offset - #Network_Buffer_Size
+            EndIf
+        EndIf
+  ;  EndIf
+    
+  ;  List_Restore(*Network_Client_Old, Network_Client())
+    ProcedureReturn Value
 EndProcedure
 
 Procedure.s Network_Client_Input_Read_String(Client_ID, Length)     ; Liest ein String angegebener L?nge aus dem Empfangsbuffer -- Reads a string of specified length from the receive buffer
-    List_Store(*Network_Client_Old, Network_Client())
+    Protected *Temp_Buffer, Data_Read.l, Ringbuffer_Max_Data.l, *Ringbuffer_Adress, Data_Temp_Size.l
+   ; List_Store(*Network_Client_Old, Network_Client())
     
     ;*Temp_Buffer = AllocateMemory(Length)
     *Temp_Buffer = Mem_Allocate(Length, #PB_Compiler_File, #PB_Compiler_Line, "Temp_Buffer")
     
-    If Network_Client_Select(Client_ID)
+   ; If Network_Client_Select(Client_ID)
         If Network_Client()\Buffer_Input_Available >= Length
             
             ; Anzahl gelesener Daten
@@ -104,21 +132,21 @@ Procedure.s Network_Client_Input_Read_String(Client_ID, Length)     ; Liest ein 
             Wend
             
         EndIf
-    EndIf
+   ; EndIf
     
     String.s = PeekS(*Temp_Buffer, Length)
     
     ;FreeMemory(*Temp_Buffer)
     Mem_Free(*Temp_Buffer)
     
-    List_Restore(*Network_Client_Old, Network_Client())
+   ; List_Restore(*Network_Client_Old, Network_Client())
     ProcedureReturn String
 EndProcedure
 
 Procedure Network_Client_Input_Read_Buffer(Client_ID, *Data_Buffer, Data_Size)   ; Liest Daten aus dem Empfangsbuffer -- Reads data from the receive buffer
-    List_Store(*Network_Client_Old, Network_Client())
+   ; List_Store(*Network_Client_Old, Network_Client())
     
-    If Network_Client_Select(Client_ID)
+   ; If Network_Client_Select(Client_ID)
         
         ; Anzahl gelesener Daten
         Data_Read = 0
@@ -141,9 +169,9 @@ Procedure Network_Client_Input_Read_Buffer(Client_ID, *Data_Buffer, Data_Size)  
                 Network_Client()\Buffer_Input_Offset - #Network_Buffer_Size
             EndIf
         Wend
-    EndIf
+   ; EndIf
     
-    List_Restore(*Network_Client_Old, Network_Client())
+   ; List_Restore(*Network_Client_Old, Network_Client())
 EndProcedure
 
 ;- Writes data into a clients input buffer, after it has been received from a socket.
@@ -183,8 +211,8 @@ Procedure Network_Client_Input_Write_Buffer(Client_ID, *Data_Buffer, Data_Size) 
     List_Restore(*Network_Client_Old, Network_Client())
 EndProcedure
 ; IDE Options = PureBasic 5.30 (Windows - x64)
-; CursorPosition = 51
-; FirstLine = 45
+; CursorPosition = 109
+; FirstLine = 93
 ; Folding = --
 ; EnableUnicode
 ; EnableXP

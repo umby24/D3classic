@@ -1,5 +1,5 @@
 Declare Network_Client_Input_Available(Client_ID)
-
+    
 Declare UnregisterCore(Name.s)
 
 Declare RegisterCore(Name.s, Timer.i, *InitFunction, *ShutdownFunction, *MainFunction)
@@ -120,7 +120,9 @@ Declare Network_Client_Input_Add_Offset(Client_ID, Bytes)     ; Addiert einige B
 
 Declare.b Network_Client_Input_Read_Byte(Client_ID)     ; Liest ein Byte aus dem Empfangsbuffer -- Reads a byte from the receive buffer
 
-Declare.b ClientInputReadShort(Client_ID)     ; Liest ein Byte aus dem Empfangsbuffer -- Reads a short from the receive buffer
+Declare.w ClientInputReadShort(Client_ID)     ; Liest ein Byte aus dem Empfangsbuffer -- Reads a short from the receive buffer
+
+Declare.l ClientInputReadInt(ClientId)
 
 Declare.s Network_Client_Input_Read_String(Client_ID, Length)     ; Liest ein String angegebener L?nge aus dem Empfangsbuffer -- Reads a string of specified length from the receive buffer
 
@@ -894,6 +896,6 @@ Declare CPE_Client_Hackcontrol_Send(Client_ID, Flying, Noclip, Speeding, SpawnCo
 
 
 ; IDE Options = PureBasic 5.30 (Windows - x64)
-; CursorPosition = 1
+; CursorPosition = 3
 ; EnableUnicode
 ; EnableXP

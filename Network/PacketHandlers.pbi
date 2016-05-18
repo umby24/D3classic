@@ -149,18 +149,19 @@ Procedure HandleExtInfo(*Client.Network_Client)
 EndProcedure
 
 Procedure HandleExtEntry(*Client.Network_Client)
+    Protected ExtName.s, ExtVersion.l
     Network_Client_Input_Add_Offset(*Client\ID, 1)
     
-    ExtName.s = Trim(Network_Client_Input_Read_String(*Client\ID, 64))
-    ;TODO: Implement ReadInt().
-    *Temp_Buffer = AllocateMemory(4) ; Read extVersion.
-    
-    If *Temp_Buffer
-        Network_Client_Input_Read_Buffer(*Client\ID, *Temp_Buffer, 4)
-        extVersion = Endian(PeekL(*Temp_Buffer))
-    EndIf
-    
-    FreeMemory(*Temp_Buffer)
+    ExtName = Trim(Network_Client_Input_Read_String(*Client\ID, 64))
+    ExtVersion = ClientInputReadInt(*Client\ID)
+;     *Temp_Buffer = AllocateMemory(4) ; Read extVersion.
+;     
+;     If *Temp_Buffer
+;         Network_Client_Input_Read_Buffer(*Client\ID, *Temp_Buffer, 4)
+;         extVersion = Endian(PeekL(*Temp_Buffer))
+;     EndIf
+;     
+;     FreeMemory(*Temp_Buffer)
     
     AddElement(*Client\Extensions())
     *Client\Extensions() = ExtName
@@ -226,8 +227,8 @@ Procedure HandleCustomBlockSupportLevel(*Client.Network_Client)
 EndProcedure
 
 ; IDE Options = PureBasic 5.30 (Windows - x64)
-; CursorPosition = 219
-; FirstLine = 176
+; CursorPosition = 155
+; FirstLine = 143
 ; Folding = --
 ; EnableUnicode
 ; EnableXP

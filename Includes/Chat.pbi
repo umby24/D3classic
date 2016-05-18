@@ -8,6 +8,8 @@
 ; ########################################## Proceduren ##########################################
 
 Procedure.s HandleChatEscapes(Input.s)
+    Protected i.l
+    
     Input = ReplaceString(Input, "%%", "§")
     
     For i = 0 To 9
@@ -160,10 +162,10 @@ Procedure HandleIncomingChat(Text.s, PlayerId.b)
     EndIf
 EndProcedure
 
-; IDE Options = PureBasic 5.30 (Windows - x86)
-; CursorPosition = 39
+; IDE Options = PureBasic 5.30 (Windows - x64)
+; CursorPosition = 10
 ; FirstLine = 3
-; Folding = 3
+; Folding = 4
 ; EnableXP
 ; DisableDebugger
 ; CompileSourceDirectory

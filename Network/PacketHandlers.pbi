@@ -47,12 +47,6 @@ Procedure HandleBlockChange(*Client.Network_Client)
     X = ClientInputReadShort(*Client)
     Z = ClientInputReadShort(*Client)
     Y = ClientInputReadShort(*Client)
-    ; X = ClientInputReadByte(*Client) * 256
-    ; X + (ClientInputReadByte(*Client) & 255)
-    ;  Z = ClientInputReadByte(*Client) * 256
-    ;  Z + (ClientInputReadByte(*Client) & 255)
-    ;  Y = ClientInputReadByte(*Client) * 256
-    ;  Y + (ClientInputReadByte(*Client) & 255)
     Mode = (ClientInputReadByte(*Client) & 255)
     Type = (ClientInputReadByte(*Client) & 255)
     
@@ -87,22 +81,6 @@ Procedure HandlePlayerTeleport(*Client.Network_Client)
     Y = ClientInputReadShort(*Client)
     R = ClientInputReadByte(*Client)
     L = ClientInputReadByte(*Client)
-    
-    ;     *Temp_Buffer = AllocateMemory(8)
-    ;     
-    ;     If *Temp_Buffer
-    ;         ClientInputReadBytes(*Client, *Temp_Buffer, 8)
-    ;         X = PeekB(*Temp_Buffer)* 256
-    ;         X + PeekB(*Temp_Buffer+1)& 255
-    ;         Z = PeekB(*Temp_Buffer+2)* 256
-    ;         Z + PeekB(*Temp_Buffer+3)& 255
-    ;         Y = PeekB(*Temp_Buffer+4)* 256
-    ;         Y + PeekB(*Temp_Buffer+5)& 255
-    ;         R = PeekB(*Temp_Buffer+6)
-    ;         L = PeekB(*Temp_Buffer+7)
-    ;     EndIf
-    ;     
-    ;     FreeMemory(*Temp_Buffer)
     
     If Not *Client\Logged_In Or Not *Client\Player\Entity
         ProcedureReturn
@@ -154,14 +132,6 @@ Procedure HandleExtEntry(*Client.Network_Client)
     
     ExtName = Trim(ClientInputReadString(*Client, 64))
     ExtVersion = ClientInputReadInt(*Client)
-;     *Temp_Buffer = AllocateMemory(4) ; Read extVersion.
-;     
-;     If *Temp_Buffer
-;         ClientInputReadBytes(*Client, *Temp_Buffer, 4)
-;         extVersion = Endian(PeekL(*Temp_Buffer))
-;     EndIf
-;     
-;     FreeMemory(*Temp_Buffer)
     
     AddElement(*Client\Extensions())
     *Client\Extensions() = ExtName
@@ -227,8 +197,8 @@ Procedure HandleCustomBlockSupportLevel(*Client.Network_Client)
 EndProcedure
 
 ; IDE Options = PureBasic 5.30 (Windows - x64)
-; CursorPosition = 135
-; FirstLine = 109
+; CursorPosition = 47
+; FirstLine = 34
 ; Folding = --
 ; EnableUnicode
 ; EnableXP

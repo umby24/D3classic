@@ -287,51 +287,51 @@ Procedure Network_Input_Do()  ; Wertet die empfangenen Daten aus. / Evaluates re
         
         List_Store(*Network_Client_Old, Network_Client())
         
-        While Network_Client_Input_Available(Network_Client()) >= 1 And Repeat_Max > 0
-            Command_Byte = (Network_Client_Input_Read_Byte(Network_Client())& 255)
-            Network_Client_Input_Add_Offset(Network_Client(), -1)
+        While InputBufferAvailable(Network_Client()) >= 1 And Repeat_Max > 0
+            Command_Byte = (ClientInputReadByte(Network_Client())& 255)
+            InputAddOffset(Network_Client(), -1)
             
             Network_Client()\Last_Time_Event = Milliseconds()
             
             
             Select Command_Byte
                 Case 0 ; ################ Login
-                    If Network_Client_Input_Available(Network_Client()) >= 1 + 1 + 64 + 64 + 1
+                    If InputBufferAvailable(Network_Client()) >= 1 + 1 + 64 + 64 + 1
                         HandleHandshake(Network_Client())
                     EndIf
                     
                 Case 1 ; ############### Ping
-                    If Network_Client_Input_Available(Network_Client()) >= 1
+                    If InputBufferAvailable(Network_Client()) >= 1
                         HandlePing(Network_Client())
                     EndIf
                     
                 Case 5 ; ############### Blockänderung / Block Change"
-                    If Network_Client_Input_Available(Network_Client()) >= 9
+                    If InputBufferAvailable(Network_Client()) >= 9
                         HandleBlockChange(Network_Client())
                     EndIf
                     
                 Case 8 ; ############### Spielerbewegung / Player Movement
-                    If Network_Client_Input_Available(Network_Client()) >= 10
+                    If InputBufferAvailable(Network_Client()) >= 10
                         HandlePlayerTeleport(Network_Client())
                     EndIf
                     
                 Case 13 ; ############### Nachricht kommt herein / Chat message
-                    If Network_Client_Input_Available(Network_Client()) >= 66
+                    If InputBufferAvailable(Network_Client()) >= 66
                         HandleChatPacket(Network_Client())
                     EndIf
                     
                 Case 16 ; CPE ExtInfo Packet
-                    If Network_Client_Input_Available(Network_Client()) >= 67
+                    If InputBufferAvailable(Network_Client()) >= 67
                         HandleExtInfo(Network_Client())
                     EndIf
                     
                 Case 17 ; CPE ExtEntry Packet
-                    If Network_Client_Input_Available(Network_Client()) >= 1 + 64 + 4
+                    If InputBufferAvailable(Network_Client()) >= 1 + 64 + 4
                         HandleExtEntry(Network_Client())
                     EndIf
                     
                 Case 19
-                    If Network_Client_Input_Available(Network_Client()) >= 2
+                    If InputBufferAvailable(Network_Client()) >= 2
                         HandleCustomBlockSupportLevel(Network_Client())
                     EndIf
                     
@@ -418,10 +418,11 @@ Procedure Network_Events()
                 Client_ID = EventClient()
                 Data_Size = ReceiveNetworkData(Client_ID, Network_Main\Buffer_Temp, #Network_Temp_Buffer_Size) ; - Read data off the socket
                 If Data_Size > 0
-                    Network_Client_Input_Write_Buffer(Client_ID, Network_Main\Buffer_Temp, Data_Size) ; - Write the data to the client input buffer to be processed elsewhere.
                     If Network_Client_Select(Client_ID)
+                        InputWriteBuffer(Network_Client(), Network_Main\Buffer_Temp, Data_Size) ; - Write the data to the client input buffer to be processed elsewhere.
                         Network_Client()\Download_Rate_Counter + Data_Size
                     EndIf
+                    
                     Network_Main\Download_Rate_Counter + Data_Size
                     ;WriteData(tempfile, *Temp_Buffer, Data_Size)
                 ElseIf Data_Size = -1
@@ -488,9 +489,9 @@ RegisterCore("Network_Output_Send", 0, #Null, #Null, @Network_Output_Send())
 RegisterCore("Network_Output_Do", 0, #Null, #Null, @Network_Output_Do())
 RegisterCore("Network_Input_Do", 0, #Null, #Null, @Network_Input_Do())
 ; IDE Options = PureBasic 5.30 (Windows - x64)
-; CursorPosition = 332
-; FirstLine = 72
-; Folding = BAx-
+; CursorPosition = 419
+; FirstLine = 143
+; Folding = BA6-
 ; EnableXP
 ; DisableDebugger
 ; CompileSourceDirectory

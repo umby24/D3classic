@@ -5,11 +5,11 @@
 Procedure HandleHandshake(*Client.Network_Client)
     Protected ClientVersion.b, PlayerName.s, Mppass.s, Cpe.b
     
-    Network_Client_Input_Add_Offset(*Client, 1)
-    ClientVersion = Network_Client_Input_Read_Byte(*Client)
-    PlayerName = Network_Client_Input_Read_String(*Client, 64)
-    Mppass = Network_Client_Input_Read_String(*Client, 64)
-    Cpe = Network_Client_Input_Read_Byte(*Client)
+    InputAddOffset(*Client, 1)
+    ClientVersion = ClientInputReadByte(*Client)
+    PlayerName = ClientInputReadString(*Client, 64)
+    Mppass = ClientInputReadString(*Client, 64)
+    Cpe = ClientInputReadByte(*Client)
     
     *Client\CPE = #False ; Set this to false until properly negotiated.
     *Client\CustomBlocks_Level = 0
@@ -36,25 +36,25 @@ Procedure HandleHandshake(*Client.Network_Client)
 EndProcedure
 
 Procedure HandlePing(*Client.Network_Client)
-    Network_Client_Input_Add_Offset(*Client, 1)
+    InputAddOffset(*Client, 1)
     *Client\Ping = Milliseconds() - *Client\Ping_Sent_Time
 EndProcedure
 
 Procedure HandleBlockChange(*Client.Network_Client)
     Protected X.w, Y.w, Z.w, Mode.b, Type.b
     
-    Network_Client_Input_Add_Offset(*Client, 1)
+    InputAddOffset(*Client, 1)
     X = ClientInputReadShort(*Client)
     Z = ClientInputReadShort(*Client)
     Y = ClientInputReadShort(*Client)
-    ; X = Network_Client_Input_Read_Byte(*Client) * 256
-    ; X + (Network_Client_Input_Read_Byte(*Client) & 255)
-    ;  Z = Network_Client_Input_Read_Byte(*Client) * 256
-    ;  Z + (Network_Client_Input_Read_Byte(*Client) & 255)
-    ;  Y = Network_Client_Input_Read_Byte(*Client) * 256
-    ;  Y + (Network_Client_Input_Read_Byte(*Client) & 255)
-    Mode = (Network_Client_Input_Read_Byte(*Client) & 255)
-    Type = (Network_Client_Input_Read_Byte(*Client) & 255)
+    ; X = ClientInputReadByte(*Client) * 256
+    ; X + (ClientInputReadByte(*Client) & 255)
+    ;  Z = ClientInputReadByte(*Client) * 256
+    ;  Z + (ClientInputReadByte(*Client) & 255)
+    ;  Y = ClientInputReadByte(*Client) * 256
+    ;  Y + (ClientInputReadByte(*Client) & 255)
+    Mode = (ClientInputReadByte(*Client) & 255)
+    Type = (ClientInputReadByte(*Client) & 255)
     
     
     If Not *Client\Logged_In Or Not *Client\Player\Entity
@@ -70,28 +70,28 @@ Procedure HandlePlayerTeleport(*Client.Network_Client)
     Protected X.w, Y.W, Z.w, R.w, L.w
     
     If *Client\HeldBlock = #True
-        Network_Client_Input_Add_Offset(*Client, 1)
+        InputAddOffset(*Client, 1)
         
         If *Client\Player\Entity
-            *Client\Player\Entity\Held_Block = Network_Client_Input_Read_Byte(*Client) ; Update the CPE Held_Block for this client.
+            *Client\Player\Entity\Held_Block = ClientInputReadByte(*Client) ; Update the CPE Held_Block for this client.
         Else
-            Network_Client_Input_Add_Offset(*Client, 1)
+            InputAddOffset(*Client, 1)
         EndIf
         
     Else
-        Network_Client_Input_Add_Offset(*Client, 2)
+        InputAddOffset(*Client, 2)
     EndIf
     
     X = ClientInputReadShort(*Client)
     Z = ClientInputReadShort(*Client)
     Y = ClientInputReadShort(*Client)
-    R = Network_Client_Input_Read_Byte(*Client)
-    L = Network_Client_Input_Read_Byte(*Client)
+    R = ClientInputReadByte(*Client)
+    L = ClientInputReadByte(*Client)
     
     ;     *Temp_Buffer = AllocateMemory(8)
     ;     
     ;     If *Temp_Buffer
-    ;         Network_Client_Input_Read_Buffer(*Client, *Temp_Buffer, 8)
+    ;         ClientInputReadBytes(*Client, *Temp_Buffer, 8)
     ;         X = PeekB(*Temp_Buffer)* 256
     ;         X + PeekB(*Temp_Buffer+1)& 255
     ;         Z = PeekB(*Temp_Buffer+2)* 256
@@ -115,10 +115,10 @@ EndProcedure
 
 Procedure HandleChatPacket(*Client.Network_Client)
     Protected Text.s, PlayerId.b
-    Network_Client_Input_Add_Offset(*Client, 1)
+    InputAddOffset(*Client, 1)
     
-    playerId = Network_Client_Input_Read_Byte(*Client)
-    Text = Trim(Network_Client_Input_Read_String(*Client, 64))
+    playerId = ClientInputReadByte(*Client)
+    Text = Trim(ClientInputReadString(*Client, 64))
     
     If *Client\Logged_In = 1
         If *Client\Player\Entity
@@ -129,9 +129,9 @@ EndProcedure
 
 Procedure HandleExtInfo(*Client.Network_Client)
     Protected AppName.s, Extensions.w
-    Network_Client_Input_Add_Offset(*Client, 1)
+    InputAddOffset(*Client, 1)
     
-    AppName = Trim(Network_Client_Input_Read_String(*Client, 64))
+    AppName = Trim(ClientInputReadString(*Client, 64))
     Extensions = ClientInputReadShort(*Client)
     
     *Client\CPE = #True
@@ -150,14 +150,14 @@ EndProcedure
 
 Procedure HandleExtEntry(*Client.Network_Client)
     Protected ExtName.s, ExtVersion.l
-    Network_Client_Input_Add_Offset(*Client, 1)
+    InputAddOffset(*Client, 1)
     
-    ExtName = Trim(Network_Client_Input_Read_String(*Client, 64))
+    ExtName = Trim(ClientInputReadString(*Client, 64))
     ExtVersion = ClientInputReadInt(*Client)
 ;     *Temp_Buffer = AllocateMemory(4) ; Read extVersion.
 ;     
 ;     If *Temp_Buffer
-;         Network_Client_Input_Read_Buffer(*Client, *Temp_Buffer, 4)
+;         ClientInputReadBytes(*Client, *Temp_Buffer, 4)
 ;         extVersion = Endian(PeekL(*Temp_Buffer))
 ;     EndIf
 ;     
@@ -216,8 +216,8 @@ EndProcedure
 
 Procedure HandleCustomBlockSupportLevel(*Client.Network_Client)
     ;Client just confirming it supports CustomBlocks.
-    Network_Client_Input_Add_Offset(*Client, 1)
-    Level = Network_Client_Input_Read_Byte(*Client)
+    InputAddOffset(*Client, 1)
+    Level = ClientInputReadByte(*Client)
     
     *Client\CustomBlocks_Level = Level
     *Client\CustomBlocks = #True
@@ -227,8 +227,8 @@ Procedure HandleCustomBlockSupportLevel(*Client.Network_Client)
 EndProcedure
 
 ; IDE Options = PureBasic 5.30 (Windows - x64)
-; CursorPosition = 225
-; FirstLine = 177
+; CursorPosition = 135
+; FirstLine = 109
 ; Folding = --
 ; EnableUnicode
 ; EnableXP

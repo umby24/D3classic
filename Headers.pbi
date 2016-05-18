@@ -1,5 +1,5 @@
-Declare Network_Client_Input_Available(Client_ID)
-    
+Declare Network_Client_Input_Available(*Client.Network_Client)
+
 Declare UnregisterCore(Name.s)
 
 Declare RegisterCore(Name.s, Timer.i, *InitFunction, *ShutdownFunction, *MainFunction)
@@ -116,17 +116,17 @@ Declare Network_Client_Output_Write_String(Client_ID, String.s, Length)     ; Wr
 
 Declare Network_Client_Output_Write_Buffer(Client_ID, *Data_Buffer, Data_Size)     ; Write raw bytes into the send buffer.
 
-Declare Network_Client_Input_Add_Offset(Client_ID, Bytes)     ; Addiert einige Bytes zum Offset des Empfangbuffers -- Adds some bytes to offset the receive buffer
+Declare Network_Client_Input_Add_Offset(*Client.Network_Client, Bytes)     ; Addiert einige Bytes zum Offset des Empfangbuffers -- Adds some bytes to offset the receive buffer
 
-Declare.b Network_Client_Input_Read_Byte(Client_ID)     ; Liest ein Byte aus dem Empfangsbuffer -- Reads a byte from the receive buffer
+Declare.b Network_Client_Input_Read_Byte(*Client.Network_Client)     ; Liest ein Byte aus dem Empfangsbuffer -- Reads a byte from the receive buffer
 
-Declare.w ClientInputReadShort(Client_ID)     ; Liest ein Byte aus dem Empfangsbuffer -- Reads a short from the receive buffer
+Declare.w ClientInputReadShort(*Client.Network_Client)     ; Liest ein Byte aus dem Empfangsbuffer -- Reads a short from the receive buffer
 
-Declare.l ClientInputReadInt(ClientId)
+Declare.l ClientInputReadInt(*Client.Network_Client)
 
-Declare.s Network_Client_Input_Read_String(Client_ID, Length)     ; Liest ein String angegebener L?nge aus dem Empfangsbuffer -- Reads a string of specified length from the receive buffer
+Declare.s Network_Client_Input_Read_String(*Client.Network_Client, Length)     ; Liest ein String angegebener L?nge aus dem Empfangsbuffer -- Reads a string of specified length from the receive buffer
 
-Declare Network_Client_Input_Read_Buffer(Client_ID, *Data_Buffer, Data_Size)   ; Liest Daten aus dem Empfangsbuffer -- Reads data from the receive buffer
+Declare Network_Client_Input_Read_Buffer(*Client.Network_Client, *Data_Buffer, Data_Size)   ; Liest Daten aus dem Empfangsbuffer -- Reads data from the receive buffer
 
 Declare Network_Client_Input_Write_Buffer(Client_ID, *Data_Buffer, Data_Size)   ; Schreibt Daten in den Empfangsbuffer -- Write data in the receive buffer
 
@@ -896,6 +896,6 @@ Declare CPE_Client_Hackcontrol_Send(Client_ID, Flying, Noclip, Speeding, SpawnCo
 
 
 ; IDE Options = PureBasic 5.30 (Windows - x64)
-; CursorPosition = 3
+; CursorPosition = 1
 ; EnableUnicode
 ; EnableXP

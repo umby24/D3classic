@@ -167,7 +167,12 @@ Procedure Network_Out_Entity_Add(Client_ID, ID_Client, Name.s, X.f, Y.f, Z.f, Ro
         Rotation = Rotation/360*256
         Look = Look/360*256
         
-        SendSpawnEntity(Client_ID, ID_Client, Name, X, Y, Z, Rotation, Look)
+        If Network_Client()\ExtPlayerList = #False Or CPE_GetClientExtVersion("ExtPlayerList") < 2
+            SendSpawnEntity(Client_ID, ID_Client, Name, X, Y, Z, Rotation, Look)
+        Else
+            SendExtAddEntity2(Client_ID, ID_Client, Name, Name, X, Y, Z, Rotation, Look) ; TODO: Provide the clients login name..
+        EndIf
+        
         ;     If Network_Client()\ExtPlayerList = #False
         ;     Else
         ;       Network_Client_Output_Write_Byte(Client_ID, 23) ; CPE ExtAddEntity

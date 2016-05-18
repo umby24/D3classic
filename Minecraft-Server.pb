@@ -181,8 +181,9 @@ XIncludeFile "Includes/Language.pbi"
 XIncludeFile "Includes/Network.pbi"
 XIncludeFile "Network/NetworkClientOutput.pbi"
 XIncludeFile "Network/NetworkClientInput.pbi"
-XIncludeFile "Includes/Error.pbi"
+XIncludeFile "Network/PacketHandlers.pbi"
 XIncludeFile "Network/Packets.pbi"
+XIncludeFile "Includes/Error.pbi"
 XIncludeFile "Includes/System.pbi"
 XIncludeFile "Includes/Block.pbi"
 XIncludeFile "Includes/NBT.pbi"
@@ -273,9 +274,10 @@ Wend
 
 CoreShutdown()
 ; ########################################## Ende / End ##########################################
-; IDE Options = PureBasic 5.30 (Windows - x86)
+; IDE Options = PureBasic 5.30 (Windows - x64)
 ; ExecutableFormat = Console
-; CursorPosition = 23
+; CursorPosition = 182
+; FirstLine = 153
 ; Folding = -
 ; EnableThread
 ; EnableXP

@@ -297,245 +297,42 @@ Procedure Network_Input_Do()  ; Wertet die empfangenen Daten aus. / Evaluates re
             Select Command_Byte
                 Case 0 ; ################ Login
                     If Network_Client_Input_Available(Network_Client()\ID) >= 1 + 1 + 64 + 64 + 1
-                        Network_Client_Input_Add_Offset(Network_Client()\ID, 1)
-                        Client_Version = Network_Client_Input_Read_Byte(Network_Client()\ID)
-                        Player_Name.s = Network_Client_Input_Read_String(Network_Client()\ID, 64)
-                        Player_Pass.s = Network_Client_Input_Read_String(Network_Client()\ID, 64)
-                        Unused_ID = Network_Client_Input_Read_Byte(Network_Client()\ID)
-                        
-                        Network_Client()\CPE = #False ; Set this to false until properly negotiated.
-                        Network_Client()\CustomBlocks_Level = 0
-                        Network_Client()\HeldBlock = #False
-                        Network_Client()\ClickDistance = #False
-                        Network_Client()\ExtPlayerList = #False
-                        Network_Client()\ChangeModel = #False
-                        Network_Client()\CPEWeather = #False
-                        Network_Client()\EnvColors = #False
-                        Network_Client()\MessageTypes = #False
-                        Network_Client()\BlockPermissions = #False
-                        Network_Client()\EnvMapAppearance = #False
-                        Network_Client()\TextHotkey = #False
-                        Network_Client()\HackControl = #False
-                        Network_Client()\LongerMessages = #False
-                        
-                        If Network_Client()\Logged_In = 0 And Network_Client()\Disconnect_Time = 0 And Unused_ID <> 66
-                            Client_Login(Network_Client()\ID, Trim(Player_Name), Player_Pass, Client_Version)
-                        ElseIf Unused_ID = 66 And Network_Client()\Logged_In = 0 And Network_Client()\Disconnect_Time = 0
-                            ;CPE Enabled Client
-                            CPE_Send_ExtInfo(Network_Client()\ID, Trim(Player_Name), Player_Pass, Client_Version)
-                            Log_Add("Network","CPE Client Detected", 0, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
-                        EndIf
+                        HandleHandshake(Network_Client())
                     EndIf
                     
                 Case 1 ; ############### Ping
                     If Network_Client_Input_Available(Network_Client()\ID) >= 1
-                        Network_Client_Input_Add_Offset(Network_Client()\ID, 1)
-                        Network_Client()\Ping = Milliseconds() - Network_Client()\Ping_Sent_Time
+                        HandlePing(Network_Client())
                     EndIf
                     
                 Case 5 ; ############### Blockänderung / Block Change"
-                    If Network_Client_Input_Available(Network_Client()\ID) >= 1 + 8
-                        Network_Client_Input_Add_Offset(Network_Client()\ID, 1)
-                        X = Network_Client_Input_Read_Byte(Network_Client()\ID) * 256
-                        X + (Network_Client_Input_Read_Byte(Network_Client()\ID) & 255)
-                        Z = Network_Client_Input_Read_Byte(Network_Client()\ID) * 256
-                        Z + (Network_Client_Input_Read_Byte(Network_Client()\ID) & 255)
-                        Y = Network_Client_Input_Read_Byte(Network_Client()\ID) * 256
-                        Y + (Network_Client_Input_Read_Byte(Network_Client()\ID) & 255)
-                        Mode = (Network_Client_Input_Read_Byte(Network_Client()\ID) & 255)
-                        Type = (Network_Client_Input_Read_Byte(Network_Client()\ID) & 255)
-                        
-                        
-                        If Network_Client()\Logged_In = 1
-                            If Network_Client()\Player\Entity
-                                If Network_Client()\Player\Entity\Map_ID = Network_Client()\Player\Map_ID
-                                    Build_Mode_Distribute(Network_Client()\ID, -1, X, Y, Z, Mode, Type)
-                                EndIf
-                            EndIf
-                        EndIf
+                    If Network_Client_Input_Available(Network_Client()\ID) >= 9
+                        HandleBlockChange(Network_Client())
                     EndIf
                     
                 Case 8 ; ############### Spielerbewegung / Player Movement
-                    If Network_Client_Input_Available(Network_Client()\ID) >= 1 + 1 + 8
-                        
-                        If Network_Client()\HeldBlock = #True
-                            Network_Client_Input_Add_Offset(Network_Client()\ID, 1)
-                            
-                            If Network_Client()\Player\Entity
-                                Network_Client()\Player\Entity\Held_Block = Network_Client_Input_Read_Byte(Network_Client()\ID) ; Update the CPE Held_Block for this client.
-                            Else
-                                Network_Client_Input_Add_Offset(Network_Client()\ID, 1)
-                            EndIf
-                            
-                        Else
-                            Network_Client_Input_Add_Offset(Network_Client()\ID, 2)
-                        EndIf
-                        
-                        
-                        *Temp_Buffer = AllocateMemory(8)
-                        If *Temp_Buffer
-                            Network_Client_Input_Read_Buffer(Network_Client()\ID, *Temp_Buffer, 8)
-                            X = PeekB(*Temp_Buffer)* 256
-                            X + PeekB(*Temp_Buffer+1)& 255
-                            Z = PeekB(*Temp_Buffer+2)* 256
-                            Z + PeekB(*Temp_Buffer+3)& 255
-                            Y = PeekB(*Temp_Buffer+4)* 256
-                            Y + PeekB(*Temp_Buffer+5)& 255
-                            R = PeekB(*Temp_Buffer+6)
-                            L = PeekB(*Temp_Buffer+7)
-                        EndIf
-                        
-                        If Network_Client()\Logged_In = 1
-                            If Network_Client()\Player\Entity
-                                If Network_Client()\Player\Entity\Map_ID = Network_Client()\Player\Map_ID
-                                    Entity_Position_Set(Network_Client()\Player\Entity\ID, Network_Client()\Player\Entity\Map_ID, X/32, Y/32, (Z-51)/32, R * 360 / 256, L * 360 / 256, 1, 0)
-                                EndIf
-                            EndIf
-                        EndIf
+                    If Network_Client_Input_Available(Network_Client()\ID) >= 10
+                        HandlePlayerTeleport(Network_Client())
                     EndIf
                     
-                Case 13 ; ############### Nachricht kommt herein
-                    If Network_Client_Input_Available(Network_Client()\ID) >= 1 + 1 + 64
-                        Network_Client_Input_Add_Offset(Network_Client()\ID, 1)
-                        Define playerId.b = Network_Client_Input_Read_Byte(Network_Client()\ID)
-                        Text.s = Trim(Network_Client_Input_Read_String(Network_Client()\ID, 64))
-                        
-                        If Network_Client()\Logged_In = 1
-                            If Network_Client()\Player\Entity
-                                HandleIncomingChat(Text, playerId)
-;                                 If Left(Text, 1) = "/"
-;                                     Command_Do(Network_Client()\ID, Mid(Text, 2))
-;                                 ElseIf Left(Text, 1) = "#"
-;                                     If (Network_Client()\GlobalChat)
-;                                         Chat_Message_Network_Send_2_Map(Network_Client()\Player\Entity\ID, Mid(Text, 2))
-;                                     Else
-;                                         Chat_Message_Network_Send_2_All(Network_Client()\Player\Entity\ID, Mid(Text, 2))
-;                                     EndIf
-;                                     
-;                                 ElseIf Left(Text, 1) = "@"
-;                                     Private_Message_Name.s = Mid(StringField(Text, 1, " "), 2)
-;                                     Chat_Message_Network_Send(Network_Client()\Player\Entity\ID, Private_Message_Name, Mid(Text, 2+Len(Private_Message_Name)))
-;                                 Else
-;                                     If (Network_Client()\GlobalChat)
-;                                         Chat_Message_Network_Send_2_All(Network_Client()\Player\Entity\ID, Text)
-;                                     Else
-;                                         Chat_Message_Network_Send_2_Map(Network_Client()\Player\Entity\ID, Text)
-;                                     EndIf
-;                                     
-;                                 EndIf
-                            EndIf
-                        EndIf
+                Case 13 ; ############### Nachricht kommt herein / Chat message
+                    If Network_Client_Input_Available(Network_Client()\ID) >= 66
+                        HandleChatPacket(Network_Client())
                     EndIf
                     
                 Case 16 ; CPE ExtInfo Packet
-                    If Network_Client_Input_Available(Network_Client()\ID) >= 1 + 64 + 2
-                        Network_Client_Input_Add_Offset(Network_Client()\ID, 1)
-                        
-                        AppName.s = Trim(Network_Client_Input_Read_String(Network_Client()\ID, 64))
-                        
-                        *Temp_Buffer = AllocateMemory(2)
-                        If *Temp_Buffer
-                            Network_Client_Input_Read_Buffer(Network_Client()\ID, *Temp_Buffer, 2)
-                            Extensions = PeekW(*Temp_Buffer)
-                            Extensions = EndianW(Extensions)
-                        EndIf
-                        
-                        FreeMemory(*Temp_Buffer)
-                        
-                        Network_Client()\CPE = #True
-                        Network_Client()\CustomExtensions = Extensions
-                        
-                        If Extensions = 0
-                            CPE_Send_Extensions(Network_Client()\ID)
-                            
-                            If Network_Client()\TextHotkey = #True
-                                CPE_Client_Send_Hotkeys(Network_Client()\ID)
-                            EndIf
-                        EndIf
-                        
-                        Log_Add("CPE","Client supports " + Str(Extensions) + " extensions", 0, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
-                        
+                    If Network_Client_Input_Available(Network_Client()\ID) >= 67
+                        HandleExtInfo(Network_Client())
                     EndIf
                     
                 Case 17 ; CPE ExtEntry Packet
                     If Network_Client_Input_Available(Network_Client()\ID) >= 1 + 64 + 4
-                        
-                        Network_Client_Input_Add_Offset(Network_Client()\ID, 1)
-                        
-                        ExtName.s = Trim(Network_Client_Input_Read_String(Network_Client()\ID, 64))
-                        
-                        *Temp_Buffer = AllocateMemory(4) ; Read extVersion.
-                        
-                        If *Temp_Buffer
-                            Network_Client_Input_Read_Buffer(Network_Client()\ID, *Temp_Buffer, 4)
-                            extVersion = Endian(PeekL(*Temp_Buffer))
-                        EndIf
-                        
-                        FreeMemory(*Temp_Buffer)
-                        
-                        AddElement(Network_Client()\Extensions())
-                        Network_Client()\Extensions() = ExtName
-                        
-                        AddElement(Network_Client()\ExtensionVersions())
-                        Network_Client()\ExtensionVersions() = extVersion
-                        
-                        Select LCase(ExtName)
-                            Case "customblocks"
-                                Network_Client()\CustomBlocks = #True  
-                            Case "heldblock"
-                                Network_Client()\HeldBlock = #True  
-                            Case "clickdistance"
-                                Network_Client()\ClickDistance = #True
-                            Case "selectioncuboid"
-                                Network_Client()\SelectionCuboid = #True
-                            Case "extplayerlist"
-                                Network_Client()\ExtPlayerList = #True
-                            Case "changemodel"
-                                Network_Client()\ChangeModel = #True
-                            Case "envweathertype"
-                                Network_Client()\CPEWeather = #True
-                            Case "envcolors"
-                                Network_Client()\EnvColors = #True  
-                            Case "messagetypes"
-                                Network_Client()\MessageTypes = #True
-                            Case "blockpermissions"
-                                Network_Client()\BlockPermissions = #True
-                            Case "envmapappearance"
-                                Network_Client()\EnvMapAppearance = #True
-                            Case "hackcontrol"
-                                Network_Client()\HackControl = #True
-                            Case "texthotkey"
-                                Network_Client()\TextHotkey = #True
-                            Case "emotefix"
-                                Network_Client()\EmoteFix = #True
-                            Case "longermessages"
-                                Network_Client()\LongerMessages = #True
-                        EndSelect
-                        
-                        Network_Client()\CustomExtensions - 1
-                        
-                        If Network_Client()\CustomExtensions = 0
-                            CPE_Send_Extensions(Network_Client()\ID)
-                            
-                            If Network_Client()\TextHotkey = #True
-                                CPE_Client_Send_Hotkeys(Network_Client()\ID)
-                            EndIf
-                            
-                        EndIf
-                        
+                        HandleExtEntry(Network_Client())
                     EndIf
                     
                 Case 19
                     If Network_Client_Input_Available(Network_Client()\ID) >= 2
-                        ;Client just confirming it supports CustomBlocks.
-                        Network_Client_Input_Add_Offset(Network_Client()\ID, 1)
-                        Level = Network_Client_Input_Read_Byte(Network_Client()\ID)
-                        
-                        Network_Client()\CustomBlocks_Level = Level
-                        Network_Client()\CustomBlocks = #True
-                        
-                        Log_Add("CPE","CPE Process Complete.", 0, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
-                        Client_Login(Network_Client()\ID, Network_Client()\Player\Login_Name, Network_Client()\Player\MPPass, Network_Client()\Player\Client_Version)
+                        HandleCustomBlockSupportLevel(Network_Client())
                     EndIf
                     
                 Default ; Wenn Befehl nicht gefunden
@@ -690,9 +487,9 @@ RegisterCore("Network_Events", 1, #Null, #Null, @Network_Events())
 RegisterCore("Network_Output_Send", 0, #Null, #Null, @Network_Output_Send())
 RegisterCore("Network_Output_Do", 0, #Null, #Null, @Network_Output_Do())
 RegisterCore("Network_Input_Do", 0, #Null, #Null, @Network_Input_Do())
-; IDE Options = PureBasic 5.30 (Windows - x86)
-; CursorPosition = 511
-; FirstLine = 272
+; IDE Options = PureBasic 5.30 (Windows - x64)
+; CursorPosition = 334
+; FirstLine = 116
 ; Folding = BAx-
 ; EnableXP
 ; DisableDebugger

@@ -120,15 +120,29 @@ Declare Network_Client_Input_Add_Offset(Client_ID, Bytes)     ; Addiert einige B
 
 Declare.b Network_Client_Input_Read_Byte(Client_ID)     ; Liest ein Byte aus dem Empfangsbuffer -- Reads a byte from the receive buffer
 
+Declare.b ClientInputReadShort(Client_ID)     ; Liest ein Byte aus dem Empfangsbuffer -- Reads a short from the receive buffer
+
 Declare.s Network_Client_Input_Read_String(Client_ID, Length)     ; Liest ein String angegebener L?nge aus dem Empfangsbuffer -- Reads a string of specified length from the receive buffer
 
 Declare Network_Client_Input_Read_Buffer(Client_ID, *Data_Buffer, Data_Size)   ; Liest Daten aus dem Empfangsbuffer -- Reads data from the receive buffer
 
 Declare Network_Client_Input_Write_Buffer(Client_ID, *Data_Buffer, Data_Size)   ; Schreibt Daten in den Empfangsbuffer -- Write data in the receive buffer
 
-Declare Error_Handler()
+Declare HandleHandshake(*Client.Network_Client)
 
-Declare Error_Main()
+Declare HandlePing(*Client.Network_Client)
+
+Declare HandleBlockChange(*Client.Network_Client)
+
+Declare HandlePlayerTeleport(*Client.Network_Client)
+
+Declare HandleChatPacket(*Client.Network_Client)
+
+Declare HandleExtInfo(*Client.Network_Client)
+
+Declare HandleExtEntry(*Client.Network_Client)
+
+Declare HandleCustomBlockSupportLevel(*Client.Network_Client)
 
 Declare SendExtInfo(ClientID, Server.s, Extensions.w)
 
@@ -181,6 +195,10 @@ Declare SendDespawnEntity(ClientID, PlayerId.b)
 Declare SendChatMessage(ClientID, Message.s, Location.b)
 
 Declare SendDisconnect(ClientID, Reason.s)
+
+Declare Error_Handler()
+
+Declare Error_Main()
 
 Declare System_Save(Filename.s) ; Speichert die Einstellungen
 
@@ -320,9 +338,9 @@ Declare Map_Block_Do_Add(*Map_Data.Map_Data, X.l, Y.l, Z.l) ; Fügt einen Block i
 
 Declare Map_Block_Do_Distribute(*Map_Data.Map_Data, X, Y, Z)
 
-Declare Map_Physic_Thread(*Dummy) ; Thread, für Physik
+Declare Map_Physic_Thread(*Dummy) ; Thread, für Physik / Thread for Physics
 
-Declare Map_Blockchanging_Thread(*Dummy) ; In diesem Thread werden alle Blockänderungen nacheinander gesendet
+Declare Map_Blockchanging_Thread(*Dummy) ; In diesem Thread werden alle Blockänderungen nacheinander gesendet / Sends all blockchanges, sequentially.
 
 Declare Map_Main()
 
@@ -431,6 +449,8 @@ Declare Client_Login(Client_ID, Name.s, MPPass.s, Version) ; A new player has lo
 Declare Client_Logout(Client_ID, Message.s, Show_2_All) ; Player has logged out, everything important is sent out and done.
 
 Declare Client_Login_Thread(*Dummy) ; In this thread, all logins are processed sequentially.
+
+Declare.s HandleChatEscapes(Input.s)
 
 Declare Chat_Message_Network_Send_2_Map(Entity_ID, Message.s) ; Sends a message to all clients of an entity on a map.
 
@@ -756,19 +776,19 @@ Declare Font_Draw_Text_Player(*Player.Player_List, Font_ID.s, Map_ID, X, Y, Z, V
 
 Declare Font_Main()
 
-Declare Undo_Save(Filename.s) ; Speichert die Einstellungen
+Declare Undo_Save(Filename.s) ; Speichert die Einstellungen / Saves Settings
 
-Declare Undo_Load(Filename.s) ; Lädt die Einstellungen
+Declare Undo_Load(Filename.s) ; Lädt die Einstellungen / Loads settings
 
-Declare Undo_Add(Player_Number, Map_ID, X, Y, Z, Type_Before.b, Player_Before)
+Declare Undo_Add(Player_Number, Map_ID, X, Y, Z, Type_Before.b, Player_Before) ; Adds a step to the change tracking system
 
-Declare Undo_Do_Player(Map_ID, Player_Number, Time) ; Macht alle Änderungen von einem bestimmten Player rückgängig.
+Declare Undo_Do_Player(Map_ID, Player_Number, Time) ; Macht alle Änderungen von einem bestimmten Player rückgängig. / Undoes changes made by a particular player
 
-Declare Undo_Do_Time(Map_ID, Time) ; Stellt alle Blöcke von einem bestimmten Zeitraum wieder her.
+Declare Undo_Do_Time(Map_ID, Time) ; Stellt alle Blöcke von einem bestimmten Zeitraum wieder her. / Undoes block changes based on time.
 
-Declare Undo_Clear_Map(Map_ID) ; Löscht Undo-Schritte einer Map
+Declare Undo_Clear_Map(Map_ID) ; Löscht Undo-Schritte einer Map / Removes all undo steps for a given map
 
-Declare Undo_Clear() ; Löscht ältere Undo-Schritte
+Declare Undo_Clear() ; Löscht ältere Undo-Schritte / Removes all undo steps.
 
 Declare Undo_Main()
 
@@ -873,7 +893,7 @@ Declare CPE_Client_Send_Hotkeys(Client_ID)
 Declare CPE_Client_Hackcontrol_Send(Client_ID, Flying, Noclip, Speeding, SpawnControl, ThirdPerson, Jumpheight.w)
 
 
-; IDE Options = PureBasic 5.30 (Windows - x86)
+; IDE Options = PureBasic 5.30 (Windows - x64)
 ; CursorPosition = 1
 ; EnableUnicode
 ; EnableXP

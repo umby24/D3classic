@@ -153,6 +153,7 @@ EndProcedure
 ; ######################################### Player
 
 Procedure Network_Out_Entity_Add(Client_ID, ID_Client, Name.s, X.f, Y.f, Z.f, Rotation.f, Look.f) ; Erstellt ein neues Spielerobjekt auf einem Client
+    PrintN("Entity_Add..")
     If ListIndex(Network_Client()) <> -1
         *Network_Client_Old = Network_Client()
     Else
@@ -181,7 +182,8 @@ Procedure Network_Out_Entity_Add(Client_ID, ID_Client, Name.s, X.f, Y.f, Z.f, Ro
         ;       Network_Client_Output_Write_String(Client_ID, Name, 64)
         ;       System_Message_Network_Send_2_All(-1, "Sent ExtAddEntity")
         ;     EndIf
-        
+    Else
+        PrintN("Could not select client")
     EndIf
     
     If *Network_Client_Old
@@ -224,10 +226,10 @@ Procedure Network_Out_Entity_Position(Client_ID, ID_Client, X.f, Y.f, Z.f, Rotat
         ChangeCurrentElement(Network_Client(), *Network_Client_Old)
     EndIf
 EndProcedure
-; IDE Options = PureBasic 5.30 (Windows - x86)
-; CursorPosition = 104
-; FirstLine = 8
-; Folding = 56
+; IDE Options = PureBasic 5.30 (Linux - x64)
+; CursorPosition = 183
+; FirstLine = 75
+; Folding = 58
 ; EnableXP
 ; DisableDebugger
 ; CompileSourceDirectory

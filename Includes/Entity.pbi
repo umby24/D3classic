@@ -502,6 +502,17 @@ Procedure Entity_Send() ; Maintained moving, creating and deleting entities of t
                 EndIf
             Next
         EndIf
+        
+        If Entity()\SpawnSelf
+            Entity()\SpawnSelf = 0
+            
+            ForEach Network_Client() ; For every client..
+                If Network_Client()\Logged_In And Network_Client()\Player\Entity = Entity() ; If the clients entity is this entity, send them their update.
+                    Network_Out_Entity_Add(Network_Client()\ID, 255, Entity()\Name, Entity()\X, Entity()\Y, Entity()\Z, Entity()\Rotation, Entity()\Look)
+                EndIf
+            Next
+        EndIf
+        
     Next
     
 EndProcedure
@@ -516,8 +527,8 @@ EndProcedure
 
 RegisterCore("Entity", 100, #Null, #Null, @Entity_Main())
 ; IDE Options = PureBasic 5.30 (Linux - x64)
-; CursorPosition = 472
-; FirstLine = 429
+; CursorPosition = 508
+; FirstLine = 475
 ; Folding = ---
 ; EnableXP
 ; DisableDebugger

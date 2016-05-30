@@ -1,5 +1,3 @@
-Declare Network_Client_Input_Available(Client_ID) 
-
 Declare UnregisterCore(Name.s)
 
 Declare RegisterCore(Name.s, Timer.i, *InitFunction, *ShutdownFunction, *MainFunction)
@@ -116,19 +114,37 @@ Declare Network_Client_Output_Write_String(Client_ID, String.s, Length)     ; Wr
 
 Declare Network_Client_Output_Write_Buffer(Client_ID, *Data_Buffer, Data_Size)     ; Write raw bytes into the send buffer.
 
-Declare Network_Client_Input_Add_Offset(Client_ID, Bytes)     ; Addiert einige Bytes zum Offset des Empfangbuffers -- Adds some bytes to offset the receive buffer
+Declare InputBufferAvailable(*Client.Network_Client)     ;  -- Bytes available in the receive buffer
 
-Declare.b Network_Client_Input_Read_Byte(Client_ID)     ; Liest ein Byte aus dem Empfangsbuffer -- Reads a byte from the receive buffer
+Declare InputAddOffset(*Client.Network_Client, Bytes)     ; Addiert einige Bytes zum Offset des Empfangbuffers -- Adds some bytes to offset the receive buffer
 
-Declare.s Network_Client_Input_Read_String(Client_ID, Length)     ; Liest ein String angegebener L?nge aus dem Empfangsbuffer -- Reads a string of specified length from the receive buffer
+Declare.b ClientInputReadByte(*Client.Network_Client)     ; Liest ein Byte aus dem Empfangsbuffer -- Reads a byte from the receive buffer
 
-Declare Network_Client_Input_Read_Buffer(Client_ID, *Data_Buffer, Data_Size)   ; Liest Daten aus dem Empfangsbuffer -- Reads data from the receive buffer
+Declare.w ClientInputReadShort(*Client.Network_Client)     ; Liest ein Byte aus dem Empfangsbuffer -- Reads a short from the receive buffer
 
-Declare Network_Client_Input_Write_Buffer(Client_ID, *Data_Buffer, Data_Size)   ; Schreibt Daten in den Empfangsbuffer -- Write data in the receive buffer
+Declare.l ClientInputReadInt(*Client.Network_Client)
 
-Declare Error_Handler()
+Declare.s ClientInputReadString(*Client.Network_Client, Length)     ; Liest ein String angegebener L?nge aus dem Empfangsbuffer -- Reads a string of specified length from the receive buffer
 
-Declare Error_Main()
+Declare ClientInputReadBytes(*Client.Network_Client, *Data_Buffer, Data_Size)   ; Liest Daten aus dem Empfangsbuffer -- Reads data from the receive buffer
+
+Declare InputWriteBuffer(*Client.Network_Client, *Data_Buffer, Data_Size)   ; Schreibt Daten in den Empfangsbuffer -- Write data in the receive buffer
+
+Declare HandleHandshake(*Client.Network_Client)
+
+Declare HandlePing(*Client.Network_Client)
+
+Declare HandleBlockChange(*Client.Network_Client)
+
+Declare HandlePlayerTeleport(*Client.Network_Client)
+
+Declare HandleChatPacket(*Client.Network_Client)
+
+Declare HandleExtInfo(*Client.Network_Client)
+
+Declare HandleExtEntry(*Client.Network_Client)
+
+Declare HandleCustomBlockSupportLevel(*Client.Network_Client)
 
 Declare SendExtInfo(ClientID, Server.s, Extensions.w)
 
@@ -184,6 +200,10 @@ Declare SendChatMessage(ClientID, Message.s, Location.b)
 
 Declare SendDisconnect(ClientID, Reason.s)
 
+Declare Error_Handler()
+
+Declare Error_Main()
+
 Declare System_Save(Filename.s) ; Speichert die Einstellungen
 
 Declare System_Load(Filename.s) ; Lädt die Einstellungen
@@ -197,6 +217,8 @@ Declare Block_Save(Filename.s) ; - Saves the blocks and all block data.
 Declare Block_Get_Pointer(Number) ; Specifices a pointer back to the element.
 
 Declare Block_Main()
+
+Declare BlockShutdown()
 
 Declare Location_Load(Filename.s)
 
@@ -322,9 +344,9 @@ Declare Map_Block_Do_Add(*Map_Data.Map_Data, X.l, Y.l, Z.l) ; Fügt einen Block i
 
 Declare Map_Block_Do_Distribute(*Map_Data.Map_Data, X, Y, Z)
 
-Declare Map_Physic_Thread(*Dummy) ; Thread, für Physik
+Declare Map_Physic_Thread(*Dummy) ; Thread, für Physik / Thread for Physics
 
-Declare Map_Blockchanging_Thread(*Dummy) ; In diesem Thread werden alle Blockänderungen nacheinander gesendet
+Declare Map_Blockchanging_Thread(*Dummy) ; In diesem Thread werden alle Blockänderungen nacheinander gesendet / Sends all blockchanges, sequentially.
 
 Declare Map_Main()
 
@@ -343,6 +365,8 @@ Declare Build_Rank_Box(Map_ID, X_0, Y_0, Z_0, X_1, Y_1, Z_1, Rank, Max_Rank) ; C
 Declare Build_Queue_Do()
 
 Declare Build_Main()
+
+Declare BuildShutdown()
 
 Declare Physic_Block_Fill_Array_Clear() ; Löscht den Inhalt des Arrays
 
@@ -434,6 +458,8 @@ Declare Client_Logout(Client_ID, Message.s, Show_2_All) ; Player has logged out,
 
 Declare Client_Login_Thread(*Dummy) ; In this thread, all logins are processed sequentially.
 
+Declare.s HandleChatEscapes(Input.s)
+
 Declare Chat_Message_Network_Send_2_Map(Entity_ID, Message.s) ; Sends a message to all clients of an entity on a map.
 
 Declare Chat_Message_Network_Send_2_All(Entity_ID, Message.s) ; Sends a message to all clients of a map (Global Chat)
@@ -479,6 +505,8 @@ Declare Build_Mode_String_Set(Client_ID, Index, Value.s)
 Declare.s Build_Mode_String_Get(Client_ID, Index)
 
 Declare Build_Mode_Main()
+
+Declare BuildModeShutdown()
 
 Declare Client_Count_Elements()
 
@@ -758,19 +786,19 @@ Declare Font_Draw_Text_Player(*Player.Player_List, Font_ID.s, Map_ID, X, Y, Z, V
 
 Declare Font_Main()
 
-Declare Undo_Save(Filename.s) ; Speichert die Einstellungen
+Declare Undo_Save(Filename.s) ; Speichert die Einstellungen / Saves Settings
 
-Declare Undo_Load(Filename.s) ; Lädt die Einstellungen
+Declare Undo_Load(Filename.s) ; Lädt die Einstellungen / Loads settings
 
-Declare Undo_Add(Player_Number, Map_ID, X, Y, Z, Type_Before.b, Player_Before)
+Declare Undo_Add(Player_Number, Map_ID, X, Y, Z, Type_Before.b, Player_Before) ; Adds a step to the change tracking system
 
-Declare Undo_Do_Player(Map_ID, Player_Number, Time) ; Macht alle Änderungen von einem bestimmten Player rückgängig.
+Declare Undo_Do_Player(Map_ID, Player_Number, Time) ; Macht alle Änderungen von einem bestimmten Player rückgängig. / Undoes changes made by a particular player
 
-Declare Undo_Do_Time(Map_ID, Time) ; Stellt alle Blöcke von einem bestimmten Zeitraum wieder her.
+Declare Undo_Do_Time(Map_ID, Time) ; Stellt alle Blöcke von einem bestimmten Zeitraum wieder her. / Undoes block changes based on time.
 
-Declare Undo_Clear_Map(Map_ID) ; Löscht Undo-Schritte einer Map
+Declare Undo_Clear_Map(Map_ID) ; Löscht Undo-Schritte einer Map / Removes all undo steps for a given map
 
-Declare Undo_Clear() ; Löscht ältere Undo-Schritte
+Declare Undo_Clear() ; Löscht ältere Undo-Schritte / Removes all undo steps.
 
 Declare Undo_Main()
 
@@ -860,6 +888,8 @@ Declare CPE_Model_Change(Client_ID, Model.s)
 
 Declare CPE_Aftermap_Actions(Client_ID, *MapData.Map_Data)
 
+Declare CPEAddExtPlayer()
+
 Declare CPE_Set_Env_Colors(Type.b, Red.w, Green.w, Blue.w)
 
 Declare CPE_Set_Weather(Client_ID, Weather.b)
@@ -876,8 +906,3 @@ Declare CPE_Client_Hackcontrol_Send(Client_ID, Flying, Noclip, Speeding, SpawnCo
 
 Declare CPE_GetClientExtVersion(Extension.s)
 
-
-; IDE Options = PureBasic 5.30 (Windows - x86)
-; CursorPosition = 1
-; EnableUnicode
-; EnableXP

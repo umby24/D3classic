@@ -488,12 +488,9 @@ RegisterCore("Network_Events", 1, #Null, #Null, @Network_Events())
 RegisterCore("Network_Output_Send", 0, #Null, #Null, @Network_Output_Send())
 RegisterCore("Network_Output_Do", 0, #Null, #Null, @Network_Output_Do())
 RegisterCore("Network_Input_Do", 0, #Null, #Null, @Network_Input_Do())
-; IDE Options = PureBasic 5.30 (Windows - x64)
-; CursorPosition = 419
-; FirstLine = 143
-; Folding = BA6-
+; IDE Options = PureBasic 5.30 (Linux - x64)
+; CursorPosition = 475
+; FirstLine = 440
+; Folding = ----
+; EnableUnicode
 ; EnableXP
-; DisableDebugger
-; CompileSourceDirectory
-; EnableCompileCount = 0
-; EnableBuildCount = 0

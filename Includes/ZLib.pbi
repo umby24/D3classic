@@ -91,11 +91,7 @@
     Macro C_uLong : l : EndMacro
   CompilerEndIf
   
-  ; - Between different OS's Z_stream is a different size.. so this is the
-  ; - Unfortunate fix for it. Seems like there should be a single way to do it.
-  ; - Oh well.
-CompilerIf #PB_Compiler_OS = #PB_OS_Windows ; - COMPILER IF
-  Structure z_stream Align #PB_Structure_AlignC ; SizeOf_x64(Z_Stream) = 88, SizeOf_x86(Z_Stream) = 56
+  Structure z_stream Align #PB_Structure_AlignC ; SizeOf_x64(z_stream) = 88, SizeOf_x86(z_stream) = 56
     *next_in.Byte     ; next input byte
     avail_in.C_uInt   ; number of bytes available at next_in
     total_in.C_uLong  ; total nb of input bytes read so far
@@ -112,43 +108,14 @@ CompilerIf #PB_Compiler_OS = #PB_OS_Windows ; - COMPILER IF
     *opaque           ; private data object passed to zalloc and zfree
   
     data_type.C_int   ; best guess about the data type: binary or text
-    adler.l           ; adler32 value of the uncompressed data
+    adler.C_uLong     ; adler32 value of the uncompressed data
     reserved.C_uLong  ; reserved for future use
   EndStructure
-CompilerElse ; - COMPILER ELSE
-    
-  Prototype.i z_alloc_func(*opaque, items.i, size.i)
-  Prototype.i z_free_func(*opaque, *address)
-  
-  Structure z_stream Align #PB_Structure_AlignC ; - SizeOf_x64(Z_Stream) = 112
-    *next_in;         /* next input byte */
-    avail_in.i;       /* number of bytes available at next_in */
-
-    total_in.i;       /* total nb of input bytes read so far */
-  
-    *next_out;        /* next output byte should be put there */
-    avail_out.i;      /* remaining free space at next_out */
-
-    total_out.i;      /* total nb of bytes output so far */
-  
-    *msg;             /* last error message, NULL if no error */
-    *state;           /* not visible by applications */
-  
-    zalloc.z_alloc_func;  /* used to allocate the internal state */
-    zfree.z_free_func;   /* used to free the internal state */
-    *opaque;          /* private data object passed to zalloc and zfree */
-  
-    data_type.i;      /* best guess about the data type: binary or text */
-
-    adler.i;          /* adler32 value of the uncompressed data */
-    reserved.i;       /* reserved for future use */
-  EndStructure
-CompilerEndIf ; - COMPILER END IF
   
   ;     gzip header information passed To And from zlib routines.  See RFC 1952
   ;  For more details on the meanings of these fields.
   
-  Structure gz_header Align #PB_Structure_AlignC ; SizeOf_x64(Z_Stream) = 72, SizeOf_x86(Z_Stream) = 52
+  Structure gz_header Align #PB_Structure_AlignC ; SizeOf_x64(gz_header) = 72, SizeOf_x86(gz_header) = 52
       text.C_int      ; true if compressed data believed to be text
       time.C_uLong    ; modification time
       xflags.C_int    ; extra flags (not used when writing a gzip file)
@@ -318,6 +285,29 @@ CompilerEndIf ; - COMPILER END IF
     crc32_combine         (crc1.l, crc2.l, len2)
   EndImport
   
+  ; deflateInit And inflateInit are macros To allow checking the zlib version
+  ; And the compiler's view of z_stream:
+  
+  Macro deflateInit(strm, level)
+    ZLIB::deflateInit_((strm), (level), ZLIB::zlibVersion(), SizeOf(ZLIB::z_stream))
+  EndMacro
+  
+  Macro inflateInit(strm)
+    ZLIB::inflateInit_((strm), (level), (method), (windowBits), (memLevel), (strategy), ZLIB::zlibVersion(), SizeOf(ZLIB::z_stream))
+  EndMacro
+  
+  Macro deflateInit2(strm, level, method, windowBits, memLevel, strategy)
+    ZLIB::deflateInit2_((strm), ZLIB::zlibVersion(), SizeOf(ZLIB::z_stream))
+  EndMacro
+  
+  Macro inflateInit2(strm, windowBits)
+    ZLIB::deflateInit2_((strm), (windowBits), ZLIB::zlibVersion(), SizeOf(ZLIB::z_stream))
+  EndMacro
+  
+  Macro inflateBackInit(strm, windowBits, window)
+    ZLIB::inflateBackInit_((strm), (windowBits), (window), ZLIB::zlibVersion(), SizeOf(ZLIB::z_stream))
+  EndMacro
+  
 
 Procedure GZip_CompressBound(Input_Len)
     Result = compressBound(Input_Len)
@@ -418,8 +408,9 @@ Procedure GZip_Decompress_From_File(Filename.s, *Output, Output_Len)
     Output_Len = Decomp
     ProcedureReturn Decomp
 EndProcedure
-; IDE Options = PureBasic 5.30 (Windows - x86)
-; CursorPosition = 2
+; IDE Options = PureBasic 5.30 (Linux - x64)
+; CursorPosition = 213
+; FirstLine = 178
 ; Folding = ---
 ; EnableXP
 ; DisableDebugger

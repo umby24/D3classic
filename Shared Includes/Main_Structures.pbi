@@ -183,7 +183,8 @@ Structure Entity
   Build_Mode.s                ; Modus, bei dem die Aktion durch Bauen beschrieben wird. (0: Normal >0: Box, Sphere...)
   Build_State.a               ; Status beim Bauen... (Welcher Punkt...)
   Build_Variable.Build_Variable [#Client_Player_Buildmode_Variables] ; Variables for build modes (Rang einer RBox...)
-  ChatBuffer.s ; - Holding place for LongerMessages support
+  ChatBuffer.s                                                       ; - Holding place for LongerMessages support
+  SpawnSelf.a
 EndStructure
 
 ; ################################################################################################################
@@ -303,9 +304,9 @@ Structure EventStruct
     Timer.i
     Time.i
 EndStructure
-; IDE Options = PureBasic 5.30 (Windows - x86)
-; CursorPosition = 253
-; FirstLine = 228
+; IDE Options = PureBasic 5.30 (Linux - x64)
+; CursorPosition = 186
+; FirstLine = 139
 ; EnableXP
 ; DisableDebugger
 ; CompileSourceDirectory

@@ -42,7 +42,7 @@ Procedure SendExtAddPlayerName(ClientID, NameId.w, Playername.s, Listname.s, Gro
     Network_Client_Output_Write_String(ClientID, LSet(Listname, 64, " "),64)
     Network_Client_Output_Write_String(ClientID, LSet(Groupname, 64, " "), 64)
     Network_Client_Output_Write_Byte(ClientID, Grouprank)
-    PrintN("Sent Ext Add Player Name: " + Playername + " to " + Str(ClientID))
+    PrintN("Sent Ext Add Player Name: " + Playername + " to " + Str(ClientID) + " NameID: " + Str(NameId))
 EndProcedure
 
 Procedure SendExtRemovePlayerName(ClientID, NameID.w)
@@ -201,8 +201,9 @@ Procedure SendDisconnect(ClientID, Reason.s)
     Network_Client_Output_Write_String(ClientID, Reason, 64)    
 EndProcedure
 ;}
-; IDE Options = PureBasic 5.30 (Windows - x86)
-; CursorPosition = 189
-; Folding = +-f--
+; IDE Options = PureBasic 5.30 (Linux - x64)
+; CursorPosition = 44
+; FirstLine = 24
+; Folding = ---+-
 ; EnableThread
 ; EnableXP

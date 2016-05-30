@@ -121,41 +121,7 @@ Procedure Client_Login(Client_ID, Name.s, MPPass.s, Version) ; A new player has 
     
     Plugin_Event_Client_Login(Network_Client())
     
-    ;CPE ExtPlayerList time.
     
-    tempClient = Network_Client()\ID
-    loginName.s = Network_Client()\Player\Login_Name
-    namePrefix.s = Network_Client()\Player\Entity\Prefix
-    nameSuffix.s = Network_Client()\Player\Entity\Suffix
-    mapName.s = Map_Data()\Name
-    CPE = Network_Client()\ExtPlayerList
-    tempID = FreeID
-    Network_Client()\Player\NameID = FreeID
-    
-    If (FreeID <> NextID)
-        FreeID = NextID  
-    Else
-        FreeID = FreeID + 1
-        NextID = FreeID
-    EndIf
-    
-    ForEach Network_Client()
-        ;Send the new player to everyone..
-        If Network_Client()\ID <> tempClient ;If it is not the new player..
-            If Network_Client()\ExtPlayerList = #True
-                SendExtAddPlayerName(Network_Client()\ID, tempID, loginName, namePrefix + loginName + nameSuffix, mapName, 0)
-            EndIf
-            
-            If CPE = #True
-                Map_Select_ID(Network_Client()\Player\Map_ID)
-                SendExtAddPlayerName(tempClient, Network_Client()\Player\NameID, Network_Client()\Player\Login_Name, Network_Client()\Player\Entity\Prefix + Network_Client()\Player\Login_Name + Network_Client()\Player\Entity\Suffix, Map_Data()\Name, 0)  
-            EndIf
-        Else
-            If CPE = #True
-                SendExtAddPlayerName(tempClient, tempID, loginName, namePrefix + loginName + nameSuffix, mapName, 0)
-            EndIf
-        EndIf
-    Next
     ;##########################################
     
     Player_List()\Save = 1
@@ -264,7 +230,10 @@ Procedure Client_Login_Thread(*Dummy) ; In this thread, all logins are processed
             
             If Network_Client_Select(Client_ID)
                 ; ############### Send map spawn
-                Network_Out_Entity_Position(Client_ID, 255, Entity_X, Entity_Y, Entity_Z, Entity_Rotation, Entity_Look)
+                Network_Client()\Player\Entity\SpawnSelf = 1
+               ; SendExtAddPlayerName(Client_ID, Network_Client()\Player\NameID, Network_Client()\Player\Login_Name, Network_Client()\Player\Entity\Prefix + Network_Client()\Player\Login_Name + Network_Client()\Player\Entity\Suffix, Map_Data()\Name, 0)
+              ;  Network_Out_Entity_Add(Client_ID, 255, "a", Entity_X, Entity_Y, Entity_Z, Entity_Rotation, Entity_Look)
+                ;Network_Out_Entity_Position(Client_ID, 255, Entity_X, Entity_Y, Entity_Z, Entity_Rotation, Entity_Look)
                 ; ############### Entity locations
                 ForEach Network_Client()\Player\Entities()
                     ID_Client = Network_Client()\Player\Entities()\ID_Client
@@ -285,9 +254,9 @@ Procedure Client_Login_Thread(*Dummy) ; In this thread, all logins are processed
     ForEver
 EndProcedure
 ; IDE Options = PureBasic 5.30 (Linux - x64)
-; CursorPosition = 237
-; FirstLine = 29
-; Folding = 9
+; CursorPosition = 123
+; FirstLine = 118
+; Folding = 0
 ; EnableXP
 ; DisableDebugger
 ; CompileSourceDirectory

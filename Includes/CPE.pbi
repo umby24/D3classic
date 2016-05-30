@@ -332,9 +332,49 @@ Procedure CPE_Aftermap_Actions(Client_ID, *MapData.Map_Data)
     If Network_Client()\HackControl = #True
         CPE_Client_Hackcontrol_Send(Network_Client()\ID, *MapData\Flying, *MapData\NoClip, *MapData\Speeding, *MapData\SpawnControl, *MapData\ThirdPerson, *MapData\JumpHeight)
     EndIf
+    
+    CPEAddExtPlayer()
     ;CPE_Client_Send_Hotkeys(Network_Client()\ID)
     
     List_Restore(*Network_Client_Old, Network_Client()) 
+EndProcedure
+
+Procedure CPEAddExtPlayer()
+    ;CPE ExtPlayerList time.
+    tempClient = Network_Client()\ID
+    loginName.s = Network_Client()\Player\Login_Name
+    namePrefix.s = Network_Client()\Player\Entity\Prefix
+    nameSuffix.s = Network_Client()\Player\Entity\Suffix
+    mapName.s = Map_Data()\Name
+    CPE = CPE_GetClientExtVersion("ExtPlayerList")
+    tempID = FreeID
+    Network_Client()\Player\NameID = FreeID
+    
+    If (FreeID <> NextID)
+        FreeID = NextID  
+    Else
+        FreeID = FreeID + 1
+        NextID = FreeID
+    EndIf
+    PushListPosition(Network_Client())
+    ForEach Network_Client()
+        ;Send the new player to everyone..
+        If Network_Client()\ID <> tempClient ;If it is not the new player..
+            If CPE_GetClientExtVersion("ExtPlayerList") = 2
+                SendExtAddPlayerName(Network_Client()\ID, tempID, loginName, namePrefix + loginName + nameSuffix, mapName, 0)
+            EndIf
+            
+            If CPE = 2
+                Map_Select_ID(Network_Client()\Player\Map_ID)
+                SendExtAddPlayerName(tempClient, Network_Client()\Player\NameID, Network_Client()\Player\Login_Name, Network_Client()\Player\Entity\Prefix + Network_Client()\Player\Login_Name + Network_Client()\Player\Entity\Suffix, Map_Data()\Name, 0)  
+            EndIf
+        Else
+            If CPE = 2
+                SendExtAddPlayerName(tempClient, tempID, loginName, namePrefix + loginName + nameSuffix, mapName, 0)
+            EndIf
+        EndIf
+    Next
+    PopListPosition(Network_Client())
 EndProcedure
 
 Procedure CPE_Set_Env_Colors(Type.b, Red.w, Green.w, Blue.w)
@@ -427,11 +467,10 @@ Procedure CPE_GetClientExtVersion(Extension.s)
     
     ProcedureReturn Result
 EndProcedure
-
 ; IDE Options = PureBasic 5.30 (Linux - x64)
-; CursorPosition = 422
-; FirstLine = 153
-; Folding = HAj-
+; CursorPosition = 334
+; FirstLine = 98
+; Folding = HAH-
 ; EnableThread
 ; EnableXP
 ; EnableOnError

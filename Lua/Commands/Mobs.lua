@@ -5,9 +5,9 @@ function Command_Mobs_Add(Client_ID, Command, Text_0, Text_1, Arg_0, Arg_1, Arg_
 	local Map_ID = Entity_Get_Map_ID(Entity_ID)
 	
 	local Map_Size_X, Map_Size_Y, Map_Size_Z = Map_Get_Dimensions(Map_ID)
-	--local Spawn_X, Spawn_Y, Spawn_Z, Spawn_Rotation, Spawn_Look = 0.5+math.random()*(Map_Size_X-1.5), 0.5+math.random()*(Map_Size_Y-1.5), Map_Size_Z-2, 0, 0
+	local Spawn_X, Spawn_Y, Spawn_Z, Spawn_Rotation, Spawn_Look = 0.5+math.random()*(Map_Size_X-1.5), 0.5+math.random()*(Map_Size_Y-1.5), Map_Size_Z-2, 0, 0
 	--local Spawn_X, Spawn_Y, Spawn_Z, Spawn_Rotation, Spawn_Look = Map_Get_Spawn(Map_ID)
-	local Spawn_X, Spawn_Y, Spawn_Z, Spawn_Rotation, Spawn_Look = Entity_Get_X(Entity_ID), Entity_Get_Y(Entity_ID), Entity_Get_Z(Entity_ID)-2, Entity_Get_Rotation(Entity_ID), Entity_Get_Look(Entity_ID)
+	--local Spawn_X, Spawn_Y, Spawn_Z, Spawn_Rotation, Spawn_Look = Entity_Get_X(Entity_ID), Entity_Get_Y(Entity_ID), Entity_Get_Z(Entity_ID), Entity_Get_Rotation(Entity_ID), Entity_Get_Look(Entity_ID)
 	
 	local Amount = 1
 	

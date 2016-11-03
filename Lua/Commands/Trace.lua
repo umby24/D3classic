@@ -53,7 +53,19 @@ local us_states = {
 }
 
 function Command_Trace(Client_ID, Command, Text_0, Text_1, Arg_0, Arg_1, Arg_2, Arg_3, Arg_4)
-	local playerID = getPlayerByName(Arg_0)
+	local playerID = -1
+	local Client_Table, Client = Client_Get_Table()
+	for i = 1, Clients do
+		local Client_ID = Client_Table[i]
+		local Entity_ID = Client_Get_Entity(Client_ID)
+		local Player_ID = Entity_Get_Player(Entity_ID)
+		local Player_Name = Player_Get_Name(Player_ID)
+		
+		if Player_Name == Arg_0 then
+			playerID = Player_ID
+		end
+	end
+	
 	if playerID == -1 then
 		System_Message_Network_Send(Client_ID, "&eError, couldn't find player.")
 		return
@@ -83,7 +95,8 @@ function Command_Trace(Client_ID, Command, Text_0, Text_1, Arg_0, Arg_1, Arg_2, 
 	print(3)
 	local country = string.sub(trace.Country,1,(string.find(trace.Country, "<"))-1)
 	print(4)
-	sendClientMessage(Client_ID,
-		"&eISP: &f"..trace.ISP,
-		"&eLocation: &f"..trace.City..", "..state..country)
+	System_Message_Network_Send(Client_ID, "&eISP: &f"..trace.ISP .. "<br>&eLocation: &f"..trace.City..", "..state..country)
+	--sendClientMessage(Client_ID,
+	--	"&eISP: &f"..trace.ISP,
+	--	"&eLocation: &f"..trace.City..", "..state..country)
 end

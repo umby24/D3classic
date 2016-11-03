@@ -153,7 +153,7 @@ EndProcedure
 ; ######################################### Player
 
 Procedure Network_Out_Entity_Add(Client_ID, ID_Client, Name.s, X.f, Y.f, Z.f, Rotation.f, Look.f) ; Erstellt ein neues Spielerobjekt auf einem Client
-    PrintN("Entity_Add..")
+    
     If ListIndex(Network_Client()) <> -1
         *Network_Client_Old = Network_Client()
     Else
@@ -226,9 +226,9 @@ Procedure Network_Out_Entity_Position(Client_ID, ID_Client, X.f, Y.f, Z.f, Rotat
         ChangeCurrentElement(Network_Client(), *Network_Client_Old)
     EndIf
 EndProcedure
-; IDE Options = PureBasic 5.30 (Linux - x64)
-; CursorPosition = 183
-; FirstLine = 75
+; IDE Options = PureBasic 5.30 (Windows - x64)
+; CursorPosition = 177
+; FirstLine = 73
 ; Folding = 58
 ; EnableXP
 ; DisableDebugger

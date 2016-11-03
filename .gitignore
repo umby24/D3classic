@@ -5,3 +5,6 @@ HTML/
 [Ll]ogs/
 
 *.exe
+HTML/Network.html
+*.html
+Temp/Save.gz

@@ -3431,109 +3431,126 @@ Procedure Lua_Do_Function(Function.s, Arguments, Results)
     Select Result
       Case #LUA_ERRRUN
         Error.s = PeekS(lua_tolstring(Lua_Main\State, -1, #Null))
-        *myMem = AllocateMemory(128)
+        *myMem = AllocateMemory(512)
         Lang_Get("", "Runtimeerror in [Field_0]", *myMem, Function, Error)
         Temp.s = PeekS(*myMem)
         FreeMemory(*myMem)
         Log_Add("Lua-Plugin", Temp.s, 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
       Case #LUA_ERRMEM
-        *myMem = AllocateMemory(128)
+        *myMem = AllocateMemory(512)
         Lang_Get("", "Memoryallocationerror in [Field_0]", *myMem, Function)
         Temp.s = PeekS(*myMem)
         FreeMemory(*myMem)
         Log_Add("Lua-Plugin", Temp.s, 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
       Case #LUA_ERRERR
-        *myMem = AllocateMemory(128)
+        *myMem = AllocateMemory(512)
         Lang_Get("", "Error in [Field_0]", *myMem, Function)
         Temp.s = PeekS(*myMem)
         FreeMemory(*myMem)
         Log_Add("Lua-Plugin", Temp.s, 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
       
     EndSelect
-    
+    lua_pop(Lua_Main\State, 1)
   EndIf
 EndProcedure
 
 Procedure Lua_Do_String(String.s)
-  Protected Error.s
-  
   If Lua_Main\State
     
-    luaL_loadstring(Lua_Main\State, String)
-    
-    Result = lua_pcall(Lua_Main\State, 0, 0, 0)
-    
-    If Result
-      lua_tostring(Error, Lua_Main\State, -1)
-      
-      Select Result
-        Case #LUA_ERRRUN
-          *myMem = AllocateMemory(128)
-          Lang_Get("", "Runtimeerror with [Field_0]", *myMem, String, Error)
-          Temp.s = PeekS(*myMem)
-          FreeMemory(*myMem)
-          Log_Add("Lua-Plugin", Temp.s, 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
-        Case #LUA_ERRMEM
-          *myMem = AllocateMemory(128)
-          Lang_Get("", "Memoryallocationerror with [Field_0]", *myMem, String, Error)
-          Temp.s = PeekS(*myMem)
-          FreeMemory(*myMem)
-          Log_Add("Lua-Plugin", Temp.s, 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
-        Case #LUA_ERRERR
-          *myMem = AllocateMemory(128)
-          Lang_Get("", "Error with [Field_0]", *myMem, String, Error)
-          Temp.s = PeekS(*myMem)
-          FreeMemory(*myMem)
-          Log_Add("Lua-Plugin", Temp.s, 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
-      
-      EndSelect
-    EndIf
+    luaL_dostring(Lua_Main\State, String)
     
   EndIf
 EndProcedure
+
+Procedure Lua_Do_File(Filename.s)
+  If Lua_Main\State
+    
+    luaL_dofile(Lua_Main\State, Filename)
+    
+  EndIf
+EndProcedure
+; Procedure Lua_Do_String(String.s)
+;   Protected Error.s
+;   
+;   If Lua_Main\State
+;     
+;     luaL_loadstring(Lua_Main\State, String)
+;     
+;     Result = lua_pcall(Lua_Main\State, 0, 0, 0)
+;     
+;     If Result
+;       lua_tostring(Error, Lua_Main\State, -1)
+;       
+;       Select Result
+;         Case #LUA_ERRRUN
+;           *myMem = AllocateMemory(512)
+;           Lang_Get("", "Runtimeerror with [Field_0]", *myMem, String, Error)
+;           Temp.s = PeekS(*myMem)
+;           FreeMemory(*myMem)
+;           Log_Add("Lua-Plugin", Temp.s, 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
+;         Case #LUA_ERRMEM
+;           *myMem = AllocateMemory(512)
+;           Lang_Get("", "Memoryallocationerror with [Field_0]", *myMem, String, Error)
+;           Temp.s = PeekS(*myMem)
+;           FreeMemory(*myMem)
+;           Log_Add("Lua-Plugin", Temp.s, 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
+;         Case #LUA_ERRERR
+;           *myMem = AllocateMemory(512)
+;           Lang_Get("", "Error with [Field_0]", *myMem, String, Error)
+;           Temp.s = PeekS(*myMem)
+;           FreeMemory(*myMem)
+;           Log_Add("Lua-Plugin", Temp.s, 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
+;       
+;   EndSelect
+;   lua_pop(Lua_Main\State, 1)
+;     EndIf
+;     
+;   EndIf
+; EndProcedure
 
 ProcedureC Lua_Traceback(Lua_State)
   
 EndProcedure
 
-Procedure Lua_Do_File(Filename.s)
-  Protected Error.s
-  If Lua_Main\State
-    
-    ;luaL_dofile(Lua_Main\State, Filename)
-    lua_getglobal(Lua_Main\State, "debug")
-    lua_getfield(Lua_Main\State, -1, "traceback")
-    lua_replace(Lua_Main\State, -2)
-    luaL_loadfile(Lua_Main\State, Filename)
-    Result = lua_pcall(Lua_Main\State, 0, 0, -2)
-    
-    If Result
-      lua_tostring(Error, Lua_Main\State, -1)
-      
-      Select Result
-        Case #LUA_ERRRUN
-          *myMem = AllocateMemory(128)
-          Lang_Get("", "Runtimeerror in [Field_0]", *myMem, Filename, Error)
-          Temp.s = PeekS(*myMem)
-          FreeMemory(*myMem)
-          Log_Add("Lua-Plugin", Temp.s, 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
-        Case #LUA_ERRMEM
-          *myMem = AllocateMemory(128)
-          Lang_Get("", "Memoryallocationerror in [Field_0]", *myMem, Filename, Error)
-          Temp.s = PeekS(*myMem)
-          FreeMemory(*myMem)
-          Log_Add("Lua-Plugin", Temp.s, 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
-        Case #LUA_ERRERR
-          *myMem = AllocateMemory(128)
-          Lang_Get("", "Error in [Field_0]", *myMem, Filename, Error)
-          Temp.s = PeekS(*myMem)
-          FreeMemory(*myMem)
-          Log_Add("Lua-Plugin", Temp.s, 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
-      
-      EndSelect
-    EndIf
-  EndIf
-EndProcedure
+; Procedure Lua_Do_File(Filename.s)
+;   Protected Error.s
+;   If Lua_Main\State
+;     
+;     ;luaL_dofile(Lua_Main\State, Filename)
+;     lua_getglobal(Lua_Main\State, "debug")
+;     lua_getfield(Lua_Main\State, -1, "traceback")
+;     lua_replace(Lua_Main\State, -2)
+;     luaL_loadfile(Lua_Main\State, Filename)
+;     Result = lua_pcall(Lua_Main\State, 0, 0, -2)
+;     
+;     If Result
+;       lua_tostring(Error, Lua_Main\State, -1)
+;       
+;       Select Result
+;         Case #LUA_ERRRUN
+;           *myMem = AllocateMemory(512)
+;           Lang_Get("", "Runtimeerror in [Field_0]", *myMem, Filename, Error)
+;           Temp.s = PeekS(*myMem)
+;           FreeMemory(*myMem)
+;           Log_Add("Lua-Plugin", Temp.s, 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
+;         Case #LUA_ERRMEM
+;           *myMem = AllocateMemory(512)
+;           Lang_Get("", "Memoryallocationerror in [Field_0]", *myMem, Filename, Error)
+;           Temp.s = PeekS(*myMem)
+;           FreeMemory(*myMem)
+;           Log_Add("Lua-Plugin", Temp.s, 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
+;         Case #LUA_ERRERR
+;           *myMem = AllocateMemory(512)
+;           Lang_Get("", "Error in [Field_0]", *myMem, Filename, Error)
+;           Temp.s = PeekS(*myMem)
+;           FreeMemory(*myMem)
+;           Log_Add("Lua-Plugin", Temp.s, 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
+;       
+;   EndSelect
+;   lua_pop(Lua_Main\State, 1)
+;     EndIf
+;   EndIf
+; EndProcedure
 
 Procedure Lua_Check_New_Files(Directory.s)
   
@@ -3574,11 +3591,11 @@ Procedure Lua_Check_New_Files(Directory.s)
   EndIf
   
 EndProcedure
-; IDE Options = PureBasic 5.30 (Linux - x64)
-; ExecutableFormat = Shared .so
-; CursorPosition = 2635
-; FirstLine = 2631
-; Folding = -------------------------------------
+; IDE Options = PureBasic 5.30 (Windows - x64)
+; ExecutableFormat = Shared Dll
+; CursorPosition = 3470
+; FirstLine = 3452
+; Folding = ---------------------------------
 ; EnableThread
 ; EnableXP
 ; EnableOnError

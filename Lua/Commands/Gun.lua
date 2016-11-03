@@ -63,3 +63,5 @@ function Gun_Event_Timer(Map_ID)
 		
 	end
 end
+
+System_Message_Network_Send_2_All(-1, "Gun reloaded")

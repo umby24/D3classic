@@ -329,16 +329,9 @@ Procedure Entity_Position_Set(ID, Map_ID, X.f, Y.f, Z.f, Rotation.f, Look.f, Pri
                             Entity()\Look = Look
                             Entity()\ID_Client = Entity_Get_Free_ID_Client(Map_ID)
                             
-                            
-                            ;CPEEEEE
-                            NameID.w = 0
-                            PlayerName.s = Entity()\Name
-                            ListName.s = Entity()\Prefix + Entity()\Name + Entity()\Suffix
-                            
                             ForEach Network_Client()
                                 If Network_Client()\Logged_In = #True
                                     If Network_Client()\Player\Entity\ID = ID
-                                        NameID = Network_Client()\Player\NameID
                                         ;Map change event!
                                         Plugin_Event_Entity_Map_Change(Network_Client()\ID, Map_ID, Old_Map_ID)
                                         Break
@@ -347,20 +340,6 @@ Procedure Entity_Position_Set(ID, Map_ID, X.f, Y.f, Z.f, Rotation.f, Look.f, Pri
                             Next
                             
                             Map_Select_ID(Entity()\Map_ID)
-                            
-                            ForEach Network_Client()
-                                If Network_Client()\ExtPlayerList = #True
-                                    Network_Client_Output_Write_Byte(Network_Client()\ID, 24)
-                                    Network_Client_Output_Write_Word(Network_Client()\ID, NameID)
-                                    
-                                    Network_Client_Output_Write_Byte(Network_Client()\ID, 22)
-                                    Network_Client_Output_Write_Word(Network_Client()\ID, NameID)
-                                    Network_Client_Output_Write_String(Network_Client()\ID, LSet(PlayerName,64," "),64)
-                                    Network_Client_Output_Write_String(Network_Client()\ID, LSet(ListName, 64, " "), 64)
-                                    Network_Client_Output_Write_String(Network_Client()\ID, LSet(Map_Data()\Name, 64, " "),64)
-                                    Network_Client_Output_Write_Byte(Network_Client()\ID, 0)      
-                                EndIf
-                            Next
                             
                             ProcedureReturn #True
                         Else
@@ -526,9 +505,9 @@ Procedure Entity_Main()
 EndProcedure
 
 RegisterCore("Entity", 100, #Null, #Null, @Entity_Main())
-; IDE Options = PureBasic 5.30 (Linux - x64)
-; CursorPosition = 508
-; FirstLine = 475
+; IDE Options = PureBasic 5.30 (Windows - x86)
+; CursorPosition = 342
+; FirstLine = 327
 ; Folding = ---
 ; EnableXP
 ; DisableDebugger

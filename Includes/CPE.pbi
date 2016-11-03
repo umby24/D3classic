@@ -347,15 +347,8 @@ Procedure CPEAddExtPlayer()
     nameSuffix.s = Network_Client()\Player\Entity\Suffix
     mapName.s = Map_Data()\Name
     CPE = CPE_GetClientExtVersion("ExtPlayerList")
-    tempID = FreeID
-    Network_Client()\Player\NameID = FreeID
-    
-    If (FreeID <> NextID)
-        FreeID = NextID  
-    Else
-        FreeID = FreeID + 1
-        NextID = FreeID
-    EndIf
+    tempID = Network_Client()\Player\NameID
+
     PushListPosition(Network_Client())
     ForEach Network_Client()
         ;Send the new player to everyone..
@@ -467,9 +460,9 @@ Procedure CPE_GetClientExtVersion(Extension.s)
     
     ProcedureReturn Result
 EndProcedure
-; IDE Options = PureBasic 5.30 (Linux - x64)
-; CursorPosition = 334
-; FirstLine = 98
+; IDE Options = PureBasic 5.30 (Windows - x86)
+; CursorPosition = 350
+; FirstLine = 116
 ; Folding = HAH-
 ; EnableThread
 ; EnableXP

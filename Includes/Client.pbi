@@ -2,7 +2,7 @@
 ; ########################################## Variablen ##########################################
 
 Structure Client_Main
-  Login_Thread_ID.i               ; ID of the login thread.
+    Login_Thread_ID.i               ; ID of the login thread.
 EndStructure
 
 Global Client_Main.Client_Main
@@ -68,7 +68,7 @@ Procedure Client_Login(Client_ID, Name.s, MPPass.s, Version) ; A new player has 
         List_Restore(*Network_Client_Old, Network_Client())
         ProcedureReturn
     EndIf
-
+    
     Login_Correct = 1
     
     If Player_List()\Banned
@@ -92,7 +92,7 @@ Procedure Client_Login(Client_ID, Name.s, MPPass.s, Version) ; A new player has 
         ProcedureReturn
     EndIf
     
-        
+    
     If Entity_Add(Name, Player_Main\Spawn_Map_ID, Map_Data()\Spawn_X, Map_Data()\Spawn_Y, Map_Data()\Spawn_Z, Map_Data()\Spawn_Rot, Map_Data()\Spawn_Look) = -1
         Log_Add("Client", Lang_Get("", "Login failed: Spawnmap is full (IP=[Field_0], Name='[Field_1]')", Network_Client()\IP, Name), 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
         Network_Client_Kick(Client_ID, Lang_Get("", "Redscreen: Spawnmap is full"), 1)
@@ -100,7 +100,7 @@ Procedure Client_Login(Client_ID, Name.s, MPPass.s, Version) ; A new player has 
         ProcedureReturn
     EndIf
     
-        
+    
     Player_Number = Player_List()\Number
     Entity_Displayname_Set(Entity()\ID, Player_Get_Prefix(Player_Number), Player_Get_Name(Player_Number), Player_Get_Suffix(Player_Number))
     
@@ -118,6 +118,14 @@ Procedure Client_Login(Client_ID, Name.s, MPPass.s, Version) ; A new player has 
     
     Entity()\Model = "default"
     Map_Data()\Clients + 1
+    Network_Client()\Player\NameID = FreeID
+    
+    If (FreeID <> NextID)
+        FreeID = NextID  
+    Else
+        FreeID = FreeID + 1
+        NextID = FreeID
+    EndIf
     
     Plugin_Event_Client_Login(Network_Client())
     
@@ -126,7 +134,7 @@ Procedure Client_Login(Client_ID, Name.s, MPPass.s, Version) ; A new player has 
     
     Player_List()\Save = 1
     Player_List_Main\Save_File = 1
-
+    
     
     List_Restore(*Network_Client_Old, Network_Client())
 EndProcedure
@@ -148,7 +156,7 @@ Procedure Client_Logout(Client_ID, Message.s, Show_2_All) ; Player has logged ou
         List_Restore(*Network_Client_Old, Network_Client())
         ProcedureReturn
     EndIf
-
+    
     Player_List()\Online = Player_Get_Online(Player_List()\Number, Client_ID)
     
     Plugin_Event_Client_Logout(Network_Client())
@@ -231,8 +239,8 @@ Procedure Client_Login_Thread(*Dummy) ; In this thread, all logins are processed
             If Network_Client_Select(Client_ID)
                 ; ############### Send map spawn
                 Network_Client()\Player\Entity\SpawnSelf = 1
-               ; SendExtAddPlayerName(Client_ID, Network_Client()\Player\NameID, Network_Client()\Player\Login_Name, Network_Client()\Player\Entity\Prefix + Network_Client()\Player\Login_Name + Network_Client()\Player\Entity\Suffix, Map_Data()\Name, 0)
-              ;  Network_Out_Entity_Add(Client_ID, 255, "a", Entity_X, Entity_Y, Entity_Z, Entity_Rotation, Entity_Look)
+                ; SendExtAddPlayerName(Client_ID, Network_Client()\Player\NameID, Network_Client()\Player\Login_Name, Network_Client()\Player\Entity\Prefix + Network_Client()\Player\Login_Name + Network_Client()\Player\Entity\Suffix, Map_Data()\Name, 0)
+                ;  Network_Out_Entity_Add(Client_ID, 255, "a", Entity_X, Entity_Y, Entity_Z, Entity_Rotation, Entity_Look)
                 ;Network_Out_Entity_Position(Client_ID, 255, Entity_X, Entity_Y, Entity_Z, Entity_Rotation, Entity_Look)
                 ; ############### Entity locations
                 ForEach Network_Client()\Player\Entities()
@@ -253,10 +261,10 @@ Procedure Client_Login_Thread(*Dummy) ; In this thread, all logins are processed
         
     ForEver
 EndProcedure
-; IDE Options = PureBasic 5.30 (Linux - x64)
-; CursorPosition = 123
-; FirstLine = 118
-; Folding = 0
+; IDE Options = PureBasic 5.30 (Windows - x86)
+; CursorPosition = 127
+; FirstLine = 99
+; Folding = -
 ; EnableXP
 ; DisableDebugger
 ; CompileSourceDirectory

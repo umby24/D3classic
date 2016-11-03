@@ -330,12 +330,12 @@ Procedure Network_Input_Do()  ; Wertet die empfangenen Daten aus. / Evaluates re
                         HandleExtEntry(Network_Client())
                     EndIf
                     
-                Case 19
+                Case 19 ; CPE Custom Block Support Level
                     If InputBufferAvailable(Network_Client()) >= 2
                         HandleCustomBlockSupportLevel(Network_Client())
                     EndIf
                     
-                Default ; Wenn Befehl nicht gefunden
+                Default ; Wenn Befehl nicht gefunden / When packet isn't found
                     Log_Add("Network", Lang_Get("", "Unknown data", Str(Network_Client()\ID), Str(Command_Byte)), 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
                     Network_Client_Kick(Network_Client()\ID, Lang_Get("", "Networkerror"), 0)
                     
@@ -488,9 +488,9 @@ RegisterCore("Network_Events", 1, #Null, #Null, @Network_Events())
 RegisterCore("Network_Output_Send", 0, #Null, #Null, @Network_Output_Send())
 RegisterCore("Network_Output_Do", 0, #Null, #Null, @Network_Output_Do())
 RegisterCore("Network_Input_Do", 0, #Null, #Null, @Network_Input_Do())
-; IDE Options = PureBasic 5.30 (Linux - x64)
-; CursorPosition = 475
-; FirstLine = 440
+; IDE Options = PureBasic 5.30 (Windows - x64)
+; CursorPosition = 332
+; FirstLine = 304
 ; Folding = ----
 ; EnableUnicode
 ; EnableXP

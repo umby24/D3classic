@@ -283,6 +283,8 @@ Procedure CPE_Model_Change(Client_ID, Model.s)
         SendChangeModel(Network_Client()\ID, Entity_ID, Model)
     Next
     
+    SendChangeModel(Network_Client()\ID, 255, Model)
+    
     List_Restore(*Network_Client_Old, Network_Client()) 
 EndProcedure
 
@@ -460,10 +462,10 @@ Procedure CPE_GetClientExtVersion(Extension.s)
     
     ProcedureReturn Result
 EndProcedure
-; IDE Options = PureBasic 5.30 (Windows - x86)
-; CursorPosition = 350
-; FirstLine = 116
-; Folding = HAH-
+; IDE Options = PureBasic 5.30 (Windows - x64)
+; CursorPosition = 286
+; FirstLine = 83
+; Folding = HgH-
 ; EnableThread
 ; EnableXP
 ; EnableOnError

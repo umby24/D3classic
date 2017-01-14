@@ -13,18 +13,6 @@ Procedure HandleHandshake(*Client.Network_Client)
     
     *Client\CPE = #False ; Set this to false until properly negotiated.
     *Client\CustomBlocks_Level = 0
-    *Client\HeldBlock = #False
-    *Client\ClickDistance = #False
-    *Client\ExtPlayerList = #False
-    *Client\ChangeModel = #False
-    *Client\CPEWeather = #False
-    *Client\EnvColors = #False
-    *Client\MessageTypes = #False
-    *Client\BlockPermissions = #False
-    *Client\EnvMapAppearance = #False
-    *Client\TextHotkey = #False
-    *Client\HackControl = #False
-    *Client\LongerMessages = #False
     
     If *Client\Logged_In = 0 And *Client\Disconnect_Time = 0 And Cpe <> 66
         Client_Login(*Client\ID, Trim(PlayerName), Mppass, ClientVersion)
@@ -63,7 +51,7 @@ EndProcedure
 Procedure HandlePlayerTeleport(*Client.Network_Client)
     Protected X.w, Y.W, Z.w, R.w, L.w
     
-    If *Client\HeldBlock = #True
+    If CPE_GetClientExtVersion("heldblock") = 1
         InputAddOffset(*Client, 1)
         
         If *Client\Player\Entity
@@ -118,7 +106,7 @@ Procedure HandleExtInfo(*Client.Network_Client)
     If Extensions = 0
         CPE_Send_Extensions(*Client)
         
-        If *Client\TextHotkey = #True
+        If CPE_GetClientExtVersion("texthotkey") = 1
             CPE_Client_Send_Hotkeys(*Client)
         EndIf
     EndIf
@@ -133,54 +121,17 @@ Procedure HandleExtEntry(*Client.Network_Client)
     ExtName = Trim(ClientInputReadString(*Client, 64))
     ExtVersion = ClientInputReadInt(*Client)
     
-    AddElement(*Client\Extensions())
-    *Client\Extensions() = ExtName
-    
-    AddElement(*Client\ExtensionVersions())
-    *Client\ExtensionVersions() = extVersion
-    
-    Select LCase(ExtName)
-        Case "customblocks"
-            *Client\CustomBlocks = #True  
-        Case "heldblock"
-            *Client\HeldBlock = #True  
-        Case "clickdistance"
-            *Client\ClickDistance = #True
-        Case "selectioncuboid"
-            *Client\SelectionCuboid = #True
-        Case "extplayerlist"
-            *Client\ExtPlayerList = #True
-        Case "changemodel"
-            *Client\ChangeModel = #True
-        Case "envweathertype"
-            *Client\CPEWeather = #True
-        Case "envcolors"
-            *Client\EnvColors = #True  
-        Case "messagetypes"
-            *Client\MessageTypes = #True
-        Case "blockpermissions"
-            *Client\BlockPermissions = #True
-        Case "envmapappearance"
-            *Client\EnvMapAppearance = #True
-        Case "hackcontrol"
-            *Client\HackControl = #True
-        Case "texthotkey"
-            *Client\TextHotkey = #True
-        Case "emotefix"
-            *Client\EmoteFix = #True
-        Case "longermessages"
-            *Client\LongerMessages = #True
-    EndSelect
+    AddMapElement(Network_Client()\Extensions(), LCase(ExtName))
+    Network_Client()\Extensions() = ExtVersion
     
     *Client\CustomExtensions - 1
     
     If *Client\CustomExtensions = 0
         CPE_Send_Extensions(*Client\ID)
         
-        If *Client\TextHotkey = #True
+        If CPE_GetClientExtVersion("texthotkey") = 1
             CPE_Client_Send_Hotkeys(*Client\ID)
         EndIf
-        
     EndIf
 EndProcedure
 
@@ -190,15 +141,14 @@ Procedure HandleCustomBlockSupportLevel(*Client.Network_Client)
     Level = ClientInputReadByte(*Client)
     
     *Client\CustomBlocks_Level = Level
-    *Client\CustomBlocks = #True
     
     Log_Add("CPE","CPE Process Complete.", 0, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
     Client_Login(*Client\ID, *Client\Player\Login_Name, *Client\Player\MPPass, *Client\Player\Client_Version)    
 EndProcedure
 
 ; IDE Options = PureBasic 5.30 (Windows - x64)
-; CursorPosition = 47
-; FirstLine = 34
+; CursorPosition = 142
+; FirstLine = 97
 ; Folding = --
 ; EnableUnicode
 ; EnableXP

@@ -23,7 +23,7 @@
 
 ; ################################################### Konstants #############################################
 
-#Plugin_Version = 510
+#Plugin_Version = 511
 
 ; ################################################### Variables/Structures ##################################
 Macro InsertPadding(nr)
@@ -335,9 +335,8 @@ Procedure Define_Prototypes(*Pointer.Plugin_Function)
   Global Hotkey_Remove.Hotkey_Remove = *Pointer\Hotkey_Remove
   Global Map_HackControl_Set.Map_HackControl_Set = *Pointer\Map_HackControl_Set
 EndProcedure
-; IDE Options = PureBasic 5.30 (Linux - x64)
-; CursorPosition = 168
-; FirstLine = 164
+; IDE Options = PureBasic 5.30 (Windows - x64)
+; CursorPosition = 19
 ; Folding = -
 ; EnableXP
 ; DisableDebugger

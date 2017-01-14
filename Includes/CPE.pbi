@@ -69,11 +69,11 @@ Procedure CPE_Send_Extensions(Client_ID)
     List_Store(*Network_Client_Old, Network_Client())
     
     If Network_Client_Select(Client_ID)
-        If Network_Client()\ClickDistance = #True
+        If CPE_GetClientExtVersion("clickdistance") = 1
             SendClickDistance(Client_ID, System_Main\Click_Distance)
         EndIf
         
-        If Network_Client()\CustomBlocks = #True
+        If CPE_GetClientExtVersion("customblocks") = 1
             SendCustomBlockSupportLevel(Client_ID, 1)
         Else
             Client_Login(Client_ID, Network_Client()\Player\Login_Name, Network_Client()\Player\MPPass, Network_Client()\Player\Client_Version)
@@ -128,8 +128,8 @@ Procedure CPE_HoldThis(Client_ID, Block, CanChange)
     List_Store(*Network_Client_Old, Network_Client()) ; Store the old NetworkClient
     
     If Network_Client_Select(Client_ID) ; Get the NetworkClient of the person getting the packet..
-        If Network_Client()\HeldBlock = #True
-            If Block > 49 And Network_Client()\CustomBlocks = #False ; If this is a custom block, and the client doesn't support it..
+        If CPE_GetClientExtVersion("heldblock") = 1
+            If Block > 49 And CPE_GetClientExtVersion("customblocks") = 0 ; If this is a custom block, and the client doesn't support it..
                 List_Restore(*Network_Client_Old, Network_Client())
                 ProcedureReturn
             EndIf
@@ -153,7 +153,7 @@ Procedure CPE_Selection_Cuboid_Add(Client_ID, SelectionID, Label.s, StartX.w, St
         ProcedureReturn
     EndIf
     
-    If Network_Client()\SelectionCuboid = #False Or List_Contains(SelectionID, Network_Client()\Selections()) = #True
+    If CPE_GetClientExtVersion("selectioncuboid") = 0 Or List_Contains(SelectionID, Network_Client()\Selections()) = #True
         List_Restore(*Network_Client_Old, Network_Client()) 
         ProcedureReturn
     EndIf
@@ -170,12 +170,17 @@ EndProcedure
 Procedure CPE_Selection_Cuboid_Delete(Client_ID, Selection_ID)
     List_Store(*Network_Client_Old, Network_Client())
     
+    PrintN("Cuboid delete called.")
+    PrintN("Delete " + Str(Selection_ID) + " for " + Client_ID)
+    
     If Not Network_Client_Select(Client_ID)
+        PrintN("Client not found")
         List_Restore(*Network_Client_Old, Network_Client()) 
         ProcedureReturn
     EndIf
     
-    If Network_Client()\SelectionCuboid = #False Or List_Contains(Selection_ID, Network_Client()\Selections()) = #False
+    If CPE_GetClientExtVersion("selectioncuboid") = 0 Or List_Contains(Selection_ID, Network_Client()\Selections()) = #False
+        PrintN("Cuboid or extnesion not found.")
         List_Restore(*Network_Client_Old, Network_Client()) 
         ProcedureReturn
     EndIf
@@ -276,7 +281,7 @@ Procedure CPE_Model_Change(Client_ID, Model.s)
     Network_Client()\Player\Entity\Model = Model
     
     ForEach Network_Client()
-        If Network_Client()\Logged_In = #False Or Network_Client()\ChangeModel = #False Or Network_Client()\Player\Entity\Map_ID <> Map_ID
+        If Network_Client()\Logged_In = #False Or CPE_GetClientExtVersion("changemodel") = 0 Or Network_Client()\Player\Entity\Map_ID <> Map_ID
             Continue
         EndIf
         
@@ -300,7 +305,7 @@ Procedure CPE_Aftermap_Actions(Client_ID, *MapData.Map_Data)
         ProcedureReturn
     EndIf
     
-    If *MapData\ColorsSet = #True And Network_Client()\EnvColors = #True
+    If *MapData\ColorsSet = #True And CPE_GetClientExtVersion("envcolors") = 1
         R = Red(*MapData\SkyColor)
         G = Green(*MapData\SkyColor)
         B = Blue(*MapData\SkyColor)
@@ -327,11 +332,11 @@ Procedure CPE_Aftermap_Actions(Client_ID, *MapData.Map_Data)
         CPE_Set_Env_Colors(4, R, G, B)
     EndIf
     
-    If Network_Client()\EnvMapAppearance = #True And *MapData\CustomAppearance = #True
+    If CPE_GetClientExtVersion("envmapappearance") = 1 And *MapData\CustomAppearance = #True
         CPE_Client_Send_Map_Appearence(Network_Client()\ID, *MapData\CustomURL, *MapData\Side_Block, *MapData\Edge_Block, *MapData\Side_level) ; Send the client the map's custom parameters.
     EndIf
     
-    If Network_Client()\HackControl = #True
+    If CPE_GetClientExtVersion("hackcontrol") = 1
         CPE_Client_Hackcontrol_Send(Network_Client()\ID, *MapData\Flying, *MapData\NoClip, *MapData\Speeding, *MapData\SpawnControl, *MapData\ThirdPerson, *MapData\JumpHeight)
     EndIf
     
@@ -380,7 +385,7 @@ Procedure CPE_Set_Weather(Client_ID, Weather.b)
     List_Store(*Network_Client_Old, Network_Client())
     
     If Network_Client_Select(Client_ID)
-        If Network_Client()\CPEWeather = #True
+        If CPE_GetClientExtVersion("envweathertype") = 1
             SendSetWeather(Network_Client()\ID, Weather)
         EndIf
     EndIf
@@ -389,7 +394,7 @@ Procedure CPE_Set_Weather(Client_ID, Weather.b)
 EndProcedure
 
 Procedure CPE_Handle_Entity()
-    If Network_Client()\Logged_In = #True And Network_Client()\ChangeModel = #True And Entity()\Model <> "default"
+    If Network_Client()\Logged_In = #True And CPE_GetClientExtVersion("changemodel") = 1 And Entity()\Model <> "Default"
         SendChangeModel(Network_Client()\ID, Entity()\ID_Client, Entity()\Model)
     EndIf
 EndProcedure
@@ -398,7 +403,7 @@ Procedure CPE_Client_Set_Block_Permissions(Client_ID, Block_ID, CanPlace, CanDel
     List_Store(*Network_Client_Old, Network_Client())
     
     If Network_Client_Select(Client_ID)
-        If Network_Client()\BlockPermissions = #True
+        If CPE_GetClientExtVersion("blockpermissions") = #True
              SendBlockPermissions(Client_ID, Block_ID, CanPlace, CanDelete)
         EndIf
     EndIf
@@ -410,7 +415,7 @@ Procedure CPE_Client_Send_Map_Appearence(Client_ID, URL.s, Side_Block, Edge_Bloc
     List_Store(*Network_Client_Old, Network_Client())
     
     If Network_Client_Select(Client_ID)
-        If Network_Client()\EnvMapAppearance = #True
+        If CPE_GetClientExtVersion("envmapappearance") = 1
             SendEnvMapAppearance(Client_ID, URL, Side_Block, Edge_Block, Side_Level)
         EndIf
     EndIf
@@ -422,7 +427,7 @@ Procedure CPE_Client_Send_Hotkeys(Client_ID)
     List_Store(*Network_Client_Old, Network_Client())
     
     If Network_Client_Select(Client_ID)
-        If Network_Client()\TextHotkey = #True
+        If CPE_GetClientExtVersion("texthotkey") = 1
             ForEach Hotkeys()
                 SendTextHotkeys(Client_ID, Hotkeys()\Label, Hotkeys()\Action, Hotkeys()\Keycode, Hotkeys()\Keymods)
             Next
@@ -436,7 +441,7 @@ Procedure CPE_Client_Hackcontrol_Send(Client_ID, Flying, Noclip, Speeding, Spawn
     List_Store(*Network_Client_Old, Network_Client())
     
     If Network_Client_Select(Client_ID)
-        If Network_Client()\HackControl = #True
+        If CPE_GetClientExtVersion("hackcontrol") = 1
             SendHackControl(Client_ID, Flying, Noclip, Speeding, SpawnControl, ThirdPerson, Jumpheight)
         EndIf
     EndIf
@@ -451,21 +456,20 @@ Procedure CPE_GetClientExtVersion(Extension.s)
         ProcedureReturn Result
     EndIf
     
-    ResetList(Network_Client()\Extensions())
-    ResetList(Network_Client()\ExtensionVersions())
+    ResetMap(Network_Client()\Extensions())
     
-    While NextElement(Network_Client()\Extensions()) And NextElement(Network_Client()\ExtensionVersions())
-        If LCase(Network_Client()\Extensions()) = LCase(Extension)
-            Result = Network_Client()\ExtensionVersions()
-        EndIf
-    Wend    
+    If Not FindMapElement(Network_Client()\Extensions(), LCase(Extension))
+        ProcedureReturn Result
+    EndIf
+    
+    Result = Network_Client()\Extensions(LCase(Extension))
     
     ProcedureReturn Result
 EndProcedure
 ; IDE Options = PureBasic 5.30 (Windows - x64)
-; CursorPosition = 286
-; FirstLine = 83
-; Folding = HgH-
+; CursorPosition = 182
+; FirstLine = 124
+; Folding = vj--
 ; EnableThread
 ; EnableXP
 ; EnableOnError

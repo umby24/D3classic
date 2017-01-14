@@ -1,7 +1,7 @@
 
 ; ########################################## Konstanten ########################################
 
-#Plugin_Version = 510
+#Plugin_Version = 511
 
 ; ######################################### Prototypes ##########################################
 
@@ -1444,7 +1444,9 @@ Procedure Plugin_Main()
             Continue
         EndIf
         
+        Watchdog_Watch("Plugin_Main", "Before Call " + Plugins()\Filename, 0)
         Plugins()\Functions\Main()
+        Watchdog_Watch("Plugin_Main", "After call " + Plugins()\Filename, 2)
     Next
 EndProcedure
 
@@ -1463,9 +1465,9 @@ Procedure Plugin_Thread(*Dummy)
         Delay(100)
     ForEver
 EndProcedure
-; IDE Options = PureBasic 5.30 (Linux - x64)
-; CursorPosition = 119
-; FirstLine = 115
+; IDE Options = PureBasic 5.30 (Windows - x64)
+; CursorPosition = 1448
+; FirstLine = 1360
 ; Folding = 8---0-----8-
 ; EnableXP
 ; DisableDebugger

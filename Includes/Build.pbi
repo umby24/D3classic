@@ -204,13 +204,13 @@ Procedure Build_Main()
 EndProcedure
 
 Procedure BuildShutdown()
-    FreeList(Build_Player_Queue())    
+    ;FreeList(Build_Player_Queue())    
 EndProcedure
 
 RegisterCore("Build", 0, #Null, @BuildShutdown, @Build_Main())
 ; IDE Options = PureBasic 5.30 (Windows - x64)
-; CursorPosition = 115
-; FirstLine = 22
+; CursorPosition = 206
+; FirstLine = 32
 ; Folding = k-
 ; EnableXP
 ; DisableDebugger

@@ -237,26 +237,12 @@ Structure Network_Client
   ;-----------------------
   CPE.b                       ; If the client supports CPE.
   CustomExtensions.w          ; How many extensions the client supports
-  CustomBlocks.b              ; If the client supports the CustomBlocks plugin
   CustomBlocks_Level.b        ; The level of block support the client has.
-  HeldBlock.b                 ; Defines if the client supports CPE HeldBlock
-  EmoteFix.b                  ; Defines if the client supports EmoteFix.
-  ClickDistance.b             ; Defines if the client supports ClickDistance.
-  SelectionCuboid.b           ; Defines if the client supports SelectionCuboid
-  ExtPlayerList.b             ; Defines if the client supports extPlayerList.
-  ChangeModel.b               ; Defines if the client supports ChangeModel.
-  CPEWeather.b                ; Defines if the client support ExtWeatherType.
-  EnvColors.b                 ; Defines if the client supports EnvColors.
-  MessageTypes.b              ; Defines if the client supports MessageTypes.
-  BlockPermissions.b          ; Defines if the client supports BlockPermissions.
-  EnvMapAppearance.b          ; Defines if the client supports EnvMapAppearance.
-  HackControl.b               ; Defines if the client supports HackControl
-  TextHotkey.b                ; Defines if the client supports TextHotkey.
-  LongerMessages.b            ; Defines if the client supports LongerMessages
+  
   GlobalChat.b
   
-  List Extensions.s()        ; Holds a list of all supported plugins on the client.
-  List ExtensionVersions.i()  ;Holds a list of the extension versions that work.
+
+  Map Extensions.l()         ; Holds a list of all extensions the client supports.
   List Selections.b()        ; Holds a list of all current selections for this player.
 EndStructure
 
@@ -304,9 +290,9 @@ Structure EventStruct
     Timer.i
     Time.i
 EndStructure
-; IDE Options = PureBasic 5.30 (Linux - x64)
-; CursorPosition = 186
-; FirstLine = 139
+; IDE Options = PureBasic 5.30 (Windows - x64)
+; CursorPosition = 244
+; FirstLine = 216
 ; EnableXP
 ; DisableDebugger
 ; CompileSourceDirectory

@@ -131,7 +131,7 @@ EndProcedure
 
 ; - NOTE: In the below method's calling, a network_client() is already selected!!
 Procedure HandleIncomingChat(Text.s, PlayerId.b)
-    If Network_Client()\LongerMessages ; - Handle incoming LongerMessages.
+    If CPE_GetClientExtVersion("longermessages") = 1 ; - Handle incoming LongerMessages.
         If PlayerId = 1
             Network_Client()\Player\Entity\ChatBuffer + Text
             ProcedureReturn
@@ -163,8 +163,8 @@ Procedure HandleIncomingChat(Text.s, PlayerId.b)
 EndProcedure
 
 ; IDE Options = PureBasic 5.30 (Windows - x64)
-; CursorPosition = 10
-; FirstLine = 3
+; CursorPosition = 133
+; FirstLine = 75
 ; Folding = 4
 ; EnableXP
 ; DisableDebugger

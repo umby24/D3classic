@@ -2362,10 +2362,9 @@ EndProcedure
 ; CPE Extensions
 
 ProcedureC Lua_CMD_Server_Get_Extensions(Lua_State)
-    PrintN("Server Get Extnesions")
   lua_newtable(Lua_State)
   
-    Elements = 11
+    Elements = 15
   
     ;lua_pushinteger(Lua_State, 1)
     lua_pushstring(Lua_State, "CustomBlocks")
@@ -2391,7 +2390,7 @@ ProcedureC Lua_CMD_Server_Get_Extensions(Lua_State)
     lua_rawset(Lua_State, -3)
     
     lua_pushstring(Lua_State, "ExtPlayerList")
-    lua_pushinteger(Lua_State, 1)
+    lua_pushinteger(Lua_State, 2)
     lua_rawset(Lua_State, -3)
     
     lua_pushstring(Lua_State, "EnvWeatherType")
@@ -2410,7 +2409,23 @@ ProcedureC Lua_CMD_Server_Get_Extensions(Lua_State)
     lua_pushinteger(Lua_State, 1)
     lua_rawset(Lua_State, -3)
     
-    lua_pushstring(Lua_State, "EnvMapAppearance")
+    lua_pushstring(Lua_State, "EnvColors")
+    lua_pushinteger(Lua_State, 1)
+    lua_rawset(Lua_State, -3)
+    
+    lua_pushstring(Lua_State, "TextHotKey")
+    lua_pushinteger(Lua_State, 1)
+    lua_rawset(Lua_State, -3)
+    
+    lua_pushstring(Lua_State, "HackControl")
+    lua_pushinteger(Lua_State, 1)
+    lua_rawset(Lua_State, -3)
+    
+    lua_pushstring(Lua_State, "SelectionCuboid")
+    lua_pushinteger(Lua_State, 1)
+    lua_rawset(Lua_State, -3)
+    
+    lua_pushstring(Lua_State, "LongerMessages")
     lua_pushinteger(Lua_State, 1)
     lua_rawset(Lua_State, -3)
     
@@ -2418,7 +2433,6 @@ ProcedureC Lua_CMD_Server_Get_Extensions(Lua_State)
 EndProcedure
 
 ProcedureC Lua_CMD_Server_Get_Extension(Lua_State)
-    PrintN("Server Get EXTENSION")
   lua_tostring(Extension.s, Lua_State, 1)
   
   result.i = 0
@@ -2434,7 +2448,7 @@ ProcedureC Lua_CMD_Server_Get_Extension(Lua_State)
     Case "changemodel"
         result = 1
     Case "extplayerlist"
-        result = 1
+        result = 2
     Case "envweathertype"
         result = 1
     Case "envmapappearance"
@@ -2443,7 +2457,15 @@ ProcedureC Lua_CMD_Server_Get_Extension(Lua_State)
         result = 1
     Case "blockpermissions"
         result = 1
-    Case "envmapappearance"
+    Case "selectioncuboid"
+        result = 1
+    Case "hackcontrol"
+        result = 1
+    Case "texthotkey"
+        result = 1
+    Case "longermessages"
+        result = 1
+    Case "envcolors"
         result = 1
   EndSelect
   
@@ -2453,7 +2475,6 @@ ProcedureC Lua_CMD_Server_Get_Extension(Lua_State)
 EndProcedure
 
 ProcedureC Lua_CMD_Client_Get_Extensions(Lua_State)
-    PrintN("Client Get Extnesions")
   Client_ID = lua_tointeger(Lua_State, 1)
   
   Elements = 0
@@ -2483,22 +2504,19 @@ ProcedureC Lua_CMD_Client_Get_Extensions(Lua_State)
 EndProcedure
 
 ProcedureC Lua_CMD_Client_Get_Extension(Lua_State)
-    PrintN("Client Get Extension")
   Client_ID = lua_tointeger(Lua_State, 1)
   lua_tostring(Extension.s, Lua_State, 2)
   
-  Result.l = 0
+  Result.i = 0
   
   *Pointer.Network_Client = Client_Get_Pointer(Client_ID)
   If *Pointer
     If *Pointer\CPE = #True
       ResetMap(*Pointer\Extensions())
       
-      While NextMapElement(*Pointer\Extensions())
-        If MapKey(*Pointer\Extensions()) = Extension
-          result = *Pointer\Extensions()
-        EndIf
-      Wend
+      If (FindMapElement(*Pointer\Extensions(), LCase(Extension)) > 0)
+          Result = *Pointer\Extensions(LCase(Extension))
+      EndIf
     EndIf
     
   EndIf
@@ -2511,7 +2529,6 @@ EndProcedure
 ;################################
 
 ProcedureC Lua_CMD_CPE_Selection_Cuboid_Add(Lua_State)
-    PrintN("Add Cuboid")
   Client_ID = lua_tointeger(Lua_State, 1)
   Selection_ID = lua_tointeger(Lua_State, 2)
   lua_tostring(Label.s, Lua_State, 3)
@@ -2532,7 +2549,6 @@ ProcedureC Lua_CMD_CPE_Selection_Cuboid_Add(Lua_State)
 EndProcedure
 
 ProcedureC Lua_CMD_CPE_Selection_Cuboid_Delete(Lua_State)
-    PrintN("Delete Cuboid")
   Client_ID = lua_tointeger(Lua_State, 1)
   Selection_ID = lua_tointeger(Lua_State, 2)
   
@@ -2542,7 +2558,6 @@ ProcedureC Lua_CMD_CPE_Selection_Cuboid_Delete(Lua_State)
 EndProcedure
 
 ProcedureC Lua_CMD_CPE_Get_Held_Block(Lua_State)
-    PrintN("Get Held Block")
   Client_ID = lua_tointeger(Lua_state, 1)
   
   *Pointer.Network_Client = Client_Get_Pointer(Client_ID)
@@ -2556,7 +2571,6 @@ ProcedureC Lua_CMD_CPE_Get_Held_Block(Lua_State)
 EndProcedure
 
 ProcedureC Lua_CMD_CPE_Set_Held_Block(Lua_State)
-    PrintN("Set Held Block")
   Client_ID = lua_tointeger(Lua_State, 1)
   Block_ID = lua_tointeger(Lua_State, 2)
   Can_Change = lua_tointeger(Lua_State, 3)
@@ -2574,7 +2588,6 @@ ProcedureC Lua_CMD_CPE_Set_Held_Block(Lua_State)
 EndProcedure
 
 ProcedureC Lua_CMD_CPE_Change_Model(Lua_State)
-    PrintN("Change model")
   Client_ID = lua_tointeger(Lua_State, 1)
   lua_tostring(Model.s, Lua_State, 2)
   
@@ -2591,7 +2604,6 @@ ProcedureC Lua_CMD_CPE_Change_Model(Lua_State)
 EndProcedure
 
 ProcedureC Lua_CMD_CPE_Set_Weather(Lua_State)
-    PrintN("Set Weather")
     Client_ID = lua_tointeger(Lua_State, 1)
     WeatherType.b = lua_tointeger(Lua_State, 2)
     
@@ -2612,7 +2624,6 @@ ProcedureC Lua_CMD_CPE_Set_Weather(Lua_State)
 EndProcedure
 
 ProcedureC Lua_CMD_CPE_Map_Set_Env_Colors(Lua_State)
-    PrintN("Set Env Colors")
     Map_ID.i = lua_tointeger(Lua_State, 1)
     Red.b = lua_tointeger(Lua_State, 2)
     Green.b = lua_tointeger(Lua_State, 3)
@@ -2627,7 +2638,6 @@ ProcedureC Lua_CMD_CPE_Map_Set_Env_Colors(Lua_State)
     ProcedureReturn 0
 EndProcedure
 ProcedureC Lua_CMD_CPE_Client_Set_Block_Permissions(Lua_State)
-    PrintN("Block Perms")
     Client_ID = lua_tointeger(Lua_State, 1)
     Block_ID = lua_tointeger(Lua_State, 2)
     Can_Place = lua_tointeger(Lua_State, 3)
@@ -2638,7 +2648,6 @@ ProcedureC Lua_CMD_CPE_Client_Set_Block_Permissions(Lua_State)
     ProcedureReturn 0    
 EndProcedure
 ProcedureC Lua_CMD_Map_Env_Apperance_Set(Lua_State)
-    PrintN("Map Appr")
     Map_ID = lua_tointeger(Lua_State, 1)
     lua_tostring(CustomURL.s, Lua_State, 2)
     Side_Block = lua_tointeger(Lua_State, 3)
@@ -2653,7 +2662,6 @@ ProcedureC Lua_CMD_Map_Env_Apperance_Set(Lua_State)
     ProcedureReturn 0
 EndProcedure ; 
 ProcedureC Lua_CMD_Client_Send_Map_Appearence(Lua_State)
-    PrintN("Client MAp Appr")
     Client_ID = lua_tointeger(Lua_State, 1)
     lua_tostring(CustomURL.s, Lua_State, 2)
     Side_Block = lua_tointeger(Lua_State, 3)
@@ -2666,7 +2674,6 @@ ProcedureC Lua_CMD_Client_Send_Map_Appearence(Lua_State)
     ProcedureReturn 0
 EndProcedure
 ProcedureC Lua_CMD_CPE_Client_Hackcontrol_Send(Lua_State)
-    PrintN("Hack Control")
     Client_ID = lua_tointeger(Lua_State, 1)
     Flying = lua_tointeger(Lua_State, 2)
     Noclip = lua_tointeger(Lua_State, 3)
@@ -3468,87 +3475,102 @@ Procedure Lua_Do_Function(Function.s, Arguments, Results)
 EndProcedure
 
 Procedure Lua_Do_String(String.s)
-  Protected Error.s
-  
   If Lua_Main\State
     
-    luaL_loadstring(Lua_Main\State, String)
-    
-    Result = lua_pcall(Lua_Main\State, 0, 0, 0)
-    
-    If Result
-      lua_tostring(Error, Lua_Main\State, -1)
-      
-      Select Result
-        Case #LUA_ERRRUN
-          *myMem = AllocateMemory(512)
-          Lang_Get("", "Runtimeerror with [Field_0]", *myMem, String, Error)
-          Temp.s = PeekS(*myMem)
-          FreeMemory(*myMem)
-          Log_Add("Lua-Plugin", Temp.s, 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
-        Case #LUA_ERRMEM
-          *myMem = AllocateMemory(512)
-          Lang_Get("", "Memoryallocationerror with [Field_0]", *myMem, String, Error)
-          Temp.s = PeekS(*myMem)
-          FreeMemory(*myMem)
-          Log_Add("Lua-Plugin", Temp.s, 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
-        Case #LUA_ERRERR
-          *myMem = AllocateMemory(512)
-          Lang_Get("", "Error with [Field_0]", *myMem, String, Error)
-          Temp.s = PeekS(*myMem)
-          FreeMemory(*myMem)
-          Log_Add("Lua-Plugin", Temp.s, 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
-      
-  EndSelect
-  lua_pop(Lua_Main\State, 1)
-    EndIf
+    luaL_dostring(Lua_Main\State, String)
     
   EndIf
 EndProcedure
+
+Procedure Lua_Do_File(Filename.s)
+  If Lua_Main\State
+    
+    luaL_dofile(Lua_Main\State, Filename)
+    
+  EndIf
+EndProcedure
+; Procedure Lua_Do_String(String.s)
+;   Protected Error.s
+;   
+;   If Lua_Main\State
+;     
+;     luaL_loadstring(Lua_Main\State, String)
+;     
+;     Result = lua_pcall(Lua_Main\State, 0, 0, 0)
+;     
+;     If Result
+;       lua_tostring(Error, Lua_Main\State, -1)
+;       
+;       Select Result
+;         Case #LUA_ERRRUN
+;           *myMem = AllocateMemory(512)
+;           Lang_Get("", "Runtimeerror with [Field_0]", *myMem, String, Error)
+;           Temp.s = PeekS(*myMem)
+;           FreeMemory(*myMem)
+;           Log_Add("Lua-Plugin", Temp.s, 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
+;         Case #LUA_ERRMEM
+;           *myMem = AllocateMemory(512)
+;           Lang_Get("", "Memoryallocationerror with [Field_0]", *myMem, String, Error)
+;           Temp.s = PeekS(*myMem)
+;           FreeMemory(*myMem)
+;           Log_Add("Lua-Plugin", Temp.s, 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
+;         Case #LUA_ERRERR
+;           *myMem = AllocateMemory(512)
+;           Lang_Get("", "Error with [Field_0]", *myMem, String, Error)
+;           Temp.s = PeekS(*myMem)
+;           FreeMemory(*myMem)
+;           Log_Add("Lua-Plugin", Temp.s, 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
+;       
+;   EndSelect
+;   lua_pop(Lua_Main\State, 1)
+;     EndIf
+;     
+;   EndIf
+; EndProcedure
 
 ProcedureC Lua_Traceback(Lua_State)
   
 EndProcedure
 
-Procedure Lua_Do_File(Filename.s)
-  Protected Error.s
-  If Lua_Main\State
-    
-    ;luaL_dofile(Lua_Main\State, Filename)
-    lua_getglobal(Lua_Main\State, "debug")
-    lua_getfield(Lua_Main\State, -1, "traceback")
-    lua_replace(Lua_Main\State, -2)
-    luaL_loadfile(Lua_Main\State, Filename)
-    Result = lua_pcall(Lua_Main\State, 0, 0, -2)
-    
-    If Result
-      lua_tostring(Error, Lua_Main\State, -1)
-      
-      Select Result
-        Case #LUA_ERRRUN
-          *myMem = AllocateMemory(512)
-          Lang_Get("", "Runtimeerror in [Field_0]", *myMem, Filename, Error)
-          Temp.s = PeekS(*myMem)
-          FreeMemory(*myMem)
-          Log_Add("Lua-Plugin", Temp.s, 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
-        Case #LUA_ERRMEM
-          *myMem = AllocateMemory(512)
-          Lang_Get("", "Memoryallocationerror in [Field_0]", *myMem, Filename, Error)
-          Temp.s = PeekS(*myMem)
-          FreeMemory(*myMem)
-          Log_Add("Lua-Plugin", Temp.s, 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
-        Case #LUA_ERRERR
-          *myMem = AllocateMemory(512)
-          Lang_Get("", "Error in [Field_0]", *myMem, Filename, Error)
-          Temp.s = PeekS(*myMem)
-          FreeMemory(*myMem)
-          Log_Add("Lua-Plugin", Temp.s, 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
-      
-  EndSelect
-  lua_pop(Lua_Main\State, 1)
-    EndIf
-  EndIf
-EndProcedure
+; Procedure Lua_Do_File(Filename.s)
+;   Protected Error.s
+;   If Lua_Main\State
+;     
+;     ;luaL_dofile(Lua_Main\State, Filename)
+;     lua_getglobal(Lua_Main\State, "debug")
+;     lua_getfield(Lua_Main\State, -1, "traceback")
+;     lua_replace(Lua_Main\State, -2)
+;     luaL_loadfile(Lua_Main\State, Filename)
+;     Result = lua_pcall(Lua_Main\State, 0, 0, -2)
+;     
+;     If Result
+;       lua_tostring(Error, Lua_Main\State, -1)
+;       
+;       Select Result
+;         Case #LUA_ERRRUN
+;           *myMem = AllocateMemory(512)
+;           Lang_Get("", "Runtimeerror in [Field_0]", *myMem, Filename, Error)
+;           Temp.s = PeekS(*myMem)
+;           FreeMemory(*myMem)
+;           Log_Add("Lua-Plugin", Temp.s, 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
+;         Case #LUA_ERRMEM
+;           *myMem = AllocateMemory(512)
+;           Lang_Get("", "Memoryallocationerror in [Field_0]", *myMem, Filename, Error)
+;           Temp.s = PeekS(*myMem)
+;           FreeMemory(*myMem)
+;           Log_Add("Lua-Plugin", Temp.s, 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
+;         Case #LUA_ERRERR
+;           *myMem = AllocateMemory(512)
+;           Lang_Get("", "Error in [Field_0]", *myMem, Filename, Error)
+;           Temp.s = PeekS(*myMem)
+;           FreeMemory(*myMem)
+;           Log_Add("Lua-Plugin", Temp.s, 5, #PB_Compiler_File, #PB_Compiler_Line, #PB_Compiler_Procedure)
+;       
+;   EndSelect
+;   lua_pop(Lua_Main\State, 1)
+;     EndIf
+;   EndIf
+; EndProcedure
 
 Procedure Lua_Check_New_Files(Directory.s)
   
@@ -3591,9 +3613,9 @@ Procedure Lua_Check_New_Files(Directory.s)
 EndProcedure
 ; IDE Options = PureBasic 5.30 (Windows - x64)
 ; ExecutableFormat = Shared Dll
-; CursorPosition = 2668
-; FirstLine = 2366
-; Folding = --------------------------PAA--------
+; CursorPosition = 2518
+; FirstLine = 2512
+; Folding = -------------------------------------
 ; EnableThread
 ; EnableXP
 ; EnableOnError

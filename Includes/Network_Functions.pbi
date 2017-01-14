@@ -64,7 +64,7 @@ Procedure System_Message_Network_Send(Client_ID, Message.s, Type=0) ; Sendet ein
     For i = 1 To Lines
         Text.s = StringField(Message, i, Chr(10))
         
-        If String_IV(Right(Text, 1)) And Network_Client()\EmoteFix = #False
+        If String_IV(Right(Text, 1)) And CPE_GetClientExtVersion("emotefix") = 0
             Text = Text + "." ; Suffix emotes for non-fixed clients.
         EndIf
         
@@ -106,7 +106,7 @@ Procedure System_Message_Network_Send_2_All(Map_ID, Message.s, Type=0) ; Sendet 
         If Text <> LSet("", 64, " ") And Text <> ""
             ForEach Network_Client()
                 If Network_Client()\Player\Map_ID = Map_ID Or Map_ID = -1
-                    If String_IV(Right(Text, 1)) And Network_Client()\EmoteFix = #False
+                    If String_IV(Right(Text, 1)) And CPE_GetClientExtVersion("emotefix") = 0
                         Text = Text + "." ; Suffix emotes for non-fixed clients.
                     EndIf
                     
@@ -168,7 +168,7 @@ Procedure Network_Out_Entity_Add(Client_ID, ID_Client, Name.s, X.f, Y.f, Z.f, Ro
         Rotation = Rotation/360*256
         Look = Look/360*256
         
-        If Network_Client()\ExtPlayerList = #False Or CPE_GetClientExtVersion("ExtPlayerList") < 2
+        If CPE_GetClientExtVersion("ExtPlayerList") < 2
             SendSpawnEntity(Client_ID, ID_Client, Name, X, Y, Z, Rotation, Look)
         Else
             SendExtAddEntity2(Client_ID, ID_Client, Name, Name, X, Y, Z, Rotation, Look) ; TODO: Provide the clients login name..
@@ -227,9 +227,9 @@ Procedure Network_Out_Entity_Position(Client_ID, ID_Client, X.f, Y.f, Z.f, Rotat
     EndIf
 EndProcedure
 ; IDE Options = PureBasic 5.30 (Windows - x64)
-; CursorPosition = 177
-; FirstLine = 73
-; Folding = 58
+; CursorPosition = 170
+; FirstLine = 117
+; Folding = 98
 ; EnableXP
 ; DisableDebugger
 ; CompileSourceDirectory

@@ -12,7 +12,7 @@ Declare Error_Handler()
 
 ; ########################################## Ladekram ############################################
 
-OnErrorCall(@Error_Handler())
+;OnErrorCall(@Error_Handler())
 
 ; ########################################## Proceduren ##########################################
 
@@ -355,9 +355,8 @@ EndProcedure
 Procedure Error_Main()
   
 EndProcedure
-; IDE Options = PureBasic 5.30 (Linux - x64)
-; CursorPosition = 249
-; FirstLine = 217
+; IDE Options = PureBasic 5.30 (Windows - x64)
+; CursorPosition = 14
 ; Folding = -
 ; EnableXP
 ; DisableDebugger

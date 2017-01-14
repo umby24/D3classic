@@ -391,7 +391,7 @@ ProcedureCDLL Main()
       
       ;Temp.s = PeekS(Files_Folder_Get("Lua"))
       ;Lua_Check_New_Files(Temp)
-      *MyMem = AllocateMemory(512)
+      *MyMem = AllocateMemory(128)
       Files_Folder_Get("Lua", *MyMem)
       Lua_Check_New_Files(PeekS(*MyMem))
       FreeMemory(*MyMem)
@@ -412,8 +412,7 @@ ProcedureCDLL Main()
   ForEach Lua_Event()
     If Lua_Event()\Type = #Lua_Event_Timer
       If Lua_Event()\Timer < Milliseconds()
-          Lua_Event()\Timer = Milliseconds() + Lua_Event()\Time
-          PrintN("Calling " + Lua_Event()\Function)
+        Lua_Event()\Timer = Milliseconds() + Lua_Event()\Time
         Lua_Do_Function_Event_Timer(Lua_Event()\Function, Lua_Event()\Map_ID)
       EndIf
     EndIf
@@ -422,8 +421,8 @@ ProcedureCDLL Main()
 EndProcedure
 ; IDE Options = PureBasic 5.30 (Windows - x64)
 ; ExecutableFormat = Shared Dll
-; CursorPosition = 413
-; FirstLine = 371
+; CursorPosition = 394
+; FirstLine = 370
 ; Folding = ------
 ; EnableThread
 ; EnableOnError

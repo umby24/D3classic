@@ -170,7 +170,7 @@ Procedure Client_Logout(Client_ID, Message.s, Show_2_All) ; Player has logged ou
         
         PushListPosition(Network_Client())
         ForEach Network_Client()
-            If Network_Client()\ExtPlayerList = #True
+            If CPE_GetClientExtVersion("extplayerlist") > 0
                 SendExtRemovePlayerName(Network_Client()\ID, loginName)
             EndIf
         Next
@@ -261,10 +261,10 @@ Procedure Client_Login_Thread(*Dummy) ; In this thread, all logins are processed
         
     ForEver
 EndProcedure
-; IDE Options = PureBasic 5.30 (Windows - x86)
-; CursorPosition = 127
-; FirstLine = 99
-; Folding = -
+; IDE Options = PureBasic 5.30 (Windows - x64)
+; CursorPosition = 173
+; FirstLine = 146
+; Folding = 8
 ; EnableXP
 ; DisableDebugger
 ; CompileSourceDirectory

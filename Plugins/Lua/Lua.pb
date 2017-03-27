@@ -413,7 +413,6 @@ ProcedureCDLL Main()
     If Lua_Event()\Type = #Lua_Event_Timer
       If Lua_Event()\Timer < Milliseconds()
           Lua_Event()\Timer = Milliseconds() + Lua_Event()\Time
-          PrintN("Calling " + Lua_Event()\Function)
         Lua_Do_Function_Event_Timer(Lua_Event()\Function, Lua_Event()\Map_ID)
       EndIf
     EndIf
@@ -422,12 +421,12 @@ ProcedureCDLL Main()
 EndProcedure
 ; IDE Options = PureBasic 5.30 (Windows - x64)
 ; ExecutableFormat = Shared Dll
-; CursorPosition = 413
-; FirstLine = 371
+; CursorPosition = 414
+; FirstLine = 384
 ; Folding = ------
 ; EnableThread
 ; EnableOnError
-; Executable = lua.x86.dll
+; Executable = lua.x64.dll
 ; DisableDebugger
 ; CompileSourceDirectory
-; Compiler = PureBasic 5.30 (Windows - x86)
+; Compiler = PureBasic 5.30 (Windows - x64)
